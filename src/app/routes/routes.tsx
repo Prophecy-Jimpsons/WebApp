@@ -5,8 +5,8 @@ import { RouteConfig } from "./types";
 
 // Lazy loading components for better performance
 const Landing = lazy(() => import("@/pages/Landing/Landing"));
-const App = lazy(() => import("@/pages/App/App"));
-const Marketplace = lazy(() => import("@/pages/Marketplace/Marketplace"));
+// const App = lazy(() => import("@/pages/App/App")); // need to change this
+// const Marketplace = lazy(() => import("@/pages/Marketplace/Marketplace")); // need to change this
 const RoadMap = lazy(() => import("@/pages/Roadmap/Roadmap"));
 const Dashboard = lazy(() => import("@/pages/Dashboard/Dashboard"));
 const NotFound = lazy(() => import("@/pages/NotFound/NotFound"));
@@ -15,6 +15,9 @@ const PrivacyPolicy = lazy(
 );
 const TermsOfService = lazy(
   () => import("@/pages/TermsOfService/TermsOfServicePage"),
+);
+const WorkInProgress = lazy(
+  () => import("@/pages/WorkInProgress/WorkInProgressPage"),
 );
 
 // Layout components should be eager laoded
@@ -41,7 +44,8 @@ export const publicRoutes: RouteConfig[] = [
         path: PATHS.PUBLIC.APP,
         element: (
           <Suspense fallback={<h1>LoadingSpinner</h1>}>
-            <App />
+            {/* <App />  // need to change this */}
+            <WorkInProgress />
           </Suspense>
         ),
       },
@@ -49,7 +53,8 @@ export const publicRoutes: RouteConfig[] = [
         path: PATHS.PUBLIC.MARKETPLACE,
         element: (
           <Suspense fallback={<h1>LoadingSpinner</h1>}>
-            <Marketplace />
+            {/* <Marketplace />  // need to change this */}
+            <WorkInProgress />
           </Suspense>
         ),
       },
@@ -82,6 +87,14 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<h1>LoadingSpinner</h1>}>
             <TermsOfService />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.WORK_IN_PROGRESS,
+        element: (
+          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+            <WorkInProgress />
           </Suspense>
         ),
       },

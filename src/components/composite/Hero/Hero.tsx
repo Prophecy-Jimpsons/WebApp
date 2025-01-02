@@ -45,7 +45,8 @@ const Hero: FC = () => {
           </p>
 
           <div className={styles.buttonGroup}>
-            <Button variant="primary" to="/app">
+            {/* // "/app" need to change this */}
+            <Button variant="primary" to="/work-in-progress">
               Enter Application
             </Button>
             <Button
