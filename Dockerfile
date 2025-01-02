@@ -1,38 +1,33 @@
-# Step 1: Build the React app
+# Build stage
 FROM node:18 AS build
-
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and yarn.lock to install dependencies
+# Copy package files
 COPY package.json yarn.lock ./
 
-# Install dependencies using Yarn
-RUN yarn install
+# Install all dependencies (including dev dependencies)
+RUN yarn install --frozen-lockfile
 
-# Copy the rest of the application files
-COPY . ./
+# Copy source files
+COPY . .
 
-# Build the Vite project
+# Build the application
 RUN yarn build
 
-# Step 2: Set up Nginx and SSL
-# FROM nginx:alpine
+# Production stage
+FROM node:18-slim
+WORKDIR /app
 
-# Remove the default Nginx index.html
-# RUN rm -rf /usr/share/nginx/html/*
+# Copy only the built assets and package files
+COPY --from=build /app/dist ./dist
+COPY package.json yarn.lock ./
 
-# Copy the built files from the build step to Nginx's HTML directory
-# COPY --from=build /app/dist /usr/share/nginx/html
+# Install only production dependencies
+RUN yarn install --production --frozen-lockfile
 
-# Install Certbot to manage SSL certificates
-# RUN apk add --no-cache certbot nginx
+# Expose the port
+EXPOSE 8080
 
-# Copy custom Nginx configuration
-# COPY nginx.conf /etc/nginx/nginx.conf
-
-# Expose ports for HTTP and HTTPS
-EXPOSE 80 443
-
-# Start Nginx
-# CMD ["nginx", "-g", "daemon off;"]
+# Start the application
+ENV NODE_ENV=production
+CMD ["yarn", "preview", "--host", "0.0.0.0", "--port", "8080"]
