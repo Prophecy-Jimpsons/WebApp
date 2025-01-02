@@ -1,0 +1,32 @@
+:root {
+  /* Brand Colors  */
+  --color-primary: #fcaf05;
+  --color-secondary: #0568fc;
+
+  /* Background Colors */
+  --color-background: #ffffff;
+  --color-background-alt: #f3f4f6;
+  --color-black-background: #0a0a14;
+  --color-black-background-alt: #0a0a0a;
+
+  /* Text Colors  */
+  --color-text: #111827;
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+
+  /* White Shades */
+  --color-white: #ffffff;
+  --color-light-white: #fafafa;
+  --color-lighter-white: #f5f5f5;
+
+  /* Black Shades  */
+  --color-light-black: #323232;
+  --color-darker-black: #1a1a1a;
+  --color-black: #000000;
+
+  /* Grey Shades  */
+  --color-light-grey: #e5e5e5;
+  --color-grey: #a0a0a0;
+  --color-dark-grey: #4d4d4d;
+  --color-thin-grey: #4d4d4d3d;
+}

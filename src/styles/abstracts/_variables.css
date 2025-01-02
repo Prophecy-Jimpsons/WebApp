@@ -1,0 +1,10 @@
+:root {
+  /* Breakpoints */
+  --breakpoint-sm: 640px; /* Small devices */
+  --breakpoint-md: 768px; /* Medium devices */
+  --breakpoint-lg: 1024px; /* Large devices */
+  --breakpoint-xl: 1280px; /* Extra large */
+
+  /* Layout */
+  -max-width: 1280px;
+}

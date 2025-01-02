@@ -1,0 +1,25 @@
+.navbar {
+  display: flex;
+  align-items: center;
+}
+
+.navLinks {
+  display: flex;
+  gap: var(--space-6);
+  align-items: center;
+  color: var(--color-white);
+}
+
+.navLink {
+  color: var(--color-grey);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: var(--color-primary);
+}
+
+.activeLink {
+  color: var(--color-primary);
+}

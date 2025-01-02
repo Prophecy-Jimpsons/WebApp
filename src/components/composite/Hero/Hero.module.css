@@ -1,0 +1,147 @@
+.heroWrapper {
+  min-height: 70vh;
+  background-color: var(--color-black-background);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: var(--space-3);
+  position: relative;
+}
+
+/* Gradient Overlay */
+.heroWrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 0%,
+    var(--color-black-background) 100%
+  );
+}
+
+.hero {
+  margin: 0 auto;
+  max-width: var(--container-xl);
+  width: 100%;
+  padding: 0 var(--space-3);
+  position: relative;
+  z-index: 2;
+}
+
+.content {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.title {
+  font-size: var(--space-12);
+  line-height: 1.2;
+  margin-bottom: var(--space-4);
+  font-weight: 700;
+
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 2px #feda03;
+  background: transparent;
+}
+
+.highlight {
+  color: var(--color-secondary);
+  text-shadow: 0 0 20px rgba(252, 175, 5, 0.3);
+}
+
+.regularText {
+  color: var(--color-grey);
+}
+
+.subtitle {
+  font-size: var(--space-6);
+  color: var(--color-white);
+  margin-bottom: var(--space-6);
+}
+
+.description {
+  font-size: var(--space-4);
+  color: var(--color-grey);
+  max-width: 80rem;
+  margin: 0 auto var(--space-8);
+  line-height: 1.6;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: var(--space-8);
+  justify-content: center;
+}
+
+.floatingIcons {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.icon {
+  position: absolute;
+  animation: float 6s ease-in-out infinite;
+}
+
+.icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+/* Individual icon styles */
+.icon1 {
+  top: -20%;
+  left: 10%;
+  animation-delay: 0s;
+  width: var(--space-20);
+  height: var(--space-20);
+}
+
+.icon2 {
+  top: -20%;
+  right: 10%;
+  animation-delay: 1s;
+  width: var(--space-16);
+  height: var(--space-16);
+}
+
+.icon3 {
+  bottom: -20%;
+  left: 10%;
+  animation-delay: 2s;
+  width: var(--space-16);
+  height: var(--space-16);
+}
+
+.icon4 {
+  bottom: -20%;
+  right: 10%;
+  animation-delay: 3s;
+  width: var(--space-20);
+  height: var(--space-20);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2rem);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

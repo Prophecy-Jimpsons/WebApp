@@ -1,0 +1,421 @@
+.roadmapWrapper {
+  /* min-height: 100vh; */
+  background-color: var(--color-black-background);
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-16) var(--space-3);
+}
+
+/* Remove or comment out the gradient in .roadmapWrapper::after */
+.roadmapWrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Remove or comment out the background gradient */
+  z-index: 1;
+}
+
+/* Update the floating icons styles */
+.floatingIcon {
+  position: absolute;
+  width: var(--space-16);
+  height: var(--space-16);
+  filter: invert(89%) sepia(27%) saturate(6941%) hue-rotate(359deg)
+    brightness(103%) contrast(104%);
+  opacity: 0.2;
+}
+
+.icon1 {
+  top: 10%;
+  left: 10%;
+  width: var(--space-20);
+  height: var(--space-20);
+  animation: float 6s ease-in-out infinite;
+}
+
+.icon2 {
+  top: 20%;
+  right: 10%;
+  width: var(--space-18);
+  height: var(--space-18);
+  animation: float 8s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.icon3 {
+  bottom: 20%;
+  left: 15%;
+  width: var(--space-18);
+  height: var(--space-18);
+  animation: float 7s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.icon4 {
+  bottom: 15%;
+  right: 15%;
+  width: var(--space-20);
+  height: var(--space-20);
+  animation: float 9s ease-in-out infinite;
+  animation-delay: 3s;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.2;
+  }
+}
+
+.container {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-16);
+}
+
+.title {
+  font-size: var(--space-8);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 2px #feda03;
+  text-shadow: 0 0 20px rgba(252, 175, 5, 0.3);
+}
+
+.subtitle {
+  color: var(--color-grey);
+  font-size: var(--space-4);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.roadmapGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-6);
+  position: relative;
+  margin-bottom: var(--space-16);
+}
+
+@media (max-width: 1024px) {
+  .roadmapGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .roadmapGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: rgba(18, 18, 18, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.5s ease-out forwards;
+  opacity: 0;
+  backdrop-filter: blur(10px);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 30px rgba(252, 175, 5, 0.15);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(252, 175, 5, 0.1),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.card:hover::before {
+  transform: translateX(100%);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.phaseInfo {
+  flex: 1;
+}
+
+.phase {
+  font-size: var(--space-3);
+  color: var(--color-secondary);
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-1);
+}
+
+.timing {
+  font-size: var(--space-3);
+  color: var(--color-grey);
+}
+
+.cardTitle {
+  font-size: var(--space-5);
+  color: var(--color-white);
+  margin-bottom: var(--space-4);
+  font-weight: 600;
+}
+
+.section {
+  margin-bottom: var(--space-4);
+}
+
+.sectionTitle {
+  color: var(--color-secondary);
+  font-size: var(--space-4);
+  margin-bottom: var(--space-2);
+  font-weight: 500;
+}
+
+.itemList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-grey);
+  margin-bottom: var(--space-3);
+  font-size: var(--space-3);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-secondary);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.phaseIcon {
+  width: var(--space-6);
+  height: var(--space-6);
+  filter: invert(89%) sepia(27%) saturate(6941%) hue-rotate(359deg)
+    brightness(103%) contrast(104%);
+}
+
+.statusIcon {
+  width: var(--space-5);
+  height: var(--space-5);
+  filter: invert(89%) sepia(27%) saturate(6941%) hue-rotate(359deg)
+    brightness(103%) contrast(104%);
+  animation: spin 8s linear infinite;
+}
+
+/* Benefits Section */
+.benefitsSection {
+  margin-top: var(--space-16);
+  text-align: center;
+  padding: var(--space-8);
+  background: rgba(18, 18, 18, 0.6);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.benefitsTitle {
+  font-size: var(--space-6);
+  color: var(--color-secondary);
+  margin-bottom: var(--space-8);
+  font-weight: 600;
+}
+
+.benefitsList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+
+  span {
+    color: var(--color-white);
+  }
+}
+
+@media (max-width: 1024px) {
+  .benefitsList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .benefitsList {
+    grid-template-columns: 1fr;
+  }
+}
+
+.benefitItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.benefitItem:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.benefitIcon {
+  width: var(--space-8);
+  height: var(--space-8);
+  filter: invert(89%) sepia(27%) saturate(6941%) hue-rotate(359deg)
+    brightness(103%) contrast(104%);
+}
+
+/* Floating background icons */
+.floatingIcons {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.floatingIcon {
+  position: absolute;
+  width: var(--space-16);
+  height: var(--space-16);
+  filter: invert(89%) sepia(27%) saturate(6941%) hue-rotate(359deg)
+    brightness(103%) contrast(104%);
+  opacity: 0.1;
+}
+
+.icon1 {
+  top: 10%;
+  left: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.icon2 {
+  top: 20%;
+  right: 10%;
+  animation: float 8s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.icon3 {
+  bottom: 20%;
+  left: 15%;
+  animation: float 7s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.icon4 {
+  bottom: 15%;
+  right: 15%;
+  animation: float 9s ease-in-out infinite;
+  animation-delay: 3s;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+/* Add delay to card animations */
+.card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.card:nth-child(4) {
+  animation-delay: 0.4s;
+}

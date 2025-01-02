@@ -1,0 +1,21 @@
+:root {
+  /* Base spacing units (1rem = 10px) */
+  --space-1: 0.4rem;
+  --space-2: 0.8rem;
+  --space-3: 1.2rem;
+  --space-4: 1.6rem;
+  --space-5: 2rem;
+  --space-6: 2.4rem;
+  --space-8: 3.2rem;
+  --space-10: 4rem;
+  --space-12: 4.8rem;
+  --space-16: 6.4rem;
+  --space-20: 8rem;
+  --space-24: 9.6rem;
+
+  /* Container widths */
+  --container-sm: 64rem;
+  --container-md: 76.8rem;
+  --container-lg: 102.4rem;
+  --container-xl: 128rem;
+}

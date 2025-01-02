@@ -1,0 +1,19 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  padding: var(--space-2) var(--space-6);
+  border: 1px solid var(--color-grey);
+  border-radius: 4px;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  color: var(--color-secondary);
+  border: 1px solid var(--color-primary);
+}
