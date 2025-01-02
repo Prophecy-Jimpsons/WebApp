@@ -8,6 +8,14 @@ export default defineConfig({
   css: {
     postcss: "./postcss.config.js",
   },
+  server: {
+    host: "0.0.0.0",
+    port: 8080,
+  },
+  preview: {
+    host: "0.0.0.0",
+    port: 8080,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

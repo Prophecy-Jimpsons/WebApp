@@ -25,6 +25,9 @@ COPY package.json yarn.lock ./
 # Install only production dependencies
 RUN yarn install --production --frozen-lockfile
 
+ENV PORT=8080
+ENV HOST=0.0.0.0
+
 # Expose the port
 EXPOSE 8080
 
