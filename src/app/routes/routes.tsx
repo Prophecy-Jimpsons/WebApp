@@ -10,6 +10,12 @@ const Marketplace = lazy(() => import("@/pages/Marketplace/Marketplace"));
 const RoadMap = lazy(() => import("@/pages/Roadmap/Roadmap"));
 const Dashboard = lazy(() => import("@/pages/Dashboard/Dashboard"));
 const NotFound = lazy(() => import("@/pages/NotFound/NotFound"));
+const PrivacyPolicy = lazy(
+  () => import("@/pages/PrivacyPolicy/PrivacyPolicyPage"),
+);
+const TermsOfService = lazy(
+  () => import("@/pages/TermsOfService/TermsOfServicePage"),
+);
 
 // Layout components should be eager laoded
 // import MainLayout from "@/layouts/MainLayout/MainLayout";
@@ -60,6 +66,22 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<h1>LoadingSpinner</h1>}>
             <NotFound />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.PRIVACY_POLICY,
+        element: (
+          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+            <PrivacyPolicy />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.TERMS_OF_SERVICE,
+        element: (
+          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+            <TermsOfService />
           </Suspense>
         ),
       },

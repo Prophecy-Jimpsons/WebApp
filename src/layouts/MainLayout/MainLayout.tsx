@@ -1,18 +1,21 @@
 import { FC } from "react";
 import { Header } from "@/components/composite/Header";
-import Hero from "@/components/composite/Hero";
 import { Footer } from "@/components/composite/Footer";
 
-const MainLayout: FC = () => {
+type Props = {
+  children: React.ReactNode;
+};
+
+const MainLayout: FC<Props> = ({ children }: Props) => {
   return (
     <div>
       <Header />
       <main>
-        <Hero />
+        {/* <Hero /> */}
+        {children}
       </main>
       <Footer />
     </div>
   );
 };
-
 export default MainLayout;

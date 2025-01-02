@@ -48,7 +48,10 @@ const Hero: FC = () => {
             <Button variant="primary" to="/app">
               Enter Application
             </Button>
-            <Button variant="secondary" to="/whitepaper">
+            <Button
+              variant="secondary"
+              to="https://jimpsons.gitbook.io/jimpsons.org"
+            >
               White paper
             </Button>
           </div>

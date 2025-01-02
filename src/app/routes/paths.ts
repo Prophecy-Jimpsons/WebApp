@@ -2,7 +2,7 @@ const PATHS = {
   // Public routes (accessible without wallet connection)
   PUBLIC: {
     LANDING: "/",
-    NOTFOUND:"/not-found",
+    NOTFOUND: "/not-found",
     APP: "/app",
     MARKETPLACE: "/marketplace",
     ROADMAP: "/roadmap",
@@ -12,7 +12,7 @@ const PATHS = {
     // Need to add component
     PRIVACY_POLICY: "/privacy-policy",
     TERMS_OF_SERVICE: "/terms-of-service",
-    WHITEPAPER: "/whitepaper",
+    WHITEPAPER: "https://jimpsons.gitbook.io/jimpsons.org",
   },
 
   // Protected routes (require wallet connection)

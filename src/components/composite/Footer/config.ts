@@ -2,8 +2,8 @@ import PATHS from "@/app/routes/paths";
 import {
   xLogo,
   telegramLogo,
-  discordLogo,
   githubLogo,
+  redditLogo,
 } from "@/assets/images/SocialLogo";
 
 export const footerLinks = [
@@ -23,22 +23,22 @@ export const footerLinks = [
 
 export const socialLinks = [
   {
-    path: "/",
-    label: "Connect Wallet",
-    icon: xLogo,
-  },
-  {
-    path: "/",
+    path: "https://t.me/+GpIAuMKh_6xkZjgx",
     label: "Telegram",
     icon: telegramLogo,
   },
   {
-    path: "/",
-    label: "Discord",
-    icon: discordLogo,
+    path: "https://x.com/PJimpsons93203",
+    label: "X",
+    icon: xLogo,
   },
   {
-    path: "/",
+    path: "https://www.reddit.com/r/prophecy_jimpsons/hot/",
+    label: "Reddit",
+    icon: redditLogo,
+  },
+  {
+    path: "https://github.com/Prophecy-Jimpsons/WebApp",
     label: "Github",
     icon: githubLogo,
   },

@@ -18,7 +18,9 @@ export const Footer: React.FC = () => {
           <ul className={styles.footerLinks}>
             {footerLinks.map((link) => (
               <li key={link.label}>
-                <Link to={link.path}>{link.label}</Link>
+                <Link to={link.path} target="_blank">
+                  {link.label}
+                </Link>
               </li>
             ))}
           </ul>
@@ -29,7 +31,7 @@ export const Footer: React.FC = () => {
           <ul className={styles.socialLinks}>
             {socialLinks.map((link) => (
               <li key={link.label}>
-                <Link to={link.path}>
+                <Link to={link.path} target="_blank">
                   <img src={link.icon} alt={link.label} width="24" />
                 </Link>
               </li>
