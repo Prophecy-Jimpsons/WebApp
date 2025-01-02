@@ -8,13 +8,13 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Install dependencies
-RUN npm install
+RUN yarn install
 
 # Copy the rest of the application files
 COPY . ./
 
 # Build the Vite project
-RUN npm run build
+RUN yarn run build
 
 # Step 2: Serve the app using Nginx
 FROM nginx:alpine
