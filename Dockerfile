@@ -17,22 +17,22 @@ COPY . ./
 RUN yarn build
 
 # Step 2: Set up Nginx and SSL
-FROM nginx:alpine
+# FROM nginx:alpine
 
 # Remove the default Nginx index.html
-RUN rm -rf /usr/share/nginx/html/*
+# RUN rm -rf /usr/share/nginx/html/*
 
 # Copy the built files from the build step to Nginx's HTML directory
-COPY --from=build /app/dist /usr/share/nginx/html
+# COPY --from=build /app/dist /usr/share/nginx/html
 
 # Install Certbot to manage SSL certificates
-RUN apk add --no-cache certbot nginx
+# RUN apk add --no-cache certbot nginx
 
 # Copy custom Nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+# COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose ports for HTTP and HTTPS
 EXPOSE 80 443
 
 # Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# CMD ["nginx", "-g", "daemon off;"]
