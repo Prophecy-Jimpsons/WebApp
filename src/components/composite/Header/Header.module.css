@@ -11,4 +11,65 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+}
+
+.desktopNav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Mobile menu button */
+.menuButton {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-grey);
+  cursor: pointer;
+  padding: var(--space-2);
+}
+
+.menuIcon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Mobile menu */
+.mobileMenu {
+  display: none;
+}
+
+/* Mobile styles */
+@media screen and (max-width: 768px) {
+  .desktopNav {
+    display: none;
+  }
+
+  .desktopEnterApp {
+    display: none;
+  }
+
+  .menuButton {
+    display: block;
+  }
+
+  .mobileMenu {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-top: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .mobileEnterApp {
+    width: 100%;
+    margin-top: var(--space-2);
+  }
 }

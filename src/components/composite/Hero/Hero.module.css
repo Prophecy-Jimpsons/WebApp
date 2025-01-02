@@ -5,7 +5,7 @@
   overflow: hidden;
   display: flex;
   align-items: center;
-  padding: var(--space-3);
+  padding: var(--space-2);
   position: relative;
 }
 
@@ -28,7 +28,7 @@
   margin: 0 auto;
   max-width: var(--container-xl);
   width: 100%;
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-2);
   position: relative;
   z-index: 2;
 }
@@ -37,22 +37,22 @@
   text-align: center;
   position: relative;
   z-index: 2;
+  padding: 0 var(--space-2);
 }
 
 .title {
-  font-size: var(--space-12);
+  font-size: var(--space-6);
   line-height: 1.2;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
   font-weight: 700;
-
   -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 2px #feda03;
+  -webkit-text-stroke: 1px #feda03;
   background: transparent;
 }
 
 .highlight {
   color: var(--color-secondary);
-  text-shadow: 0 0 20px rgba(252, 175, 5, 0.3);
+  text-shadow: 0 0 10px rgba(252, 175, 5, 0.3);
 }
 
 .regularText {
@@ -60,23 +60,26 @@
 }
 
 .subtitle {
-  font-size: var(--space-6);
+  font-size: var(--space-4);
   color: var(--color-white);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 
 .description {
-  font-size: var(--space-4);
+  font-size: var(--space-3);
   color: var(--color-grey);
-  max-width: 80rem;
-  margin: 0 auto var(--space-8);
+  max-width: 100%;
+  margin: 0 auto var(--space-6);
   line-height: 1.6;
+  padding: 0 var(--space-2);
 }
 
 .buttonGroup {
   display: flex;
-  gap: var(--space-8);
+  flex-direction: column;
+  gap: var(--space-4);
   justify-content: center;
+  align-items: center;
 }
 
 .floatingIcons {
@@ -101,37 +104,37 @@
   transition: all 0.3s ease;
 }
 
-/* Individual icon styles */
+/* Individual icon styles - Mobile first */
 .icon1 {
   top: -20%;
-  left: 10%;
+  left: 5%;
   animation-delay: 0s;
-  width: var(--space-20);
-  height: var(--space-20);
+  width: var(--space-12);
+  height: var(--space-12);
 }
 
 .icon2 {
   top: -20%;
-  right: 10%;
+  right: 5%;
   animation-delay: 1s;
-  width: var(--space-16);
-  height: var(--space-16);
+  width: var(--space-10);
+  height: var(--space-10);
 }
 
 .icon3 {
   bottom: -20%;
-  left: 10%;
+  left: 5%;
   animation-delay: 2s;
-  width: var(--space-16);
-  height: var(--space-16);
+  width: var(--space-10);
+  height: var(--space-10);
 }
 
 .icon4 {
   bottom: -20%;
-  right: 10%;
+  right: 5%;
   animation-delay: 3s;
-  width: var(--space-20);
-  height: var(--space-20);
+  width: var(--space-12);
+  height: var(--space-12);
 }
 
 @keyframes float {
@@ -139,9 +142,107 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-2rem);
+    transform: translateY(-1rem);
   }
   100% {
     transform: translateY(0);
+  }
+}
+
+/* Tablet (768px and up) */
+@media screen and (min-width: 768px) {
+  .title {
+    font-size: var(--space-8);
+    -webkit-text-stroke: 1.5px #feda03;
+  }
+
+  .subtitle {
+    font-size: var(--space-5);
+  }
+
+  .description {
+    font-size: var(--space-3);
+    max-width: 80%;
+    padding: 0;
+  }
+
+  .buttonGroup {
+    flex-direction: row;
+    gap: var(--space-6);
+  }
+
+  .icon1,
+  .icon4 {
+    width: var(--space-16);
+    height: var(--space-16);
+  }
+
+  .icon2,
+  .icon3 {
+    width: var(--space-14);
+    height: var(--space-14);
+  }
+}
+
+/* Desktop (1024px and up) */
+@media screen and (min-width: 1024px) {
+  .heroWrapper {
+    padding: var(--space-3);
+  }
+
+  .hero {
+    padding: 0 var(--space-3);
+  }
+
+  .title {
+    font-size: var(--space-12);
+    -webkit-text-stroke: 2px #feda03;
+    margin-bottom: var(--space-4);
+  }
+
+  .subtitle {
+    font-size: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .description {
+    font-size: var(--space-4);
+    max-width: 80rem;
+    margin-bottom: var(--space-8);
+  }
+
+  .buttonGroup {
+    gap: var(--space-8);
+  }
+
+  .icon1,
+  .icon4 {
+    width: var(--space-20);
+    height: var(--space-20);
+  }
+
+  .icon2,
+  .icon3 {
+    width: var(--space-16);
+    height: var(--space-16);
+  }
+}
+
+/* Large Desktop (1280px and up) */
+@media screen and (min-width: 1280px) {
+  .description {
+    max-width: 90rem;
+  }
+
+  .icon1,
+  .icon4 {
+    width: var(--space-24);
+    height: var(--space-24);
+  }
+
+  .icon2,
+  .icon3 {
+    width: var(--space-20);
+    height: var(--space-20);
   }
 }

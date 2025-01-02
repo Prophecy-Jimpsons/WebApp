@@ -1,6 +1,12 @@
 import React from "react";
 import styles from "./PrivacyPolicy.module.css";
 
+// Import the same chain icons used in hero section
+import SOLANA from "@/assets/icons/chains/Solana_Network_Logo.png";
+import BASE from "@/assets/icons/chains/Base_Network_Logo.svg";
+import POLYGON from "@/assets/icons/chains/Polygon_Network_Logo.png";
+import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
+
 interface PolicySection {
   title: string;
   content: string;
@@ -21,17 +27,17 @@ const PrivacyPolicy: React.FC = () => {
     dataUsage: {
       title: "Data Usage",
       content:
-        " Your blockchain data enables us to process predictions and generate AI artwork seamlessly. We utilize platform interaction data to verify prophecy outcomes and maintain robust security protocols. This information helps us enhance the user experience and optimize platform performance while respecting your privacy. ",
+        "Your blockchain data enables us to process predictions and generate AI artwork seamlessly. We utilize platform interaction data to verify prophecy outcomes and maintain robust security protocols. This information helps us enhance the user experience and optimize platform performance while respecting your privacy.",
     },
     protection: {
       title: "Data Protection",
       content:
-        " Security is paramount in our decentralized infrastructure. All data is stored across decentralized networks, protected by smart contract security measures and regular audits. Our system employs encrypted data transmission and automated security protocols, eliminating any central point of failure. ",
+        "Security is paramount in our decentralized infrastructure. All data is stored across decentralized networks, protected by smart contract security measures and regular audits. Our system employs encrypted data transmission and automated security protocols, eliminating any central point of failure.",
     },
     rights: {
       title: "User Rights",
       content:
-        " ProphecyJimpsons empowers users with complete control over their data. You maintain the right to anonymity throughout your platform experience. You can manage your wallet connections, modify predictions, and control your NFTs at any time. The platform ensures your ability to delete or export your data whenever desired. ",
+        "ProphecyJimpsons empowers users with complete control over their data. You maintain the right to anonymity throughout your platform experience. You can manage your wallet connections, modify predictions, and control your NFTs at any time. The platform ensures your ability to delete or export your data whenever desired.",
     },
     changes: {
       title: "Changes to this Policy",
@@ -47,21 +53,46 @@ const PrivacyPolicy: React.FC = () => {
 
   return (
     <main className={styles.container}>
-      <div className={styles.content}>
-        <h1 className={styles.title}>Privacy Policy</h1>
+      {/* Floating Chain Icons */}
+      <div className={styles.floatingIcons}>
+        <div className={`${styles.icon} ${styles.icon1}`}>
+          <img src={SOLANA} alt="Solana logo" />
+        </div>
+        <div className={`${styles.icon} ${styles.icon2}`}>
+          <img src={BASE} alt="Base logo" />
+        </div>
+        <div className={`${styles.icon} ${styles.icon3}`}>
+          <img src={POLYGON} alt="Polygon logo" />
+        </div>
+        <div className={`${styles.icon} ${styles.icon4}`}>
+          <img src={STARKNET} alt="Starknet logo" />
+        </div>
+      </div>
 
-        <p className={styles.description}>
-          ProphecyJimpsons ("we," "our," or "us") respects and protects the
-          privacy of our users. This Privacy Policy explains how we collect,
-          use, and safeguard your information when you use our platform.
-        </p>
+      <div className={styles.contentWrapper}>
+        <div className={styles.titleContainer}>
+          <h1 className={styles.title}>
+            <span className={styles.highlight}>PRIVACY</span>{" "}
+            <span className={styles.highlight}>POLICY</span>
+          </h1>
+        </div>
 
-        {Object.entries(policyData).map(([key, section]) => (
-          <div key={key} className={styles.section}>
-            <h2 className={styles.sectionTitle}>{section.title}</h2>
-            <p>{section.content}</p>
+        <div className={styles.content}>
+          <p className={styles.description}>
+            ProphecyJimpsons ("we," "our," or "us") respects and protects the
+            privacy of our users. This Privacy Policy explains how we collect,
+            use, and safeguard your information when you use our platform.
+          </p>
+
+          <div className={styles.sectionsContainer}>
+            {Object.entries(policyData).map(([key, section]) => (
+              <div key={key} className={styles.section}>
+                <h2 className={styles.sectionTitle}>{section.title}</h2>
+                <p className={styles.sectionContent}>{section.content}</p>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </main>
   );
