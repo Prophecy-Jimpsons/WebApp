@@ -16,7 +16,7 @@ const TermsOfService: React.FC = () => {
     collect: {
       title: "Platform Usage",
       content:
-        " ProphecyJimpsons enables users to create and trade prediction-based NFTs, participate in our DAO governance, and engage with our community. You may utilize all platform features, including AI-generated artwork creation, prediction verification, and community engagement tools. Our platform emphasizes decentralized decision-making and community-driven growth. ",
+        " ProphecyJimpsons enables users to create and trade prediction-based NFTs, participate in our DAO governance, and engage with our community. You may utilize all platform features, including AI-generated artwork creation, prediction verification, and community engagement tools. Our platform emphasizes on decentralized decision-making and community-driven growth. ",
     },
     prohibited: {
       title: "Prohibited Activities",
