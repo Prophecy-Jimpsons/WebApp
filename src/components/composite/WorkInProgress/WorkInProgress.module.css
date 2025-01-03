@@ -95,6 +95,27 @@
   animation: shadow 3s ease-in-out infinite;
 }
 
+/* .titleContainer {
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-size: var(--space-6);
+  line-height: 1.2;
+  font-weight: 700;
+  display: inline-block;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-out forwards;
+  animation-delay: 0.3s;
+}
+
+.highlight {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px #feda03;
+  text-shadow: 0 0 20px rgba(252, 175, 5, 0.3);
+} */
+
 .titleContainer {
   text-align: center;
   margin-bottom: var(--space-4);
@@ -114,6 +135,26 @@
   -webkit-text-fill-color: transparent;
   -webkit-text-stroke: 1px #feda03;
   text-shadow: 0 0 20px rgba(252, 175, 5, 0.3);
+  background: linear-gradient(
+    to right,
+    var(--color-secondary) 0%,
+    var(--color-secondary) 5%,
+    var(--color-primary) 15%,
+    var(--color-primary) 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shine 3s linear infinite;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
 }
 
 .regularText {

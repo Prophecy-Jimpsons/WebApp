@@ -19,9 +19,7 @@ const WorkInProgress: React.FC = () => {
 
         <div className={styles.titleContainer}>
           <h1 className={styles.title}>
-            <span className={styles.highlight}>WORK</span>{" "}
-            <span className={styles.highlight}>IN</span>{" "}
-            <span className={styles.highlight}>PROGRESS</span>
+            <span className={styles.highlight}>LAUNCHING SOON</span>
           </h1>
         </div>
       </div>
