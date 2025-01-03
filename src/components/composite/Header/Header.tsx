@@ -17,13 +17,11 @@ export const Header: FC = () => {
       <div className={styles.header}>
         <Logo />
 
-        {/* Desktop navigation and button */}
         <div className={styles.desktopNav}>
           <Navbar />
         </div>
 
         <div className={styles.rightSection}>
-          {/* Desktop Enter App button */}
           <div className={styles.desktopEnterApp}>
             <EnterAppButton />
           </div>
@@ -41,15 +39,15 @@ export const Header: FC = () => {
           </button>
         </div>
 
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <div className={styles.mobileMenu}>
-            <Navbar />
-            <div className={styles.mobileEnterApp}>
-              <EnterAppButton />
-            </div>
+        {/* Mobile menu with animation classes */}
+        <div
+          className={`${styles.mobileMenu} ${isMenuOpen ? styles.active : ""}`}
+        >
+          <Navbar />
+          <div className={styles.mobileEnterApp}>
+            <EnterAppButton />
           </div>
-        )}
+        </div>
       </div>
     </header>
   );

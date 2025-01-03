@@ -29,4 +29,14 @@
   --color-grey: #a0a0a0;
   --color-dark-grey: #4d4d4d;
   --color-thin-grey: #4d4d4d3d;
+
+  /* Additional Colors for Gradients & Accents */
+  --color-yellow-400: #fcd34d;
+  --color-yellow-600: #d97706;
+  --color-blue-400: #3b82f6;
+  --color-blue-600: #2563eb;
+
+  /* Additional Background Colors */
+  --color-dark-blue: #0a051e;
+  --color-darker-blue: #0f0a2a;
 }
