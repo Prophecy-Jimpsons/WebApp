@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import Button from "@/components/ui/Button";
 import styles from "./Hero.module.css";
 
@@ -8,13 +8,29 @@ import POLYGON from "@/assets/icons/chains/Polygon_Network_Logo.png";
 import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
 
 const Hero: FC = () => {
+  const [copied, setCopied] = useState(false);
+  const solanaAddress = "0x1234567890abcdef1234567890abcdef12345678";
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(solanaAddress);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  const formatAddress = (address: string) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
   return (
     <section className={styles.heroWrapper}>
       <div className={styles.hero}>
-        {/* Floating Icons (Chain icon) */}
         <div className={styles.floatingIcons}>
           <div className={`${styles.icon} ${styles.icon1}`}>
-            <img src={SOLANA} alt="Solona logo" />
+            <img src={SOLANA} alt="Solana logo" />
           </div>
           <div className={`${styles.icon} ${styles.icon2}`}>
             <img src={BASE} alt="Base logo" />
@@ -45,7 +61,6 @@ const Hero: FC = () => {
           </p>
 
           <div className={styles.buttonGroup}>
-            {/* // "/app" need to change this */}
             <Button variant="primary" to="/work-in-progress">
               Enter Application
             </Button>
@@ -55,6 +70,46 @@ const Hero: FC = () => {
             >
               White paper
             </Button>
+          </div>
+
+          <div className={styles.contractContainer}>
+            <span className={styles.contractLabel}>Contract Address</span>
+            <div className={styles.addressWrapper}>
+              <span className={styles.chainLabel}>SOLANA</span>
+              <span className={styles.address}>
+                {formatAddress(solanaAddress)}
+              </span>
+              <button
+                onClick={copyToClipboard}
+                className={styles.copyButton}
+                aria-label="Copy Solana contract address"
+              >
+                {copied ? (
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                ) : (
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>

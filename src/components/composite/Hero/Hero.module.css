@@ -104,6 +104,99 @@
   transition: all 0.3s ease;
 }
 
+/* Copy Address  */
+.contractContainer {
+  margin-top: var(--space-8);
+  text-align: center;
+  position: relative;
+  padding: var(--space-4);
+}
+
+.contractContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-secondary),
+    transparent
+  );
+}
+
+.addressWrapper {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  background: rgba(252, 175, 5, 0.05);
+  border-radius: var(--space-1);
+  position: relative;
+}
+
+.addressWrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--space-1);
+  padding: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-secondary),
+    transparent
+  );
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.chainLabel {
+  color: var(--color-secondary);
+  font-size: var(--space-3);
+  font-weight: 700;
+  margin-right: var(--space-3);
+  text-transform: uppercase;
+}
+
+.address {
+  color: var(--color-white);
+  font-size: var(--space-3);
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  padding: var(--space-2);
+  margin-left: var(--space-3);
+  cursor: pointer;
+  color: var(--color-primary);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.copyButton:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.contractLabel {
+  display: block;
+  color: var(--color-grey);
+  font-size: var(--space-3);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
 /* Individual icon styles - Mobile first */
 .icon1 {
   top: -20%;
@@ -182,6 +275,19 @@
     width: var(--space-14);
     height: var(--space-14);
   }
+
+  .contractContainer {
+    margin-top: var(--space-10);
+  }
+
+  .chainLabel,
+  .address {
+    font-size: var(--space-4);
+  }
+
+  .contractLabel {
+    font-size: var(--space-4);
+  }
 }
 
 /* Desktop (1024px and up) */
@@ -226,6 +332,23 @@
     width: var(--space-16);
     height: var(--space-16);
   }
+
+  .contractContainer {
+    margin-top: var(--space-12);
+  }
+
+  .addressWrapper {
+    padding: var(--space-3) var(--space-6);
+  }
+
+  .chainLabel,
+  .address {
+    font-size: var(--space-4);
+  }
+
+  .contractLabel {
+    font-size: var(--space-4);
+  }
 }
 
 /* Large Desktop (1280px and up) */
@@ -244,5 +367,14 @@
   .icon3 {
     width: var(--space-20);
     height: var(--space-20);
+  }
+
+  .chainLabel,
+  .address {
+    font-size: var(--space-4);
+  }
+
+  .contractLabel {
+    font-size: var(--space-4);
   }
 }
