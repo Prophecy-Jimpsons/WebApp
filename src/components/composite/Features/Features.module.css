@@ -62,6 +62,11 @@
   opacity: 0.95;
 }
 
+.subtitle span {
+  opacity: 1;
+  color: var(--color-primary);
+}
+
 .description {
   color: var(--color-grey);
   max-width: 72rem;
@@ -604,10 +609,10 @@
   }
 
   .chainItem {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     text-align: center;
-    gap: var(--space-2);
+    gap: var(--space-4);
   }
 
   .bottomCard {

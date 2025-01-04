@@ -80,7 +80,8 @@ const Features = () => {
         <div className={styles.titleSection}>
           <h2 className={styles.mainTitle}>Predict & Create</h2>
           <h3 className={styles.subtitle}>
-            Where AI meets blockchain predictions
+            Where <span>Artificial Intelligence</span> meets blockchain
+            predictions
           </h3>
           <p className={styles.description}>
             Transform your market insights into unique NFTs, powered by advanced

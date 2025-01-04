@@ -75,7 +75,7 @@
 
 .buttonGroup {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: var(--space-4);
   justify-content: center;
   align-items: center;
@@ -88,7 +88,7 @@
   top: 0;
   left: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: -1;
   overflow: hidden;
 }
 
@@ -199,7 +199,7 @@
 /* Mobile First Icon Styles */
 .icon1 {
   top: 5%;
-  left: 5%;
+  left: 0;
   width: var(--space-12);
   height: var(--space-12);
   animation-delay: 0s;
@@ -207,7 +207,7 @@
 
 .icon2 {
   top: 5%;
-  right: 5%;
+  right: 0;
   width: var(--space-10);
   height: var(--space-10);
   animation-delay: 1s;
@@ -293,6 +293,10 @@
   .icon4 > img {
     width: var(--space-12);
     height: var(--space-12);
+  }
+
+  .buttonGroup {
+    flex-direction: row;
   }
 }
 
