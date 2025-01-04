@@ -75,7 +75,7 @@ const Hero: FC = () => {
           <div className={styles.contractContainer}>
             <span className={styles.contractLabel}>Contract Address</span>
             <div className={styles.addressWrapper}>
-              <span className={styles.chainLabel}>SOLANA</span>
+              <span className={styles.chainLabel}>JIMP</span>
               <span className={styles.address}>
                 {formatAddress(solanaAddress)}
               </span>
