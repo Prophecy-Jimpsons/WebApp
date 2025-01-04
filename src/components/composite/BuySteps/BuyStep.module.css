@@ -1,0 +1,420 @@
+.buyStepWrapper {
+  background-color: var(--color-black-background);
+  position: relative;
+  padding: var(--space-16) var(--space-3);
+}
+
+.content {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Video Section */
+.videoSection {
+  text-align: center;
+  margin-bottom: var(--space-16);
+}
+
+.mainTitle {
+  font-size: var(--space-12);
+  font-weight: 700;
+  margin-bottom: var(--space-8);
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px #feda03;
+}
+
+.videoWrapper {
+  margin: 0 auto;
+  aspect-ratio: 16/9; /* Maintain 16:9 aspect ratio */
+  width: 100%; /* Full width of the container */
+  max-width: var(--container-lg); /* Constrains max width */
+  height: auto; /* Height adjusts to aspect ratio */
+  background: rgba(18, 18, 18, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.videoIframe {
+  width: 100%; /* Ensures the iframe is responsive and matches the container width */
+  height: 100%; /* Full height of the container to maintain aspect ratio */
+  border: none; /* Removes iframe border */
+}
+
+.videoPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-grey);
+  font-size: var(--space-4);
+}
+
+/* Steps Section */
+.stepsSection {
+  padding: var(--space-16) 0;
+  background-color: var(--color-black-background);
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--space-16);
+}
+
+.stepsSection::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+      to right,
+      rgba(252, 175, 5, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(252, 175, 5, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-mask-image: radial-gradient(
+    circle at center,
+    black 60%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+}
+
+.stepsWrapper {
+  max-width: var(--container-lg);
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  padding: 0 var(--space-3);
+}
+
+.stepsTitle {
+  text-align: center;
+  font-size: var(--space-12);
+  font-weight: 700;
+  margin-bottom: var(--space-12);
+  color: var(--color-primary);
+  text-shadow: 0 0 20px rgba(5, 104, 252, 0.3);
+  animation: titlePulse 3s infinite;
+}
+
+@keyframes titlePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+/* Step Row & Content */
+.stepRow {
+  display: grid;
+  grid-template-columns: 1fr 140px 1fr;
+  align-items: center;
+  margin-bottom: var(--space-16);
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.stepRow:nth-child(even) {
+  animation-delay: 0.3s;
+}
+
+.stepRow:nth-child(even) .stepContent {
+  order: 3;
+}
+
+.stepRow:nth-child(even) .iconWrapper {
+  order: 1;
+}
+
+.stepRow:nth-child(even) .connectorWrapper {
+  order: 2;
+}
+
+.stepContent {
+  padding: var(--space-8);
+  background: rgba(18, 18, 18, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s ease;
+}
+
+.stepContent:hover {
+  transform: translateY(-8px);
+  border-color: var(--color-secondary);
+  box-shadow:
+    0 0 30px rgba(5, 104, 252, 0.2),
+    0 0 60px rgba(72, 52, 212, 0.1);
+  background: linear-gradient(
+    145deg,
+    rgba(18, 18, 28, 0.9),
+    rgba(24, 24, 36, 0.8)
+  );
+}
+
+.stepNumber {
+  font-size: var(--space-6);
+  background: linear-gradient(135deg, #feda03, #ff6b6b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  margin-bottom: var(--space-4);
+}
+
+.stepTitle {
+  color: var(--color-white);
+  font-size: var(--space-4);
+  margin-bottom: var(--space-4);
+  font-weight: 600;
+}
+
+.stepDescription {
+  color: var(--color-grey);
+  font-size: var(--space-3);
+  line-height: 1.6;
+}
+
+/* Connector & Icon */
+.connectorWrapper {
+  width: 100%;
+  height: 50px;
+  position: relative;
+}
+
+.connector {
+  width: 100%;
+  height: 100%;
+}
+
+.connectorLine {
+  fill: none;
+  stroke: url(#gradient);
+  stroke-width: 2;
+  stroke-dasharray: 10;
+  animation: dash 20s linear infinite;
+}
+
+.iconWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.iconWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+/* First icon */
+.stepRow:nth-child(1) .iconWrapper {
+  justify-content: flex-start;
+}
+
+/* Second icon */
+.stepRow:nth-child(2) .iconWrapper {
+  justify-content: flex-end;
+}
+
+/* Third icon */
+.stepRow:nth-child(3) .iconWrapper {
+  justify-content: flex-start;
+}
+
+/* Fourth icon */
+.stepRow:nth-child(4) .iconWrapper {
+  justify-content: flex-end;
+}
+
+/* Fifth icon */
+.stepRow:nth-child(5) .iconWrapper {
+  justify-content: flex-start;
+}
+
+/* Sixth icon */
+.stepRow:nth-child(6) .iconWrapper {
+  justify-content: flex-end;
+}
+
+/* Reset for mobile */
+@media screen and (max-width: 768px) {
+  .stepRow .iconWrapper {
+    justify-content: center;
+  }
+}
+
+.iconCircle {
+  width: var(--space-16);
+  height: var(--space-16);
+  /* background: linear-gradient(
+    145deg,
+    rgba(24, 24, 36, 0.9),
+    rgba(18, 18, 28, 0.8)
+  ); */
+  border: 1px solid;
+  border-image: linear-gradient(
+      135deg,
+      var(--color-secondary),
+      var(--color-primary)
+    )
+    1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s ease;
+  /* animation: pulse 3s infinite; */
+}
+
+.iconCircle svg {
+  width: var(--space-8);
+  height: var(--space-8);
+  color: #ff6b6b;
+  filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.5));
+  transition: all 0.4s ease;
+}
+
+.iconCircle:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow:
+    0 0 20px rgba(255, 107, 107, 0.3),
+    0 0 60px rgba(72, 52, 212, 0.2);
+}
+
+.iconCircle:hover svg {
+  color: #4834d4;
+  transform: rotate(-5deg) scale(1.1);
+  filter: drop-shadow(0 0 10px rgba(72, 52, 212, 0.5));
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 1000;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes titlePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Responsive */
+@media screen and (max-width: 1024px) {
+  .mainTitle {
+    font-size: var(--space-8);
+  }
+
+  .iconCircle {
+    width: var(--space-14);
+    height: var(--space-14);
+  }
+
+  .iconCircle svg {
+    width: var(--space-7);
+    height: var(--space-7);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .stepsSection {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .stepRow {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+    background: linear-gradient(
+      145deg,
+      rgba(24, 24, 36, 0.6),
+      rgba(18, 18, 28, 0.5)
+    );
+    padding: var(--space-6);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .stepRow:nth-child(even) .stepContent,
+  .stepRow:nth-child(even) .iconWrapper {
+    order: initial;
+  }
+
+  .connectorWrapper {
+    display: none;
+  }
+
+  .iconCircle {
+    width: var(--space-12);
+    height: var(--space-12);
+  }
+
+  .iconCircle svg {
+    width: var(--space-6);
+    height: var(--space-6);
+  }
+
+  .stepContent {
+    text-align: center;
+    padding: var(--space-4);
+  }
+
+  .stepNumber {
+    font-size: var(--space-5);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .stepsSection {
+    padding: var(--space-6) var(--space-2);
+  }
+
+  .stepRow {
+    padding: var(--space-4);
+  }
+
+  .iconCircle {
+    width: var(--space-10);
+    height: var(--space-10);
+  }
+
+  .iconCircle svg {
+    width: var(--space-5);
+    height: var(--space-5);
+  }
+}
