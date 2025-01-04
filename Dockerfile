@@ -22,20 +22,12 @@ RUN apk add --no-cache \
 # Set build environment variables
 ENV PYTHON=/usr/bin/python3
 ENV NODE_GYP_FORCE_PYTHON=/usr/bin/python3
-ENV USB_INCLUDE_DIR=/usr/include/libusb-1.0
-ENV CFLAGS="-I/usr/include/libusb-1.0"
-ENV LDFLAGS="-L/usr/lib"
 
 # Copy package files
 COPY package.json yarn.lock ./
 
-# Install node-gyp globally
-RUN yarn global add node-gyp
-
 # Install dependencies with increased timeout
-RUN yarn install --frozen-lockfile --network-timeout 300000 && \
-    cd node_modules/usb && \
-    node-gyp rebuild
+RUN yarn install --frozen-lockfile --network-timeout 300000
 
 # Copy source files
 COPY . .
@@ -47,13 +39,23 @@ RUN yarn build
 FROM node:20-alpine
 WORKDIR /app
 
-# Install runtime dependencies
+# Install runtime dependencies including build tools needed for production install
 RUN apk add --no-cache \
     python3 \
-    libusb \
-    eudev \
+    make \
+    g++ \
+    linux-headers \
+    eudev-dev \
+    libusb-dev \
     udev \
-    libc6-compat
+    build-base \
+    libc6-compat \
+    libusb \
+    eudev
+
+# Set Python path for production
+ENV PYTHON=/usr/bin/python3
+ENV NODE_GYP_FORCE_PYTHON=/usr/bin/python3
 
 # Copy built files and production dependencies
 COPY --from=build /app/dist ./dist
