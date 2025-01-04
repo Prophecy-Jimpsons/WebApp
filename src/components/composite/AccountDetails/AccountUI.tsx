@@ -1,5 +1,5 @@
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Trophy, Crown, Star } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   useGetBalance,
@@ -7,6 +7,36 @@ import {
   useGetSignatures,
 } from "./AccountDataAccess";
 import styles from "./AccountUI.module.css";
+
+type TierInfo = {
+  level: string;
+  multiplier: number;
+  daysRequired: number;
+  icon: React.ElementType;
+};
+
+const TIER_LEVELS: TierInfo[] = [
+  {
+    level: "Diamond",
+    multiplier: 5,
+    daysRequired: 90,
+    icon: Trophy
+  },
+  {
+    level: "Gold",
+    multiplier: 3,
+    daysRequired: 60,
+    icon: Crown
+  },
+  {
+    level: "Silver",
+    multiplier: 2,
+    daysRequired: 30,
+    icon: Star
+  }
+];
+
+
 
 function LoadingBalance() {
   return (
@@ -19,6 +49,64 @@ function LoadingBalance() {
     </div>
   );
 }
+
+function TierLevel({ address }: { address: PublicKey }) {
+  const tokenQuery = useGetTokenAccounts({ address });
+  
+  const jimpBalance = useMemo(() => {
+    return (
+      tokenQuery.data?.find(
+        (item) =>
+          item.account.data.parsed.info.mint ===
+          "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump",
+      )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
+    );
+  }, [tokenQuery.data]);
+
+  const currentTier = useMemo(() => {
+    if (jimpBalance === 0) {
+      return {
+        level: "Tier 0",
+        multiplier: 0,
+        daysRequired: 0,
+        icon: Star
+      };
+    }
+    return TIER_LEVELS[2]; // Default Silver
+  }, [jimpBalance]);
+
+  if (tokenQuery.isLoading) {
+    return <LoadingBalance />;
+  }
+
+  return (
+    <div className={styles.tierSection}>
+      <h2 className={styles.tierTitle}>HODL Tier Level</h2>
+      <div className={styles.tierCard}>
+        <div className={styles.tierHeader}>
+          <currentTier.icon size={24} className={styles.tierIcon} />
+          <h3>{currentTier.level}</h3>
+        </div>
+        <div className={styles.tierDetails}>
+          <p>Reward Multiplier: {currentTier.multiplier}X</p>
+          {currentTier.level !== "Tier 0" && (
+            <p>Required Days: {currentTier.daysRequired}+</p>
+          )}
+        </div>
+        {currentTier.level !== "Tier 0" && (
+          <div className={styles.tierProgress}>
+            <div 
+              className={styles.progressBar} 
+              style={{ width: `${(30/currentTier.daysRequired) * 100}%` }}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
 
 export function AccountBalance({ address }: { address: PublicKey }) {
   const solQuery = useGetBalance({ address });
@@ -60,6 +148,8 @@ export function AccountBalance({ address }: { address: PublicKey }) {
           </h1>
         </div>
 
+        
+
         <div className={styles.balanceItem}>
           <h2 className={styles.balanceLabel}>JIMP Balance</h2>
           <h1 className={styles.balanceTitle}>
@@ -70,6 +160,7 @@ export function AccountBalance({ address }: { address: PublicKey }) {
             )}
           </h1>
         </div>
+        <TierLevel address={address} />
       </div>
     </>
   );
