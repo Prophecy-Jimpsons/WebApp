@@ -51,7 +51,7 @@
   font-weight: 700;
   color: var(--color-secondary);
   margin-bottom: var(--space-4);
-  text-shadow: 0 0 20px rgba(252, 175, 5, 0.3);
+  /* text-shadow: 0 0 20px rgba(252, 175, 5, 0.3); */
   letter-spacing: -0.02em;
 }
 

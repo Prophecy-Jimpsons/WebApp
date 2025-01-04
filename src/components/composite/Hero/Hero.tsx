@@ -9,7 +9,7 @@ import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
 
 const Hero: FC = () => {
   const [copied, setCopied] = useState(false);
-  const solanaAddress = "0x1234567890abcdef1234567890abcdef12345678";
+  const solanaAddress = "HQZwE5bZ4zq************************8qRspump";
 
   const copyToClipboard = async () => {
     try {
