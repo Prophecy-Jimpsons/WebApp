@@ -1,0 +1,36 @@
+.wrapper {
+  position: relative;
+  /* display: flex; */
+}
+
+.content {
+  filter: blur(3px);
+  pointer-events: none;
+  user-select: none;
+  /* opacity: 0.9; */
+  transition: all 0.3s ease;
+}
+
+/* Add subtle animation to draw attention */
+.content::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(252, 175, 5, 0.1),
+    transparent
+  );
+  background-size: 200% 200%;
+  animation: shimmer 3s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

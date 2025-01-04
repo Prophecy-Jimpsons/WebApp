@@ -1,0 +1,114 @@
+/* src/components/composite/Hero/Hero.module.css */
+.heroWrapper {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  margin-top: var(--space-20);
+  padding: var(--space-16) var(--space-4);
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.leftSection {
+  width: 100%;
+}
+
+.title {
+  font-size: var(--space-12);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+  text-transform: uppercase;
+  line-height: 1.2;
+  -webkit-text-stroke: 1px var(--color-primary);
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: var(--space-12);
+  margin-bottom: var(--space-12);
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  justify-content: center;
+}
+
+.rightSection {
+  width: 100%;
+  margin-top: var(--space-12);
+  text-align: center;
+}
+
+.imageContainer {
+  position: relative;
+  display: inline-block;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0px 0px 70px rgba(5, 5, 20, 0.2);
+  backdrop-filter: blur(16px);
+}
+
+.heroImage {
+  height: 384px;
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.verifiedBadge {
+  position: absolute;
+  bottom: 5%;
+  left: 7%;
+  width: 27%;
+  border-radius: 50%;
+  box-shadow: 0 10px 15px rgba(30, 41, 59, 0.5);
+  animation: rotate3d 20s linear infinite;
+}
+
+@keyframes rotate3d {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Media queries */
+@media (min-width: 1024px) {
+  .heroContent {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .leftSection {
+    width: 58.333%;
+  }
+
+  .rightSection {
+    width: 41.666%;
+    margin-top: 0;
+    text-align: right;
+  }
+
+  .buttonGroup {
+    flex-direction: row;
+    gap: var(--space-6);
+    justify-content: flex-start;
+  }
+}

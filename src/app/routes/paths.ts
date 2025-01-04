@@ -3,7 +3,7 @@ const PATHS = {
   PUBLIC: {
     LANDING: "/",
     NOTFOUND: "/not-found",
-    APP: "/work-in-progress", //"/app" need to change this
+    APP: "/app",
     MARKETPLACE: "/work-in-progress", //"/marketplace" need to change this
     ROADMAP: "/roadmap",
     BLOG: "/blog",
@@ -21,6 +21,8 @@ const PATHS = {
       "https://jimpsons.gitbook.io/jimpsons.org/getting-started/prophecyjimpsons-ai-the-neutral-oracle",
     PREDICTION_GUIDE:
       "https://jimpsons.gitbook.io/jimpsons.org/getting-started/prediction-guide",
+    PJ_UNVEILED:
+      "https://jimpsons.gitbook.io/jimpsons.org/getting-started/how-prophecyjimpsons-works",
   },
 
   // Protected routes (require wallet connection)

@@ -1,0 +1,227 @@
+/* src/components/composite/MarketplacePreview/MarketplacePreview.module.css */
+.section {
+  padding: var(--space-20) 0;
+  background: linear-gradient(
+    180deg,
+    var(--color-black-background) 0%,
+    #0a051e 50%,
+    var(--color-black-background) 100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grid Background */
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+      to right,
+      rgba(252, 175, 5, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(252, 175, 5, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+}
+
+.container {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  position: relative;
+  z-index: 1;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-12);
+}
+
+.title {
+  font-size: var(--space-8);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  color: var(--color-white);
+  text-transform: uppercase;
+}
+
+.highlight {
+  color: var(--color-primary);
+  text-shadow: 0 0 20px rgba(252, 175, 5, 0.3);
+}
+
+.subtitle {
+  color: var(--color-grey);
+  font-size: var(--space-4);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--space-6);
+  margin-bottom: var(--space-12);
+}
+
+.card {
+  background: rgba(10, 10, 20, 0.8);
+  border: 1px solid rgba(252, 175, 5, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(252, 175, 5, 0.1);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+  box-shadow: 0 12px 40px rgba(252, 175, 5, 0.2);
+}
+
+.imageContainer {
+  position: relative;
+  padding-top: 75%;
+  background: linear-gradient(45deg, #0a0a14, #1a1a2e);
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(252, 175, 5, 0.1),
+    rgba(5, 104, 252, 0.1)
+  );
+  z-index: 1;
+  mix-blend-mode: overlay;
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.9) contrast(1.1);
+  mix-blend-mode: luminosity;
+}
+
+.status {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border-radius: 20px;
+  font-size: var(--space-3);
+  font-weight: 500;
+  z-index: 2;
+  backdrop-filter: blur(8px);
+}
+
+.active {
+  background: rgba(34, 197, 94, 0.2);
+  color: rgb(34, 197, 94);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.verified {
+  background: rgba(5, 104, 252, 0.2);
+  color: rgb(5, 104, 252);
+  border: 1px solid rgba(5, 104, 252, 0.3);
+}
+
+.pending {
+  background: rgba(252, 175, 5, 0.2);
+  color: rgb(252, 175, 5);
+  border: 1px solid rgba(252, 175, 5, 0.3);
+}
+
+.content {
+  padding: var(--space-6);
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 20, 0.8),
+    rgba(10, 10, 20, 0.95)
+  );
+}
+
+.nftTitle {
+  font-size: var(--space-5);
+  font-weight: 600;
+  color: var(--color-white);
+  margin-bottom: var(--space-3);
+}
+
+.prediction {
+  color: var(--color-grey);
+  font-size: var(--space-3);
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-4);
+  border-top: 1px solid rgba(252, 175, 5, 0.1);
+}
+
+.price {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.priceLabel {
+  font-size: var(--space-3);
+  color: var(--color-grey);
+  font-weight: normal;
+}
+
+.viewLink {
+  color: var(--color-grey);
+  font-size: var(--space-3);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: var(--space-2) var(--space-4);
+  border-radius: 8px;
+  background: rgba(252, 175, 5, 0.1);
+}
+
+.viewLink:hover {
+  color: var(--color-primary);
+  background: rgba(252, 175, 5, 0.2);
+}
+
+.actions {
+  text-align: center;
+}
+
+/* Media Queries */
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .container {
+    padding: 0 var(--space-6);
+  }
+}

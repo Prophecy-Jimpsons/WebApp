@@ -1,3 +1,10 @@
+.notFoundWrapper {
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .notFound {
   display: flex;
   flex-direction: column;
@@ -17,6 +24,7 @@
   text-align: center;
   max-width: var(--container-md);
   padding: var(--space-6);
+  margin-top: var(--space-16);
 }
 
 .notFound > main > div h1 {
