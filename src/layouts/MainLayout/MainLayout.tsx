@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { Header } from "@/components/composite/Header";
 import { Footer } from "@/components/composite/Footer";
+import styles from "./MainLayout.module.css";
 
 type Props = {
   children: React.ReactNode;
@@ -8,12 +9,9 @@ type Props = {
 
 const MainLayout: FC<Props> = ({ children }: Props) => {
   return (
-    <div>
+    <div className={styles.wrapper}>
       <Header />
-      <main>
-        {/* <Hero /> */}
-        {children}
-      </main>
+      <main className={styles.main}>{children}</main>
       <Footer />
     </div>
   );

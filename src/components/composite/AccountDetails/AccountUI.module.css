@@ -1,10 +1,21 @@
-
 .container {
-  min-height: 100vh;
   background-color: var(--color-black-background);
   position: relative;
   overflow: hidden;
   padding: var(--space-16) var(--space-3);
+}
+
+.titleSection {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.mainTitle {
+  font-size: var(--space-8);
+  font-weight: 700;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px #feda03;
+  margin-bottom: var(--space-4);
 }
 
 .content {
@@ -144,4 +155,136 @@
 
 .transferOut {
   color: var(--color-warning);
+}
+
+.loadingPulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.loadingBar {
+  height: 1.5rem;
+  background: var(--color-dark-grey);
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.loadingBarLarge {
+  height: 2.5rem;
+}
+
+.balanceSection {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.balanceItem {
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.balanceLabel {
+  font-size: var(--space-4);
+  color: var(--color-grey);
+  margin-bottom: var(--space-2);
+}
+
+.balanceTitle {
+  font-size: var(--space-8);
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.balanceTitle:hover {
+  opacity: 0.9;
+}
+
+.transactionsSection {
+  margin-bottom: var(--space-8);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--space-4);
+  padding: var(--space-4);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-size: var(--space-5);
+  color: var(--color-white);
+}
+
+.refreshButton {
+  padding: var(--space-2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--space-2);
+  color: var(--color-grey);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.refreshButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--space-2);
+}
+
+.table th,
+.table td {
+  padding: var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table th {
+  color: var(--color-white);
+}
+
+.table td {
+  color: var(--color-grey);
+}
+
+.statusSuccess {
+  color: #22c55e;
+}
+
+.statusFailed {
+  color: #ef4444;
+}
+
+.loadingRow {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.loadingCell {
+  height: 1rem;
+  background: var(--color-dark-grey);
+  border-radius: 0.25rem;
+  flex: 1;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
