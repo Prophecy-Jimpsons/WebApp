@@ -9,7 +9,6 @@
   position: relative;
 }
 
-/* Gradient Overlay */
 .heroWrapper::after {
   content: "";
   position: absolute;
@@ -90,6 +89,7 @@
   left: 0;
   pointer-events: none;
   z-index: 1;
+  overflow: hidden;
 }
 
 .icon {
@@ -104,7 +104,6 @@
   transition: all 0.3s ease;
 }
 
-/* Copy Address  */
 .contractContainer {
   margin-top: var(--space-8);
   text-align: center;
@@ -197,37 +196,37 @@
   letter-spacing: 1px;
 }
 
-/* Individual icon styles - Mobile first */
+/* Mobile First Icon Styles */
 .icon1 {
-  top: -20%;
+  top: 5%;
   left: 5%;
-  animation-delay: 0s;
   width: var(--space-12);
   height: var(--space-12);
+  animation-delay: 0s;
 }
 
 .icon2 {
-  top: -20%;
+  top: 5%;
   right: 5%;
-  animation-delay: 1s;
   width: var(--space-10);
   height: var(--space-10);
+  animation-delay: 1s;
 }
 
 .icon3 {
-  bottom: -20%;
+  bottom: 5%;
   left: 5%;
-  animation-delay: 2s;
   width: var(--space-10);
   height: var(--space-10);
+  animation-delay: 2s;
 }
 
 .icon4 {
-  bottom: -20%;
+  bottom: 5%;
   right: 5%;
-  animation-delay: 3s;
   width: var(--space-12);
   height: var(--space-12);
+  animation-delay: 3s;
 }
 
 @keyframes float {
@@ -242,10 +241,90 @@
   }
 }
 
-/* Tablet (768px and up) */
-@media screen and (min-width: 768px) {
+/* Small tablets (600px and up) */
+@media screen and (min-width: 600px) {
+  .icon1,
+  .icon4 {
+    width: var(--space-14);
+    height: var(--space-14);
+  }
+
+  .icon2,
+  .icon3 {
+    width: var(--space-12);
+    height: var(--space-12);
+  }
+
+  .icon1 {
+    top: 10%;
+    left: 10%;
+  }
+
+  .icon2 {
+    top: 10%;
+    right: 10%;
+  }
+
+  .icon3 {
+    bottom: 10%;
+    left: 10%;
+  }
+
+  .icon4 {
+    bottom: 10%;
+    right: 10%;
+  }
+
+  .icon1 > img {
+    width: var(--space-16);
+    height: var(--space-16);
+  }
+
+  .icon2 > img {
+    width: var(--space-12);
+    height: var(--space-12);
+  }
+
+  .icon3 > img {
+    width: var(--space-12);
+    height: var(--space-12);
+  }
+
+  .icon4 > img {
+    width: var(--space-12);
+    height: var(--space-12);
+  }
+}
+
+/* iPad and Medium tablets (768px to 1023px) */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .heroWrapper {
+    min-height: 60vh;
+    padding: var(--space-4);
+  }
+
+  .icon1 > img {
+    width: var(--space-16);
+    height: var(--space-16);
+  }
+
+  .icon2 > img {
+    width: var(--space-12);
+    height: var(--space-12);
+  }
+
+  .icon3 > img {
+    width: var(--space-12);
+    height: var(--space-12);
+  }
+
+  .icon4 > img {
+    width: var(--space-12);
+    height: var(--space-12);
+  }
+
   .title {
-    font-size: var(--space-8);
+    font-size: var(--space-7);
     -webkit-text-stroke: 1.5px #feda03;
   }
 
@@ -255,8 +334,8 @@
 
   .description {
     font-size: var(--space-3);
-    max-width: 80%;
-    padding: 0;
+    max-width: 90%;
+    margin: 0 auto var(--space-6);
   }
 
   .buttonGroup {
@@ -266,14 +345,34 @@
 
   .icon1,
   .icon4 {
-    width: var(--space-16);
-    height: var(--space-16);
+    width: var(--space-15);
+    height: var(--space-15);
   }
 
   .icon2,
   .icon3 {
-    width: var(--space-14);
-    height: var(--space-14);
+    width: var(--space-13);
+    height: var(--space-13);
+  }
+
+  .icon1 {
+    top: 15%;
+    left: 15%;
+  }
+
+  .icon2 {
+    top: 15%;
+    right: 15%;
+  }
+
+  .icon3 {
+    bottom: 15%;
+    left: 15%;
+  }
+
+  .icon4 {
+    bottom: 15%;
+    right: 15%;
   }
 
   .contractContainer {
@@ -342,10 +441,7 @@
   }
 
   .chainLabel,
-  .address {
-    font-size: var(--space-4);
-  }
-
+  .address,
   .contractLabel {
     font-size: var(--space-4);
   }
@@ -367,14 +463,5 @@
   .icon3 {
     width: var(--space-20);
     height: var(--space-20);
-  }
-
-  .chainLabel,
-  .address {
-    font-size: var(--space-4);
-  }
-
-  .contractLabel {
-    font-size: var(--space-4);
   }
 }

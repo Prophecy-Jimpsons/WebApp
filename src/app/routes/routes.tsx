@@ -22,6 +22,7 @@ const AccountDetails = lazy(
 const WorkInProgress = lazy(
   () => import("@/pages/WorkInProgress/WorkInProgressPage"),
 );
+const HowToBuy = lazy(() => import("@/pages/HowToBuy/HowToBuyPage"));
 
 // Layout components should be eager laoded
 // import MainLayout from "@/layouts/MainLayout/MainLayout";
@@ -106,6 +107,14 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<h1>LoadingSpinner</h1>}>
             <WorkInProgress />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.HOW_TO_BUY,
+        element: (
+          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+            <HowToBuy />
           </Suspense>
         ),
       },

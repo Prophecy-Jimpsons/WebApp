@@ -15,7 +15,8 @@ const PATHS = {
 
     WORK_IN_PROGRESS: "/work-in-progress",
 
-    ACCOUNT_DETAILS: "/account-details"
+    ACCOUNT_DETAILS: "/account-details",
+    HOW_TO_BUY: "/how-to-buy",
   },
 
   // Protected routes (require wallet connection)
