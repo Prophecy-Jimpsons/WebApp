@@ -14,6 +14,7 @@ const PATHS = {
     WHITEPAPER: "https://jimpsons.gitbook.io/jimpsons.org",
 
     WORK_IN_PROGRESS: "/work-in-progress",
+    HOW_TO_BUY: "/how-to-buy",
   },
 
   // Protected routes (require wallet connection)

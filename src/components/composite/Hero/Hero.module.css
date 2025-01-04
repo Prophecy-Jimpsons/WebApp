@@ -243,9 +243,6 @@
 
 /* Small tablets (600px and up) */
 @media screen and (min-width: 600px) {
-  .heroWrapper {
-    min-height: 50vh;
-  }
   .icon1,
   .icon4 {
     width: var(--space-14);
