@@ -1,41 +1,45 @@
-# Build stage
+# Build Stage
 FROM node:20-alpine AS build
+
+# Set working directory
 WORKDIR /app
 
-# Install all required build dependencies
+# Install essential build dependencies
 RUN apk add --no-cache \
     python3 \
     make \
     g++ \
+    build-base \
     linux-headers \
     eudev-dev \
     libusb-dev \
     udev \
-    build-base \
     libc6-compat \
-    libusb \
-    eudev \
-    gcc
+    && ln -sf python3 /usr/bin/python
 
-# Set build environment variables
+# Configure Python environment correctly
 ENV PYTHON=/usr/bin/python3
-ENV NODE_GYP_FORCE_PYTHON=/usr/bin/python3
-ENV USB_INCLUDE_DIR=/usr/include/libusb-1.0
+RUN python3 --version && which python3
 
-# Copy package files
+# Configure npm to use Python - Using correct syntax
+RUN npm config set python "/usr/bin/python3" --location=global
+
+# Copy package management files
 COPY package.json yarn.lock ./
 
-# Install dependencies with increased timeout
-RUN yarn install --frozen-lockfile --network-timeout 300000
+# Install dependencies
+RUN yarn install --frozen-lockfile --network-timeout 300000 --build-from-source
 
-# Copy source files
+# Copy application code
 COPY . .
 
-# Build TypeScript and Vite
+# Build the application
 RUN yarn build
 
-# Production stage
+# Production Stage
 FROM node:20-alpine
+
+# Set working directory
 WORKDIR /app
 
 # Install runtime dependencies
@@ -44,17 +48,22 @@ RUN apk add --no-cache \
     libusb \
     eudev \
     udev \
-    libc6-compat
+    libc6-compat \
+    && ln -sf python3 /usr/bin/python
 
-# Copy built files and production dependencies
+# Configure Python environment
+ENV PYTHON=/usr/bin/python3
+RUN npm config set python "/usr/bin/python3" --location=global
+
+# Copy built files from build stage
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/yarn.lock ./yarn.lock
 
-# Install only production dependencies
+# Install production dependencies
 RUN yarn install --production --frozen-lockfile --network-timeout 300000
 
-# Environment setup
+# Configure environment
 ENV NODE_ENV=production
 ENV PORT=8080
 ENV HOST=0.0.0.0
@@ -62,8 +71,8 @@ ENV HOST=0.0.0.0
 # Expose port
 EXPOSE 8080
 
-# Use a more production-ready server
+# Install serve
 RUN yarn add serve
 
-# Start serve instead of preview
+# Start command
 CMD ["yarn", "serve", "-s", "dist", "-l", "8080"]
