@@ -14,6 +14,9 @@ RUN apk add --no-cache \
     build-base \
     libc6-compat
 
+# Set Python path explicitly
+ENV PYTHON=/usr/bin/python3
+
 
 # Copy package files
 COPY package.json yarn.lock ./
@@ -42,6 +45,9 @@ RUN apk add --no-cache \
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/yarn.lock ./yarn.lock
+
+# Set Python path for production
+ENV PYTHON=/usr/bin/python3
 
 # Install only production dependencies
 RUN yarn install --production --frozen-lockfile --network-timeout 300000
