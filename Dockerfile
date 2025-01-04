@@ -2,7 +2,7 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Install Python and other build dependencies
+# Install dependencies for node-gyp and USB compilation
 RUN apk add --no-cache \
     python3 \
     make \
@@ -12,12 +12,14 @@ RUN apk add --no-cache \
     libusb-dev \
     udev \
     build-base \
-    libc6-compat
+    libc6-compat \
+    libusb \
+    eudev
 
-# Set Python path explicitly and create symlink
-RUN ln -sf /usr/bin/python3 /usr/bin/python && \
-    ln -sf /usr/bin/python3 /usr/local/bin/python && \
-    npm config set python /usr/bin/python3
+# Set Python and USB environment
+ENV PYTHON=/usr/bin/python3
+ENV NODE_GYP_FORCE_PYTHON=/usr/bin/python3
+ENV USB_INCLUDE_DIR=/usr/include/libusb-1.0
 
 # Copy package files
 COPY package.json yarn.lock ./
@@ -43,10 +45,10 @@ RUN apk add --no-cache \
     udev \
     libc6-compat
 
-# Set Python path for production
-RUN ln -sf /usr/bin/python3 /usr/bin/python && \
-    ln -sf /usr/bin/python3 /usr/local/bin/python && \
-    npm config set python /usr/bin/python3
+# Set Python and USB environment for production
+ENV PYTHON=/usr/bin/python3
+ENV NODE_GYP_FORCE_PYTHON=/usr/bin/python3
+ENV USB_INCLUDE_DIR=/usr/include/libusb-1.0
 
 # Copy built files and production dependencies
 COPY --from=build /app/dist ./dist
