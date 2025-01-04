@@ -10,10 +10,10 @@ RUN apk add --no-cache \
     linux-headers \
     eudev-dev \
     libusb-dev \
-    libudev-dev \
     udev \
     build-base \
     libc6-compat
+
 
 # Copy package files
 COPY package.json yarn.lock ./
