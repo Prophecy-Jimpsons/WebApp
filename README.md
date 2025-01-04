@@ -1,140 +1,179 @@
 # 🔮 ProphecyJimpsons
 
-Welcome to **ProphecyJimpsons** – an innovative platform that turns future predictions into NFTs! Leveraging the power of blockchain, AI-generated imagery, and community-driven governance, ProphecyJimpsons allows users to make, verify, and trade predictive NFTs across multiple networks. Let's dive into the world of blockchain oracles and predictive assets! 🌐✨
+ProphecyJimpsons is a revolutionary multi-chain platform for creating, trading, and verifying predictive NFTs. Turn your crystal ball gazing into crypto with zero-cost minting, AI-generated art, and cross-chain compatibility.
 
----
+## 🚀 Features
 
-## 📜 Table of Contents
+- **Free Minting**: Create prediction NFTs with zero initial cost
+- **Multi-Chain Support**: Deploy on Solana, Polygon, StarkNet, and Base
+- **AI-Generated Art**: Automatic creation of unique NFT artwork
+- **JIMP Token Integration**: Native token for platform operations
+- **Cross-Chain Compatibility**: Seamless asset transfer between supported chains
 
-- [Project Overview](#-project-overview)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#-getting-started)
-- [Features](#-features)
-- [Usage Guide](#-usage-guide)
-- [Community and Support](#-community-and-support)
-- [License](#-license)
-- [Contributing](#-contributing)
+## 🛠 Prerequisites
 
----
+Before you begin, ensure you have the following installed:
 
-## 📘 Project Overview
+- Node.js (v20 or higher)
+- Yarn package manager
+- Git
 
-ProphecyJimpsons is a decentralized platform on the Solana blockchain (with additional support for Ethereum-based chains, StarkNet, and Base) that transforms user predictions into NFTs. Through community engagement and AI verification, we empower users to make verifiable, tradeable predictions. Key features include:
+## 💻 Installation
 
-- **Minting predictive NFTs** that capture insights and predictions.
-- **Automatic verification** using smart contracts and AI.
-- **Value accrual** based on the accuracy of predictions.
-- A future **DAO for community voting** on real-world event verification.
+1. Clone the repository:
 
----
+```bash
+git clone https://github.com/Prophecy-Jimpsons/WebApp
+cd prophecy-jimpsons
+```
 
-<h2 id="tech-stack">
-🛠️ Tech Stack
-</h2>
+1. Install dependencies:
 
-- **Blockchain**: Solana, with support for Ethereum-based chains, StarkNet, and Base.
-- **Frontend**: React, TypeScript
-- **Backend**: Node.js, Express
-- **Smart Contracts**: Rust with Anchor Framework
-- **Storage**: IPFS for NFT metadata and images
-- **Token**: JIMP (ProphecyJimpsons’ native token)
+```bash
+yarn install
+```
 
----
+1. Create a `.env` file in the root directory and add necessary environment variables:
 
-## 🚀 Getting Started
+```bash
+REACT_APP_ALCHEMY_API_KEY=your_alchemy_api_key
+REACT_APP_WALLET_CONNECT_PROJECT_ID=your_wallet_connect_project_id
+```
 
-### Prerequisites
+## 🚀 Development
 
-- **Node.js**: Ensure you have Node.js installed. [Download here](https://nodejs.org/).
-- **Git**: Version control for cloning and collaboration.
+To start the development server:
 
-### Installation
+```bash
+yarn start
+```
 
-1. **Clone the Repository**
+Open [http://localhost:8080](http://localhost:8080) to view it in your browser.
 
-   ```bash
-   git clone https://github.com/Jimpsons/webapp.git
-   ```
+## 🏗 Build
 
-2. **Navigate to Project Directory**
+To create a production build:
 
-   ```bash
-   cd webapp
-   ```
+```bash
+yarn build
+```
 
-3. **Install Dependencies**
+To serve the production build locally, you can use a static server:
 
-   ```bash
-   npm install
-   ```
+```bash
+yarn global add serve
+serve -s build
+```
 
-4. **Start Development Server**
+## 📁 Project Structure
 
-   ```bash
-   npm run dev
-   ```
+```text
+prophecy-jimpsons/
+├── src/
+│   ├── assets/          # Static assets and icons
+│   │   └── icons/
+│   │       └── chains/  # Blockchain network icons
+│   ├── components/      # React components
+│   │   ├── ui/         # Reusable UI components
+│   │   └── ...         # Feature-specific components
+│   └── styles/         # CSS modules and variables
+│       └── variables/  # CSS custom properties
+├── public/            # Public assets
+└── package.json      # Project dependencies and scripts
+```
 
----
+## 🎨 Styling
 
-## ✨ Features
+The project uses CSS Modules for component-specific styling with the following features:
 
-- **Quick Start Guide** 🧙‍♂️: Become a blockchain oracle in just 5 steps! Set up a wallet, select a chain, mint predictions, and track or trade your NFTs.
-- **Multi-Chain Support** 🌐: Includes Ethereum-based chains, Solana, StarkNet, and Base for low-cost and fast transactions.
-- **Community DAO** 🗳️: Participate in verifying real-world events and shaping platform decisions.
-- **Predictive NFTs** 🎴: Turn your insights into unique, tradeable assets.
-- **Automatic Verification** ✅: Smart contracts validate prediction accuracy and adjust NFT value dynamically.
+- CSS variables for consistent theming:
+  - Colors (--color-primary, --color-secondary, etc.)
+  - Spacing (--space-1 through --space-24)
+  - Container widths (--container-sm through --container-xl)
+- Mobile-first responsive design
+- Custom animations and transitions
+- Backdrop filters and glass-morphism effects
 
----
+## 🌐 Supported Blockchain Networks
 
-## 🧭 Usage Guide
+- **Solana**
 
-### Step 1: Wallet Setup
+  - Fast transaction processing
+  - Low gas fees
+  - Proof-of-History consensus
 
-- **Ethereum-based chains**: Use MetaMask 🦊
-- **Solana**: Phantom wallet ☀️
-- **StarkNet**: ArgentX ⭐
+- **Polygon**
 
-### Step 2: Choose Your Chain
+  - Ethereum compatibility
+  - High throughput
+  - Low transaction costs
 
-- **Solana**: High-speed, low-cost transactions 🏃‍♂️💨
-- **Polygon**: Ethereum-compatible with lower fees 😎
-- **StarkNet**: Privacy-focused 🕵️‍♂️
-- **Base**: Layer 2 scaling 🎭
+- **StarkNet**
 
-### Step 3: Mint Your Prediction
+  - Enhanced privacy
+  - ZK-rollup security
+  - Scalable transactions
 
-1. Click on "Mint Prediction" and type your prophecy (e.g., "Crypto prices will skyrocket! 🚀").
-2. Generate AI-powered artwork for your prediction.
-3. Review and mint to own a unique predictive NFT.
+- **Base**
+  - Ethereum L2 solution
+  - Optimistic rollups
+  - Native asset bridging
 
-### Step 4: Track Your Predictions
+## 🔧 Available Scripts
 
-- Monitor your predictions from the dashboard and watch as smart contracts verify events.
+```bash
+# Start development server
+yarn start
 
-### Step 5: Trade or HODL
+# Create production build
+yarn build
 
-- **HODL**: Keep your NFT or **Trade**: List on the marketplace for others to bid.
+# Run tests
+yarn test
 
----
+# Run tests in watch mode
+yarn test:watch
 
-## 🌐 Community and Support
+# Eject from create-react-app
+yarn eject
+```
 
-- **Discord**: Join the community, share tips, and discuss predictions.
-- **Twitter**: Follow us for updates and insights.
-- **DAO Participation**: Become part of the decision-making process by voting on platform changes.
+## 📦 Key Dependencies
 
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
+- **React**: UI framework
+- **@solana/web3.js**: Solana blockchain interactions
+- **@solana/spl-token**: Token program interactions
+- **@tanstack/react-query**: Data fetching and caching
+- **CSS Modules**: Scoped styling
+- **Lucide React**: Icon components
+- **Tabler Icons**: Additional icon set
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/Jimpsons/webapp/issues) to submit any feedback or suggestions.
+1. Fork the repository
+1. Create your feature branch (`git checkout -b feature/amazing-feature`)
+1. Commit your changes (`git commit -m 'Add amazing feature'`)
+1. Push to the branch (`git push origin feature/amazing-feature`)
+1. Open a Pull Request
+
+Please ensure your code follows the project's styling and component patterns.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🔗 Important Links
+
+- [Documentation](https://docs.prophecyjimpsons.com)
+- [White Paper](https://jimpsons.gitbook.io/jimpsons.org)
+- [Discord Community](https://discord.gg/prophecyjimpsons)
+
+## 🤔 Support
+
+1. Check our [FAQs](https://docs.prophecyjimpsons.com/faq)
+1. Join our [Discord community](https://discord.gg/prophecyjimpsons)
+1. Create an issue in the repository
 
 ---
 
-Happy Predicting! 🧙‍♂️✨
+Built with 💜 by the ProphecyJimpsons Team
