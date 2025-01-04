@@ -2,25 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+    />
 
-    <!-- Standard Favicon -->
+    <!-- Primary Meta Tags -->
+    <title>ProphecyJimpsons - Next Generation Predictive NFTs</title>
+    <meta
+      name="title"
+      content="ProphecyJimpsons - Next Generation Predictive NFTs"
+    />
+    <meta
+      name="description"
+      content="Create and trade AI-generated predictive NFTs with zero-cost minting across Solana, Polygon, StarkNet, and Base blockchains. Join the future of decentralized predictions."
+    />
+    <meta
+      name="keywords"
+      content="NFT, blockchain, predictions, crypto, Solana, Polygon, StarkNet, Base, Web3, DeFi, prophecy, zero-cost minting"
+    />
+    <meta name="author" content="ProphecyJimpsons" />
+    <meta name="theme-color" content="#0568fc" />
+
+    <!-- Favicon Configuration -->
     <link rel="icon" type="image/svg+xml" href="/assets/favicons/favicon.ico" />
-
-    <!-- Apple Touch Icon for iOS -->
     <link
       rel="apple-touch-icon"
       href="/assets/favicons/apple-touch-icon.png"
       type="image/png"
     />
-
-    <!-- SVG Favicon for High-Resolution Displays -->
     <link
       rel="shortcut icon"
       href="/assets/favicons/favicon.svg"
       type="image/x-icon"
     />
-
-    <!-- 96x96 Favicon for Specific Browser -->
     <link
       rel="shortcut icon"
       sizes="96x96"
@@ -31,7 +46,7 @@
     <!-- Android Chrome Icons -->
     <link
       rel="shortcut icon"
-      sizes="96x96"
+      sizes="192x192"
       href="/assets/favicons/web-app-manifest-192x192.png"
       type="image/png"
     />
@@ -42,23 +57,210 @@
       type="image/png"
     />
 
-    <!-- Web Manifest for Progressive Web Apps  -->
+    <!-- PWA Support -->
     <link rel="manifest" href="/assets/favicons/site.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://prophecyjimpsons.com/" />
+    <meta
+      property="og:title"
+      content="ProphecyJimpsons - Next Generation Predictive NFTs"
+    />
+    <meta
+      property="og:description"
+      content="Create and trade AI-generated predictive NFTs with zero-cost minting across multiple blockchains. Join the future of decentralized predictions."
+    />
+    <meta
+      property="og:image"
+      content="https://prophecyjimpsons.com/assets/social/og-image.png"
+    />
+    <meta property="og:site_name" content="ProphecyJimpsons" />
 
-    <!-- Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ProphecyJimpsons" />
+    <meta name="twitter:creator" content="@ProphecyJimpsons" />
+    <meta
+      name="twitter:title"
+      content="ProphecyJimpsons - Next Generation Predictive NFTs"
+    />
+    <meta
+      name="twitter:description"
+      content="Create and trade AI-generated predictive NFTs with zero-cost minting across multiple blockchains."
+    />
+    <meta
+      name="twitter:image"
+      content="https://prophecyjimpsons.com/assets/social/twitter-card.png"
+    />
+
+    <!-- Preconnect to External Resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Font Loading -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
 
-    <title>Prophecy Jimpsons</title>
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ProphecyJimpsons",
+        "description": "Create and trade AI-generated predictive NFTs with zero-cost minting",
+        "applicationCategory": "DeFi",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+
+    <!-- App Loading Style -->
+    <style>
+      .app-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--color-black-background, #0a0a14);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease-out;
+      }
+
+      .app-loading.fade-out {
+        opacity: 0;
+      }
+
+      .app-loading-content {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-6, 24px);
+      }
+
+      .app-loading-logo {
+        width: var(--space-20, 80px);
+        height: var(--space-20, 80px);
+        animation: pulse 1.5s ease-in-out infinite;
+        filter: drop-shadow(0 0 10px rgba(5, 104, 252, 0.3));
+      }
+
+      .app-loading-text {
+        font-family: "Poppins", sans-serif;
+        font-size: var(--space-4, 16px);
+        font-weight: 500;
+        color: var(--color-white, #ffffff);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        background: linear-gradient(
+          45deg,
+          var(--color-primary, #fcaf05),
+          var(--color-secondary, #0568fc)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 2s linear infinite;
+        background-size: 200% 100%;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 0.6;
+          transform: scale(0.95);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 0.6;
+          transform: scale(0.95);
+        }
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: 0% center;
+        }
+        100% {
+          background-position: 200% center;
+        }
+      }
+
+      /* Add responsive adjustments */
+      @media screen and (max-width: 768px) {
+        .app-loading-logo {
+          width: var(--space-16, 64px);
+          height: var(--space-16, 64px);
+        }
+
+        .app-loading-text {
+          font-size: var(--space-3, 14px);
+        }
+      }
+    </style>
   </head>
   <body>
+    <noscript>
+      <div
+        style="
+          padding: 20px;
+          text-align: center;
+          color: white;
+          background: #0a0a14;
+        "
+      >
+        JavaScript is required to run ProphecyJimpsons. Please enable JavaScript
+        to continue.
+      </div>
+    </noscript>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="app-loading">
+      <div class="app-loading-content">
+        <img
+          src="/assets/images/mainLogo.svg"
+          alt="ProphecyJimpsons Loading"
+          class="app-loading-logo"
+        />
+        <div class="app-loading-text">Loading ProphecyJimpsons...</div>
+      </div>
+    </div>
+
+    <!-- Application Root -->
     <div id="root"></div>
+
+    <!-- Main Application -->
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Loading Screen Handler -->
+    <script>
+      window.addEventListener("load", function () {
+        const loadingScreen = document.getElementById("loading-screen");
+        loadingScreen.classList.add("fade-out");
+        setTimeout(() => {
+          loadingScreen.style.display = "none";
+        }, 300);
+      });
+    </script>
   </body>
 </html>

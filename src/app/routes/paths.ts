@@ -17,6 +17,8 @@ const PATHS = {
 
     ACCOUNT_DETAILS: "/account-details",
     HOW_TO_BUY: "/how-to-buy",
+    AI_NEUTRALITY:
+      "https://jimpsons.gitbook.io/jimpsons.org/getting-started/prophecyjimpsons-ai-the-neutral-oracle",
     PREDICTION_GUIDE:
       "https://jimpsons.gitbook.io/jimpsons.org/getting-started/prediction-guide",
   },

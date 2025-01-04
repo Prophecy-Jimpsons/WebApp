@@ -20,8 +20,8 @@ export const footerLinks = [
     label: "Whitepaper",
   },
   {
-    path: PATHS.PUBLIC.WHITEPAPER,
-    label: "Whitepaper",
+    path: PATHS.PUBLIC.AI_NEUTRALITY,
+    label: "AI Neutrality",
   },
   {
     path: PATHS.PUBLIC.PREDICTION_GUIDE,
