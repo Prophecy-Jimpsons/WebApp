@@ -1,0 +1,11 @@
+.layoutWrapper {
+  min-height: 100vh;
+  background-color: var(--color-black-background);
+  display: flex;
+  flex-direction: column;
+}
+
+.mainContent {
+  flex: 1;
+  padding: var(--space-4);
+}

@@ -5,7 +5,7 @@ import { RouteConfig } from "./types";
 
 // Lazy loading components for better performance
 const Landing = lazy(() => import("@/pages/Landing/Landing"));
-// const App = lazy(() => import("@/pages/App/App")); // need to change this
+const App = lazy(() => import("@/pages/App/App"));
 // const Marketplace = lazy(() => import("@/pages/Marketplace/Marketplace")); // need to change this
 const RoadMap = lazy(() => import("@/pages/Roadmap/Roadmap"));
 const Dashboard = lazy(() => import("@/pages/Dashboard/Dashboard"));
@@ -48,8 +48,8 @@ export const publicRoutes: RouteConfig[] = [
         path: PATHS.PUBLIC.APP,
         element: (
           <Suspense fallback={<h1>LoadingSpinner</h1>}>
-            {/* <App />  // need to change this */}
-            <WorkInProgress />
+            <App />
+            {/* <WorkInProgress /> */}
           </Suspense>
         ),
       },

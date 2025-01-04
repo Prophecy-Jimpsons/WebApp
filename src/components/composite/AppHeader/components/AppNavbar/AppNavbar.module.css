@@ -1,0 +1,80 @@
+.navbar {
+  display: flex;
+  align-items: center;
+}
+
+.navLinks {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.navLink {
+  color: var(--color-grey);
+  text-decoration: none;
+  padding: var(--space-2);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Style for Overview link */
+.navLink:first-child {
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+/* Style for locked links */
+.navLink:not(:first-child) {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.navLink:not(:first-child)::before {
+  content: "🔒";
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  animation: lockPulse 2s infinite;
+}
+
+.navLink:hover {
+  color: var(--color-white);
+}
+
+.navLink.activeLink {
+  color: var(--color-primary);
+}
+
+@keyframes lockPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translateY(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navLinks {
+    flex-direction: column;
+    gap: var(--space-4);
+    width: 100%;
+  }
+
+  .navLink {
+    width: 100%;
+    padding: var(--space-2) var(--space-4);
+  }
+
+  /* Adjust lock icon position for mobile */
+  .navLink:not(:first-child)::before {
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}

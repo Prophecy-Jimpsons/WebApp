@@ -16,8 +16,8 @@ export const footerLinks = [
     label: "Terms of Service",
   },
   {
-    path: PATHS.PUBLIC.WHITEPAPER,
-    label: "Whitepaper",
+    path: PATHS.PUBLIC.PJ_UNVEILED,
+    label: "PJ Unveiled",
   },
   {
     path: PATHS.PUBLIC.AI_NEUTRALITY,
@@ -46,7 +46,7 @@ export const socialLinks = [
     icon: redditLogo,
   },
   {
-    path: "https://github.com/Prophecy-Jimpsons/WebApp",
+    path: "https://github.com/Prophecy-Jimpsons",
     label: "Github",
     icon: githubLogo,
   },
