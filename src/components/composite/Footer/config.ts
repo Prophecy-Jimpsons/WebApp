@@ -19,6 +19,14 @@ export const footerLinks = [
     path: PATHS.PUBLIC.WHITEPAPER,
     label: "Whitepaper",
   },
+  {
+    path: PATHS.PUBLIC.WHITEPAPER,
+    label: "Whitepaper",
+  },
+  {
+    path: PATHS.PUBLIC.PREDICTION_GUIDE,
+    label: "Prediction Guide",
+  },
 ];
 
 export const socialLinks = [

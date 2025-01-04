@@ -1,0 +1,228 @@
+.widgetContainer {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: 1000;
+}
+
+.floatingButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-secondary);
+  border: none;
+  border-radius: 50px;
+  color: var(--color-white);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(5, 104, 252, 0.3);
+  transition: all 0.3s ease;
+  animation: slideIn 0.5s ease-out;
+}
+
+.floatingButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(5, 104, 252, 0.4);
+}
+
+.supportWindow {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 360px;
+  /* height: 560px; */
+  background: var(--color-black-background);
+  border: 1px solid var(--color-thin-grey);
+  border-radius: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.header {
+  padding: var(--space-4);
+  background: rgba(5, 104, 252, 0.1);
+  border-bottom: 1px solid var(--color-thin-grey);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-white);
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: var(--color-grey);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+}
+
+.ticketForm {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  overflow-y: auto;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-thin-grey);
+  border-radius: var(--space-2);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-white);
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-2) center;
+  background-size: 16px;
+  padding-right: var(--space-8);
+}
+
+.select option {
+  background: var(--color-black-background);
+  color: var(--color-white);
+}
+
+.submitButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-secondary);
+  border: none;
+  border-radius: var(--space-2);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: var(--space-2);
+}
+
+.submitButton:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+.successMessage {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.successMessage h3 {
+  color: var(--color-secondary);
+  margin: 0;
+}
+
+.successMessage p {
+  color: var(--color-grey);
+  margin: 0;
+}
+
+.ticketNumber {
+  font-family: monospace;
+  padding: var(--space-2) var(--space-4);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--space-2);
+  margin: var(--space-2) 0;
+}
+
+.newTicketButton {
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: 1px solid var(--color-secondary);
+  border-radius: var(--space-2);
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: var(--space-4);
+}
+
+.newTicketButton:hover {
+  background: rgba(5, 104, 252, 0.1);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

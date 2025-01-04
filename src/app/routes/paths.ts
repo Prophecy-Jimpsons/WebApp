@@ -17,6 +17,8 @@ const PATHS = {
 
     ACCOUNT_DETAILS: "/account-details",
     HOW_TO_BUY: "/how-to-buy",
+    PREDICTION_GUIDE:
+      "https://jimpsons.gitbook.io/jimpsons.org/getting-started/prediction-guide",
   },
 
   // Protected routes (require wallet connection)
