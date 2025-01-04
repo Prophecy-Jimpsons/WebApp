@@ -33,7 +33,7 @@ cd prophecy-jimpsons
 yarn install
 ```
 
-1. Create a `.env` file in the root directory and add necessary environment variables:
+1. Create a `.env` file in the root directory and add necessary environment variables (Optimal):
 
 ```bash
 REACT_APP_ALCHEMY_API_KEY=your_alchemy_api_key
@@ -128,14 +128,14 @@ yarn start
 # Create production build
 yarn build
 
+# Preview
+yarn preview
+
 # Run tests
 yarn test
 
 # Run tests in watch mode
 yarn test:watch
-
-# Eject from create-react-app
-yarn eject
 ```
 
 ## 📦 Key Dependencies
@@ -164,13 +164,13 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🔗 Important Links
 
-- [Documentation](https://docs.prophecyjimpsons.com)
+- [Documentation](https://jimpsons.gitbook.io/jimpsons.org)
 - [White Paper](https://jimpsons.gitbook.io/jimpsons.org)
 - [Discord Community](https://discord.gg/prophecyjimpsons)
 
 ## 🤔 Support
 
-1. Check our [FAQs](https://docs.prophecyjimpsons.com/faq)
+1. Check our [FAQs](https://jimpsons.gitbook.io/jimpsons.org)
 1. Join our [Discord community](https://discord.gg/prophecyjimpsons)
 1. Create an issue in the repository
 
