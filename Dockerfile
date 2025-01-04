@@ -2,14 +2,24 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Install dependencies for node-gyp
-RUN apk add --no-cache python3 make g++
+# Install dependencies for node-gyp and USB compilation
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    linux-headers \
+    eudev-dev \
+    libusb-dev \
+    libudev-dev \
+    udev \
+    build-base \
+    libc6-compat
 
 # Copy package files
 COPY package.json yarn.lock ./
 
-# Install dependencies
-RUN yarn install --frozen-lockfile --network-timeout 100000
+# Install dependencies with increased timeout
+RUN yarn install --frozen-lockfile --network-timeout 300000
 
 # Copy source files
 COPY . .
@@ -21,13 +31,20 @@ RUN yarn build
 FROM node:20-alpine
 WORKDIR /app
 
+# Install runtime USB dependencies
+RUN apk add --no-cache \
+    libusb \
+    eudev \
+    udev \
+    libc6-compat
+
 # Copy built files and production dependencies
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/yarn.lock ./yarn.lock
 
 # Install only production dependencies
-RUN yarn install --production --frozen-lockfile --network-timeout 100000
+RUN yarn install --production --frozen-lockfile --network-timeout 300000
 
 # Environment setup
 ENV NODE_ENV=production
