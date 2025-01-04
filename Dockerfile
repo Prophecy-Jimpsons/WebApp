@@ -2,7 +2,7 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Install dependencies for node-gyp and USB compilation
+# Install Python and other build dependencies
 RUN apk add --no-cache \
     python3 \
     make \
@@ -14,9 +14,10 @@ RUN apk add --no-cache \
     build-base \
     libc6-compat
 
-# Set Python path explicitly
-ENV PYTHON=/usr/bin/python3
-
+# Set Python path explicitly and create symlink
+RUN ln -sf /usr/bin/python3 /usr/bin/python && \
+    ln -sf /usr/bin/python3 /usr/local/bin/python && \
+    npm config set python /usr/bin/python3
 
 # Copy package files
 COPY package.json yarn.lock ./
@@ -34,20 +35,23 @@ RUN yarn build
 FROM node:20-alpine
 WORKDIR /app
 
-# Install runtime USB dependencies
+# Install runtime dependencies
 RUN apk add --no-cache \
+    python3 \
     libusb \
     eudev \
     udev \
     libc6-compat
 
+# Set Python path for production
+RUN ln -sf /usr/bin/python3 /usr/bin/python && \
+    ln -sf /usr/bin/python3 /usr/local/bin/python && \
+    npm config set python /usr/bin/python3
+
 # Copy built files and production dependencies
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/yarn.lock ./yarn.lock
-
-# Set Python path for production
-ENV PYTHON=/usr/bin/python3
 
 # Install only production dependencies
 RUN yarn install --production --frozen-lockfile --network-timeout 300000
