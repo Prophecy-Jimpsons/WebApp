@@ -1,45 +1,50 @@
-# Build Stage
+# Build stage
 FROM node:20-alpine AS build
-
-# Set working directory
 WORKDIR /app
 
-# Install essential build dependencies
+# Install all required build dependencies
 RUN apk add --no-cache \
     python3 \
     make \
     g++ \
-    build-base \
     linux-headers \
     eudev-dev \
     libusb-dev \
     udev \
+    build-base \
     libc6-compat \
-    && ln -sf python3 /usr/bin/python
+    libusb \
+    eudev \
+    gcc \
+    file-dev \
+    musl-dev
 
-# Configure Python environment correctly
+# Set build environment variables
 ENV PYTHON=/usr/bin/python3
-RUN python3 --version && which python3
+ENV NODE_GYP_FORCE_PYTHON=/usr/bin/python3
+ENV USB_INCLUDE_DIR=/usr/include/libusb-1.0
+ENV CFLAGS="-I/usr/include/libusb-1.0"
+ENV LDFLAGS="-L/usr/lib"
 
-# Configure npm to use Python - Using correct syntax
-RUN npm config set python "/usr/bin/python3" --location=global
-
-# Copy package management files
+# Copy package files
 COPY package.json yarn.lock ./
 
-# Install dependencies
-RUN yarn install --frozen-lockfile --network-timeout 300000 --build-from-source
+# Install node-gyp globally
+RUN yarn global add node-gyp
 
-# Copy application code
+# Install dependencies with increased timeout
+RUN yarn install --frozen-lockfile --network-timeout 300000 && \
+    cd node_modules/usb && \
+    node-gyp rebuild
+
+# Copy source files
 COPY . .
 
-# Build the application
+# Build TypeScript and Vite
 RUN yarn build
 
-# Production Stage
+# Production stage
 FROM node:20-alpine
-
-# Set working directory
 WORKDIR /app
 
 # Install runtime dependencies
@@ -48,22 +53,17 @@ RUN apk add --no-cache \
     libusb \
     eudev \
     udev \
-    libc6-compat \
-    && ln -sf python3 /usr/bin/python
+    libc6-compat
 
-# Configure Python environment
-ENV PYTHON=/usr/bin/python3
-RUN npm config set python "/usr/bin/python3" --location=global
-
-# Copy built files from build stage
+# Copy built files and production dependencies
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/yarn.lock ./yarn.lock
 
-# Install production dependencies
+# Install only production dependencies
 RUN yarn install --production --frozen-lockfile --network-timeout 300000
 
-# Configure environment
+# Environment setup
 ENV NODE_ENV=production
 ENV PORT=8080
 ENV HOST=0.0.0.0
@@ -71,8 +71,8 @@ ENV HOST=0.0.0.0
 # Expose port
 EXPOSE 8080
 
-# Install serve
+# Use a more production-ready server
 RUN yarn add serve
 
-# Start command
+# Start serve instead of preview
 CMD ["yarn", "serve", "-s", "dist", "-l", "8080"]
