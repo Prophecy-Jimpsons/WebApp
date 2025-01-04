@@ -9,7 +9,7 @@ const VideoSection: React.FC = () => (
     <h2 className={styles.mainTitle}>How to Buy JIMP Token</h2>
     <div className={styles.videoWrapper}>
       <iframe
-        src="https://www.youtube.com/embed/3QH7ZTibV-Q"
+        src="https://www.youtube.com/embed/mkvKYQ-c0vE"
         title="How to Buy JIMP Token"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen

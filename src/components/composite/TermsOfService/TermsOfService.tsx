@@ -17,7 +17,7 @@ const TermsOfService: React.FC = () => {
     intro: {
       title: "Terms of Service",
       content:
-        "Welcome to ProphecyJimpsons! These Terms of Service govern your use of our predictive NFT platform, effective January 1st, 2025. By accessing our platform, you acknowledge and agree to these terms, which we may modify at our discretion.",
+        "Welcome to ProphecyJimpsons! These Terms of Service govern your use of our predictive NFT platform, effective January 14th, 2025. By accessing our platform, you acknowledge and agree to these terms, which we may modify at our discretion.",
     },
     collect: {
       title: "Platform Usage",
