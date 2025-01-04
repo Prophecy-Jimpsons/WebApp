@@ -16,6 +16,9 @@ const PrivacyPolicy = lazy(
 const TermsOfService = lazy(
   () => import("@/pages/TermsOfService/TermsOfServicePage"),
 );
+const AccountDetails = lazy(
+  () => import("@/pages/AccountDetails/AccountDetailsPage"),
+);
 const WorkInProgress = lazy(
   () => import("@/pages/WorkInProgress/WorkInProgressPage"),
 );
@@ -79,6 +82,14 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<h1>LoadingSpinner</h1>}>
             <PrivacyPolicy />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.ACCOUNT_DETAILS,
+        element: (
+          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+            <AccountDetails />
           </Suspense>
         ),
       },
