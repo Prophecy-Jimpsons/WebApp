@@ -95,12 +95,14 @@
   font-size: var(--space-12);
   font-weight: 700;
   margin-bottom: var(--space-12);
-  color: var(--color-primary);
+  color: var(--color-secondary);
   text-shadow: 0 0 20px rgba(5, 104, 252, 0.3);
-  animation: titlePulse 3s infinite;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px var(--color-secondary);
+  /* animation: titlePulse 3s infinite; */
 }
 
-@keyframes titlePulse {
+/* @keyframes titlePulse {
   0%,
   100% {
     transform: scale(1);
@@ -110,7 +112,7 @@
     transform: scale(1.05);
     opacity: 0.8;
   }
-}
+} */
 
 /* Step Row & Content */
 .stepRow {
@@ -245,6 +247,10 @@
 
 /* Reset for mobile */
 @media screen and (max-width: 768px) {
+  .stepsTitle {
+    font-size: var(--space-10);
+  }
+
   .stepRow .iconWrapper {
     justify-content: center;
   }
