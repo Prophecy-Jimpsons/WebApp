@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 WORKDIR /app
 
 # Install dependencies for node-gyp
@@ -18,7 +18,7 @@ COPY . .
 RUN yarn build
 
 # Production stage
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /app
 
 # Copy built files and production dependencies
