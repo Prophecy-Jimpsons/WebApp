@@ -31,7 +31,7 @@ export const footerLinks = [
 
 export const socialLinks = [
   {
-    path: "https://t.me/ProphecyJimpsons",
+    path: "https://t.me/+GpIAuMKh_6xkZjgx",
     label: "Telegram",
     icon: telegramLogo,
   },
