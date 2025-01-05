@@ -2,20 +2,14 @@ import { FC, useState } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import styles from "./SupportWidget.module.css";
 
-interface TicketForm {
-  name: string;
-  email: string;
-  topic: string;
-  description: string;
-}
-
-interface SuccessMessage {
-  isVisible: boolean;
-  ticketNumber?: string;
-}
+import { validateField, validateForm } from "./validations";
+import { TicketForm, SuccessMessage, FormError } from "./types";
+import { submitToSalesforce } from "./salesforce";
 
 export const SupportWidget: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [errors, setErrors] = useState<FormError[]>([]);
   const [formData, setFormData] = useState<TicketForm>({
     name: "",
     email: "",
@@ -25,13 +19,6 @@ export const SupportWidget: FC = () => {
   const [success, setSuccess] = useState<SuccessMessage>({
     isVisible: false,
   });
-
-  const toggleWidget = () => {
-    setIsOpen(!isOpen);
-    if (!isOpen) {
-      setSuccess({ isVisible: false });
-    }
-  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -43,35 +30,76 @@ export const SupportWidget: FC = () => {
       ...prev,
       [name]: value,
     }));
+
+    // Real-time validation
+    const fieldError = validateField(name, value);
+    setErrors((prev) => {
+      const otherErrors = prev.filter((error) => error.field !== name);
+      return fieldError ? [...otherErrors, fieldError] : otherErrors;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const formErrors = validateForm(formData);
+    if (formErrors.length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
-      // Here you would make your Salesforce API call
-      // const response = await createSalesforceTicket(formData);
+      submitToSalesforce(formData);
 
-      // Simulate API call for now
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Show success message
-      setSuccess({
-        isVisible: true,
-        ticketNumber: "TICKET-" + Math.floor(Math.random() * 10000),
-      });
-
-      // Reset form
+      // Reset form and show success message
       setFormData({
         name: "",
         email: "",
         topic: "",
         description: "",
       });
+
+      setSuccess({
+        isVisible: true,
+        ticketNumber: "TICKET-" + Math.floor(Math.random() * 10000),
+      });
+      // Clear any existing errors
+      setErrors([]);
     } catch (error) {
-      console.error("Error creating ticket:", error);
       // Handle error case
+      setErrors((prev) => [
+        ...prev,
+        {
+          field: "submit",
+          message: "Failed to submit ticket. Please try again.",
+        },
+      ]);
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const toggleWidget = () => {
+    setIsOpen(!isOpen);
+    if (!isOpen) {
+      // Reset all states when closing widget
+      setSuccess({ isVisible: false, ticketNumber: undefined });
+      setErrors([]);
+      setIsSubmitting(false);
+    }
+  };
+
+  // Update the success message reset handler
+  const handleNewTicket = () => {
+    setSuccess({ isVisible: false, ticketNumber: undefined });
+    setErrors([]);
+    setFormData({
+      name: "",
+      email: "",
+      topic: "",
+      description: "",
+    });
   };
 
   return (
@@ -91,17 +119,21 @@ export const SupportWidget: FC = () => {
           {success.isVisible ? (
             <div className={styles.successMessage}>
               <h3>Ticket Created Successfully!</h3>
-              <p>Thank you for reaching out. We will get back to you soon.</p>
+              <p>TThank you for reaching out. We will get back to you soon.</p>
               {success.ticketNumber && (
                 <p className={styles.ticketNumber}>
-                  Ticket Number: {success.ticketNumber}
+                  Reference Number: {success.ticketNumber}
                 </p>
               )}
+              <p className={styles.spamNote}>
+                Please check your inbox and spam folder for a confirmation
+                email.
+              </p>
               <button
-                onClick={() => setSuccess({ isVisible: false })}
+                onClick={handleNewTicket}
                 className={styles.newTicketButton}
               >
-                Create New Ticket
+                Submit Another Ticket
               </button>
             </div>
           ) : (
@@ -114,8 +146,13 @@ export const SupportWidget: FC = () => {
                   onChange={handleChange}
                   placeholder="Your Name"
                   className={styles.input}
-                  required
+                  disabled={isSubmitting}
                 />
+                {errors.find((e) => e.field === "name") && (
+                  <span className={styles.errorText}>
+                    {errors.find((e) => e.field === "name")?.message}
+                  </span>
+                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -126,8 +163,13 @@ export const SupportWidget: FC = () => {
                   onChange={handleChange}
                   placeholder="Your Email"
                   className={styles.input}
-                  required
+                  disabled={isSubmitting}
                 />
+                {errors.find((e) => e.field === "email") && (
+                  <span className={styles.errorText}>
+                    {errors.find((e) => e.field === "email")?.message}
+                  </span>
+                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -136,7 +178,7 @@ export const SupportWidget: FC = () => {
                   value={formData.topic}
                   onChange={handleChange}
                   className={styles.select}
-                  required
+                  disabled={isSubmitting}
                 >
                   <option value="">Select Topic</option>
                   <option value="general">General Inquiry</option>
@@ -144,6 +186,11 @@ export const SupportWidget: FC = () => {
                   <option value="billing">Billing</option>
                   <option value="feature">Feature Request</option>
                 </select>
+                {errors.find((e) => e.field === "topic") && (
+                  <span className={styles.errorText}>
+                    {errors.find((e) => e.field === "topic")?.message}
+                  </span>
+                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -153,14 +200,23 @@ export const SupportWidget: FC = () => {
                   onChange={handleChange}
                   placeholder="Describe your issue..."
                   className={styles.textarea}
-                  required
                   rows={4}
+                  disabled={isSubmitting}
                 />
+                {errors.find((e) => e.field === "description") && (
+                  <span className={styles.errorText}>
+                    {errors.find((e) => e.field === "description")?.message}
+                  </span>
+                )}
               </div>
 
-              <button type="submit" className={styles.submitButton}>
+              <button
+                type="submit"
+                className={styles.submitButton}
+                disabled={isSubmitting}
+              >
                 <Send size={20} />
-                <span>Submit Ticket</span>
+                <span>{isSubmitting ? "Submitting..." : "Submit Ticket"}</span>
               </button>
             </form>
           )}

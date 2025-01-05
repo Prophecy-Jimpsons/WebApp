@@ -179,6 +179,16 @@
   margin: var(--space-2) 0;
 }
 
+.spamNote {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  background-color: var(--color-thin-grey);
+  border-radius: var(--space-1);
+  font-size: var(--space-4);
+  line-height: 1.5;
+  border-left: 3px solid var(--color-yellow-400);
+}
+
 .newTicketButton {
   padding: var(--space-2) var(--space-4);
   background: transparent;
@@ -192,6 +202,12 @@
 
 .newTicketButton:hover {
   background: rgba(5, 104, 252, 0.1);
+}
+
+.errorText {
+  color: var(--color-danger);
+  font-size: var(--space-3);
+  margin-top: var(--space-1);
 }
 
 @keyframes slideIn {

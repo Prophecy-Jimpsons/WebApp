@@ -30,6 +30,9 @@
   --color-dark-grey: #4d4d4d;
   --color-thin-grey: #4d4d4d3d;
 
+  /* Danger Text Colors */
+  --color-danger: #dc2626;
+
   /* Additional Colors for Gradients & Accents */
   --color-yellow-400: #fcd34d;
   --color-yellow-600: #d97706;
