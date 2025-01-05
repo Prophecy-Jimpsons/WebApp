@@ -20,23 +20,21 @@ const TIER_LEVELS: TierInfo[] = [
     level: "Diamond",
     multiplier: 5,
     daysRequired: 90,
-    icon: Trophy
+    icon: Trophy,
   },
   {
     level: "Gold",
     multiplier: 3,
     daysRequired: 60,
-    icon: Crown
+    icon: Crown,
   },
   {
     level: "Silver",
     multiplier: 2,
     daysRequired: 30,
-    icon: Star
-  }
+    icon: Star,
+  },
 ];
-
-
 
 function LoadingBalance() {
   return (
@@ -52,13 +50,13 @@ function LoadingBalance() {
 
 function TierLevel({ address }: { address: PublicKey }) {
   const tokenQuery = useGetTokenAccounts({ address });
-  
+
   const jimpBalance = useMemo(() => {
     return (
       tokenQuery.data?.find(
         (item) =>
           item.account.data.parsed.info.mint ===
-          "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump",
+          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
       )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
     );
   }, [tokenQuery.data]);
@@ -69,7 +67,7 @@ function TierLevel({ address }: { address: PublicKey }) {
         level: "Tier 0",
         multiplier: 0,
         daysRequired: 0,
-        icon: Star
+        icon: Star,
       };
     }
     return TIER_LEVELS[2]; // Default Silver
@@ -95,9 +93,9 @@ function TierLevel({ address }: { address: PublicKey }) {
         </div>
         {currentTier.level !== "Tier 0" && (
           <div className={styles.tierProgress}>
-            <div 
-              className={styles.progressBar} 
-              style={{ width: `${(30/currentTier.daysRequired) * 100}%` }}
+            <div
+              className={styles.progressBar}
+              style={{ width: `${(30 / currentTier.daysRequired) * 100}%` }}
             />
           </div>
         )}
@@ -105,8 +103,6 @@ function TierLevel({ address }: { address: PublicKey }) {
     </div>
   );
 }
-
-
 
 export function AccountBalance({ address }: { address: PublicKey }) {
   const solQuery = useGetBalance({ address });
@@ -117,7 +113,7 @@ export function AccountBalance({ address }: { address: PublicKey }) {
       tokenQuery.data?.find(
         (item) =>
           item.account.data.parsed.info.mint ===
-          "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump",
+          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
       )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
     );
   }, [tokenQuery.data]);
@@ -147,8 +143,6 @@ export function AccountBalance({ address }: { address: PublicKey }) {
             )}
           </h1>
         </div>
-
-        
 
         <div className={styles.balanceItem}>
           <h2 className={styles.balanceLabel}>JIMP Balance</h2>
