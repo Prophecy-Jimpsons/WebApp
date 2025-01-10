@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { Header } from "@/components/composite/Header";
 import { Footer } from "@/components/composite/Footer";
-import ImportantNoticeModal from "@/components/composite/ImportantNoticeModal";
 import SupportWidget from "@/components/composite/Chat";
 import styles from "./MainLayout.module.css";
 
@@ -17,7 +16,6 @@ const MainLayout: FC<Props> = ({ children }: Props) => {
         <main className={styles.main}>{children}</main>
         <Footer />
       </div>
-      <ImportantNoticeModal />
       <SupportWidget />
     </>
   );
