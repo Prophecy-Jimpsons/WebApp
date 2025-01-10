@@ -27,14 +27,30 @@ const ImportantNoticeModal: FC = () => {
             account. Until then, you can find our updates at:
           </p>
           <div className={styles.details}>
-            <a
-              href="https://x.com/jimpsons_org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.link}
-            >
-              @jimpsons_org
-            </a>
+            <div className={styles.socialLinks}>
+              <p>
+                <span>X (Twitter):</span>
+                <a
+                  href="https://x.com/jimpsons_org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.link}
+                >
+                  @jimpsons_org
+                </a>
+              </p>
+              <p>
+                <span>Telegram:</span>
+                <a
+                  href="https://t.me/+GpIAuMKh_6xkZjgx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.link}
+                >
+                  Join our Telegram
+                </a>
+              </p>
+            </div>
           </div>
           <div className={styles.warning}>
             <p>
