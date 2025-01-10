@@ -23,30 +23,36 @@ const ImportantNoticeModal: FC = () => {
         <div className={styles.content}>
           <p>Dear Community,</p>
           <p>
-            We want to inform you that our official X (Twitter) account is
-            currently suspended. We are actively working to resolve this
-            situation with the X team.
+            Our team is working on restoring access to our previous X (Twitter)
+            account. Until then, you can find our updates at:
           </p>
+          <div className={styles.details}>
+            <a
+              href="https://x.com/jimpsons_org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.link}
+            >
+              @jimpsons_org
+            </a>
+          </div>
           <div className={styles.warning}>
             <p>
-              <strong>⚠️ Please be cautious:</strong> We've identified several
-              spam websites impersonating our project. Always verify you're
-              using our official platforms.
+              <strong>⚠️ Please note:</strong> We will use this account for
+              updates until our previous account is restored. Be cautious of any
+              impersonators.
             </p>
           </div>
           <div className={styles.details}>
-            <p>What you should know:</p>
+            <p>Stay connected with us for:</p>
             <ul>
-              <li>We're in communication with X's support team</li>
-              <li>
-                This is a temporary situation that we're working to resolve
-              </li>
-              <li>Our platform and services continue to operate normally</li>
+              <li>Latest project updates</li>
+              <li>Community announcements</li>
+              <li>Important platform notifications</li>
             </ul>
           </div>
           <p className={styles.update}>
-            We appreciate your patience and support during this time. We'll
-            update the community as soon as this matter is resolved.
+            Thank you for your continued support and understanding.
           </p>
         </div>
       </div>
