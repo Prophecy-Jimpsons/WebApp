@@ -2,11 +2,11 @@
 import { lazy, Suspense } from "react";
 import PATHS from "./paths";
 import { RouteConfig } from "./types";
+import LoadingSpinner from "@/components/ui/LoadingSpinner/LoadingSpinner";
 
 // Lazy loading components for better performance
 const Landing = lazy(() => import("@/pages/Landing/Landing"));
 const App = lazy(() => import("@/pages/App/App"));
-// const Marketplace = lazy(() => import("@/pages/Marketplace/Marketplace")); // need to change this
 const RoadMap = lazy(() => import("@/pages/Roadmap/Roadmap"));
 const Dashboard = lazy(() => import("@/pages/Dashboard/Dashboard"));
 const NotFound = lazy(() => import("@/pages/NotFound/NotFound"));
@@ -24,22 +24,19 @@ const WorkInProgress = lazy(
 );
 const HowToBuy = lazy(() => import("@/pages/HowToBuy/HowToBuyPage"));
 
-// Layout components should be eager laoded
-// import MainLayout from "@/layouts/MainLayout/MainLayout";
+// Layout components should be eager loaded
 import DashBoardLayout from "@/layouts/DashboardLayout/DashboardLayout";
 
 // Public Routes - No authentication needed
 export const publicRoutes: RouteConfig[] = [
   {
     path: PATHS.PUBLIC.LANDING,
-    // element: <MainLayout />,
-    errorElement: <h1>Error Page</h1>, // replace with <ErrorBoundary/>
+    errorElement: <LoadingSpinner text="Oops! Something went wrong..." />,
     children: [
       {
         index: true,
         element: (
-          // replace with <LoadingSpinner/>
-          <Suspense fallback={<h1>Loading Spinner</h1>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <Landing />
           </Suspense>
         ),
@@ -47,17 +44,15 @@ export const publicRoutes: RouteConfig[] = [
       {
         path: PATHS.PUBLIC.APP,
         element: (
-          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <App />
-            {/* <WorkInProgress /> */}
           </Suspense>
         ),
       },
       {
         path: PATHS.PUBLIC.MARKETPLACE,
         element: (
-          <Suspense fallback={<h1>LoadingSpinner</h1>}>
-            {/* <Marketplace />  // need to change this */}
+          <Suspense fallback={<LoadingSpinner />}>
             <WorkInProgress />
           </Suspense>
         ),
@@ -65,7 +60,7 @@ export const publicRoutes: RouteConfig[] = [
       {
         path: PATHS.PUBLIC.ROADMAP,
         element: (
-          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <RoadMap />
           </Suspense>
         ),
@@ -73,7 +68,7 @@ export const publicRoutes: RouteConfig[] = [
       {
         path: PATHS.PUBLIC.NOTFOUND,
         element: (
-          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <NotFound />
           </Suspense>
         ),
@@ -81,7 +76,7 @@ export const publicRoutes: RouteConfig[] = [
       {
         path: PATHS.PUBLIC.PRIVACY_POLICY,
         element: (
-          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <PrivacyPolicy />
           </Suspense>
         ),
@@ -89,7 +84,7 @@ export const publicRoutes: RouteConfig[] = [
       {
         path: PATHS.PUBLIC.ACCOUNT_DETAILS,
         element: (
-          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <AccountDetails />
           </Suspense>
         ),
@@ -97,7 +92,7 @@ export const publicRoutes: RouteConfig[] = [
       {
         path: PATHS.PUBLIC.TERMS_OF_SERVICE,
         element: (
-          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <TermsOfService />
           </Suspense>
         ),
@@ -105,7 +100,7 @@ export const publicRoutes: RouteConfig[] = [
       {
         path: PATHS.PUBLIC.WORK_IN_PROGRESS,
         element: (
-          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <WorkInProgress />
           </Suspense>
         ),
@@ -113,7 +108,7 @@ export const publicRoutes: RouteConfig[] = [
       {
         path: PATHS.PUBLIC.HOW_TO_BUY,
         element: (
-          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <HowToBuy />
           </Suspense>
         ),
@@ -127,12 +122,12 @@ export const protectedRoutes: RouteConfig[] = [
   {
     path: PATHS.PROTECTED.DASHBOARD,
     element: <DashBoardLayout />,
-    errorElement: <h1>Error Page</h1>, // replace with <ErrorBoundary/>
+    errorElement: <LoadingSpinner text="Oops! Something went wrong..." />,
     children: [
       {
         index: true,
         element: (
-          <Suspense fallback={<h1>LoadingSpinner</h1>}>
+          <Suspense fallback={<LoadingSpinner text="Loading Dashboard..." />}>
             <Dashboard />
           </Suspense>
         ),
