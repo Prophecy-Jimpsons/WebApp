@@ -1,0 +1,129 @@
+/* ImportantNoticeModal.module.css */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-4);
+}
+
+.modal {
+  background: var(--color-black-background);
+  border: 1px solid rgba(252, 175, 5, 0.2);
+  border-radius: var(--space-4);
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  border-bottom: 1px solid rgba(252, 175, 5, 0.2);
+}
+
+.title {
+  color: var(--color-primary);
+  font-size: var(--space-5);
+  margin: 0;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: var(--color-grey);
+  cursor: pointer;
+  padding: var(--space-2);
+  transition: color 0.2s ease;
+}
+
+.closeButton:hover {
+  color: var(--color-white);
+}
+
+.content {
+  padding: var(--space-6);
+  color: var(--color-grey);
+  font-size: var(--space-3);
+  line-height: 1.6;
+}
+
+.warning {
+  background: rgba(252, 175, 5, 0.1);
+  border-left: 4px solid var(--color-primary);
+  padding: var(--space-4);
+  margin: var(--space-4) 0;
+  border-radius: 0 var(--space-2) var(--space-2) 0;
+}
+
+.warning p {
+  margin: 0;
+}
+
+.details {
+  margin: var(--space-4) 0;
+}
+
+.details ul {
+  list-style-type: none;
+  padding: 0;
+  margin: var(--space-3) 0;
+}
+
+.details li {
+  padding-left: var(--space-4);
+  position: relative;
+  margin-bottom: var(--space-2);
+}
+
+.details li::before {
+  content: "•";
+  color: var(--color-primary);
+  position: absolute;
+  left: 0;
+}
+
+.update {
+  margin-top: var(--space-4);
+  font-style: italic;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .overlay {
+    padding: var(--space-3);
+  }
+
+  .modal {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .header {
+    padding: var(--space-3);
+  }
+
+  .content {
+    padding: var(--space-4);
+  }
+}
