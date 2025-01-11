@@ -61,7 +61,7 @@ interface Transaction extends ConfirmedSignatureInfo {
   meta?: TransactionMeta;
 }
 
-function getDaysSinceFirstPurchase(transactions: Transaction[], address: string): number {
+function getDaysSinceFirstPurchase(transactions: Transaction[], _address: string): number {
  // const jimpMintAddress = "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump";
   const startDate = new Date("2025-01-03T00:00:00.000Z");
   

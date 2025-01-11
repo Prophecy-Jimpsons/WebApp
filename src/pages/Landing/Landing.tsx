@@ -3,7 +3,7 @@ import { FC } from "react";
 import MainLayout from "../../layouts/MainLayout/MainLayout";
 import Hero from "@/components/composite/Hero";
 import Features from "@/components/composite/Features";
-import ImportantNoticeModal from "@/components/composite/ImportantNoticeModal";
+// import ImportantNoticeModal from "@/components/composite/ImportantNoticeModal";
 
 const Landing: FC = () => {
   return (
@@ -12,7 +12,7 @@ const Landing: FC = () => {
         <Hero />
         <Features />
       </MainLayout>
-      <ImportantNoticeModal />
+      {/* <ImportantNoticeModal /> */}
     </>
   );
 };

@@ -13,43 +13,45 @@ export const Header: FC = () => {
   };
 
   return (
-    <header className={styles.headerWrapper}>
-      <div className={styles.header}>
-        <Logo />
+    <>
+      <header className={styles.headerWrapper}>
+        <div className={styles.header}>
+          <Logo />
 
-        <div className={styles.desktopNav}>
-          <Navbar />
-        </div>
-
-        <div className={styles.rightSection}>
-          <div className={styles.desktopEnterApp}>
-            <EnterAppButton />
+          <div className={styles.desktopNav}>
+            <Navbar />
           </div>
 
-          <button
-            className={styles.menuButton}
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
+          <div className={styles.rightSection}>
+            <div className={styles.desktopEnterApp}>
+              <EnterAppButton />
+            </div>
+
+            <button
+              className={styles.menuButton}
+              onClick={toggleMenu}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? (
+                <X className={styles.menuIcon} />
+              ) : (
+                <Menu className={styles.menuIcon} />
+              )}
+            </button>
+          </div>
+
+          {/* Mobile menu with animation classes */}
+          <div
+            className={`${styles.mobileMenu} ${isMenuOpen ? styles.active : ""}`}
           >
-            {isMenuOpen ? (
-              <X className={styles.menuIcon} />
-            ) : (
-              <Menu className={styles.menuIcon} />
-            )}
-          </button>
-        </div>
-
-        {/* Mobile menu with animation classes */}
-        <div
-          className={`${styles.mobileMenu} ${isMenuOpen ? styles.active : ""}`}
-        >
-          <Navbar />
-          <div className={styles.mobileEnterApp}>
-            <EnterAppButton />
+            <Navbar />
+            <div className={styles.mobileEnterApp}>
+              <EnterAppButton />
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 };
 
