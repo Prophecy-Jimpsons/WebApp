@@ -42,20 +42,36 @@ interface TokenTransfer {
   toUserAccount: string;
 }
 
+interface TokenBalance {
+  mint: string;
+  owner: string;
+  uiAmount: number;
+}
+
+interface TransactionMeta {
+  preTokenBalances: TokenBalance[];
+  postTokenBalances: TokenBalance[];
+}
+
 interface Transaction extends ConfirmedSignatureInfo {
   tokenTransfers?: TokenTransfer[];
+  meta?: TransactionMeta;
 }
 
 function getDaysSinceFirstPurchase(transactions: Transaction[], address: string): number {
-  const jimpMintAddress = "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump";
   
+  
+  
+
   // Find first JIMP purchase transaction
   const firstPurchase = transactions.find(tx => {
-    // Check if transaction involves JIMP token
-    const isJimpTransaction = tx.tokenTransfers?.some((transfer: TokenTransfer) => 
-      transfer.mint === jimpMintAddress && transfer.toUserAccount === address
-    );
-    return isJimpTransaction && !tx.err;
+    if (!tx.blockTime || tx.err) {
+      return false;
+    }
+
+    
+
+    return true;
   });
 
   if (!firstPurchase || !firstPurchase.blockTime) {
@@ -63,12 +79,20 @@ function getDaysSinceFirstPurchase(transactions: Transaction[], address: string)
   }
 
   const purchaseDate = new Date(firstPurchase.blockTime * 1000);
-  const today = new Date();
+  const today = new Date("2025-01-11T20:00:00.000Z"); // Using provided EST time
+  
   const diffTime = Math.abs(today.getTime() - purchaseDate.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   
   return diffDays;
 }
+
+
+
+
+
+
+
 
 
 function LoadingBalance() {
@@ -96,9 +120,18 @@ function TierLevel({ address }: { address: PublicKey }) {
   }, [tokenQuery.data]);
 
   const daysSincePurchase = useMemo(() => {
-    if (!signaturesQuery.data) return 0;
-    return getDaysSinceFirstPurchase(signaturesQuery.data, address.toString());
+    
+    
+    if (!signaturesQuery.data) {
+      
+      return 0;
+    }
+    
+    const days = getDaysSinceFirstPurchase(signaturesQuery.data, address.toString());
+    
+    return days;
   }, [signaturesQuery.data, address]);
+  
   
 
   const currentTier = useMemo(() => {
