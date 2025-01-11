@@ -40,8 +40,8 @@ const TIER_LEVELS: TierInfo[] = [
 interface TokenTransfer {
   mint: string;
   toUserAccount: string;
-  fromUserAccount: string;  // This was missing
-  amount: number;          // This was missing
+  fromUserAccount: string;  
+  amount: number;         
 }
 
 
