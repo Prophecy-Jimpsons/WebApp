@@ -40,7 +40,10 @@ const TIER_LEVELS: TierInfo[] = [
 interface TokenTransfer {
   mint: string;
   toUserAccount: string;
+  fromUserAccount: string;  // This was missing
+  amount: number;          // This was missing
 }
+
 
 interface TokenBalance {
   mint: string;
@@ -59,33 +62,64 @@ interface Transaction extends ConfirmedSignatureInfo {
 }
 
 function getDaysSinceFirstPurchase(transactions: Transaction[], address: string): number {
+ // const jimpMintAddress = "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump";
+  const startDate = new Date("2025-01-03T00:00:00.000Z");
   
-  
-  
+  // Sort and filter transactions after Jan 3, 2025
+  const relevantTransactions = transactions
+    .filter(tx => {
+      if (!tx.blockTime) return false;
+      const txDate = new Date(tx.blockTime * 1000);
+      return txDate >= startDate;
+    })
+    .sort((a, b) => (a.blockTime || 0) - (b.blockTime || 0));
 
-  // Find first JIMP purchase transaction
-  const firstPurchase = transactions.find(tx => {
-    if (!tx.blockTime || tx.err) {
-      return false;
-    }
+  console.log("Filtered transactions:", {
+    total: transactions.length,
+    filtered: relevantTransactions.length
+  });
 
-    
+  // Find first JIMP purchase transaction after Jan 3
+  const firstPurchase = relevantTransactions.find(tx => {
+    console.log("Checking transaction:", {
+      date: new Date(tx.blockTime! * 1000).toISOString(),
+      signature: tx.signature
+    });
 
-    return true;
+    if (tx.err) return false;
+    return true; // For now, consider any successful transaction
   });
 
   if (!firstPurchase || !firstPurchase.blockTime) {
+    console.log("No valid purchase found after Jan 3, 2025");
     return 0;
   }
 
   const purchaseDate = new Date(firstPurchase.blockTime * 1000);
-  const today = new Date("2025-01-11T20:00:00.000Z"); // Using provided EST time
+  const today = new Date("2025-01-11T22:00:00.000Z"); // 5 PM EST
   
+  console.log("Date calculations:", {
+    purchaseDate: purchaseDate.toISOString(),
+    today: today.toISOString()
+  });
+
   const diffTime = Math.abs(today.getTime() - purchaseDate.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   
+  console.log(`Days held: ${diffDays}`);
+  
   return diffDays;
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -115,7 +149,7 @@ function TierLevel({ address }: { address: PublicKey }) {
     return tokenQuery.data?.find(
       (item) =>
         item.account.data.parsed.info.mint ===
-        "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump"
+        "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump"
     )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0;
   }, [tokenQuery.data]);
 
@@ -197,7 +231,7 @@ export function AccountBalance({ address }: { address: PublicKey }) {
       tokenQuery.data?.find(
         (item) =>
           item.account.data.parsed.info.mint ===
-          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
+          "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump",
       )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
     );
   }, [tokenQuery.data]);
