@@ -40,10 +40,9 @@ const TIER_LEVELS: TierInfo[] = [
 interface TokenTransfer {
   mint: string;
   toUserAccount: string;
-  fromUserAccount: string;  // This was missing
-  amount: number;          // This was missing
+  fromUserAccount: string; // This was missing
+  amount: number; // This was missing
 }
-
 
 interface TokenBalance {
   mint: string;
@@ -61,13 +60,17 @@ interface Transaction extends ConfirmedSignatureInfo {
   meta?: TransactionMeta;
 }
 
-function getDaysSinceFirstPurchase(transactions: Transaction[], _address: string): number {
- // const jimpMintAddress = "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump";
+function getDaysSinceFirstPurchase(
+  transactions: Transaction[],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _address: string,
+): number {
+  // const jimpMintAddress = "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump";
   const startDate = new Date("2025-01-03T00:00:00.000Z");
-  
+
   // Sort and filter transactions after Jan 3, 2025
   const relevantTransactions = transactions
-    .filter(tx => {
+    .filter((tx) => {
       if (!tx.blockTime) return false;
       const txDate = new Date(tx.blockTime * 1000);
       return txDate >= startDate;
@@ -76,14 +79,14 @@ function getDaysSinceFirstPurchase(transactions: Transaction[], _address: string
 
   console.log("Filtered transactions:", {
     total: transactions.length,
-    filtered: relevantTransactions.length
+    filtered: relevantTransactions.length,
   });
 
   // Find first JIMP purchase transaction after Jan 3
-  const firstPurchase = relevantTransactions.find(tx => {
+  const firstPurchase = relevantTransactions.find((tx) => {
     console.log("Checking transaction:", {
       date: new Date(tx.blockTime! * 1000).toISOString(),
-      signature: tx.signature
+      signature: tx.signature,
     });
 
     if (tx.err) return false;
@@ -97,37 +100,19 @@ function getDaysSinceFirstPurchase(transactions: Transaction[], _address: string
 
   const purchaseDate = new Date(firstPurchase.blockTime * 1000);
   const today = new Date("2025-01-11T22:00:00.000Z"); // 5 PM EST
-  
+
   console.log("Date calculations:", {
     purchaseDate: purchaseDate.toISOString(),
-    today: today.toISOString()
+    today: today.toISOString(),
   });
 
   const diffTime = Math.abs(today.getTime() - purchaseDate.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
   console.log(`Days held: ${diffDays}`);
-  
+
   return diffDays;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function LoadingBalance() {
   return (
@@ -146,27 +131,27 @@ function TierLevel({ address }: { address: PublicKey }) {
   const signaturesQuery = useGetSignatures({ address });
 
   const jimpBalance = useMemo(() => {
-    return tokenQuery.data?.find(
-      (item) =>
-        item.account.data.parsed.info.mint ===
-        "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump"
-    )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0;
+    return (
+      tokenQuery.data?.find(
+        (item) =>
+          item.account.data.parsed.info.mint ===
+          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
+      )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
+    );
   }, [tokenQuery.data]);
 
   const daysSincePurchase = useMemo(() => {
-    
-    
     if (!signaturesQuery.data) {
-      
       return 0;
     }
-    
-    const days = getDaysSinceFirstPurchase(signaturesQuery.data, address.toString());
-    
+
+    const days = getDaysSinceFirstPurchase(
+      signaturesQuery.data,
+      address.toString(),
+    );
+
     return days;
   }, [signaturesQuery.data, address]);
-  
-  
 
   const currentTier = useMemo(() => {
     if (jimpBalance === 0) {
@@ -177,12 +162,12 @@ function TierLevel({ address }: { address: PublicKey }) {
         icon: Star,
       };
     }
-    
+
     // Determine tier based on days held
     if (daysSincePurchase >= 90) {
       return TIER_LEVELS[0]; // Diamond
     } else if (daysSincePurchase >= 60) {
-      return TIER_LEVELS[1]; // Gold  
+      return TIER_LEVELS[1]; // Gold
     }
     return TIER_LEVELS[2]; // Silver
   }, [jimpBalance, daysSincePurchase]);
@@ -212,7 +197,9 @@ function TierLevel({ address }: { address: PublicKey }) {
           <div className={styles.tierProgress}>
             <div
               className={styles.progressBar}
-              style={{ width: `${(daysSincePurchase / currentTier.daysRequired) * 100}%` }}
+              style={{
+                width: `${(daysSincePurchase / currentTier.daysRequired) * 100}%`,
+              }}
             />
           </div>
         )}
@@ -220,7 +207,6 @@ function TierLevel({ address }: { address: PublicKey }) {
     </div>
   );
 }
-
 
 export function AccountBalance({ address }: { address: PublicKey }) {
   const solQuery = useGetBalance({ address });
@@ -231,7 +217,7 @@ export function AccountBalance({ address }: { address: PublicKey }) {
       tokenQuery.data?.find(
         (item) =>
           item.account.data.parsed.info.mint ===
-          "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump",
+          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
       )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
     );
   }, [tokenQuery.data]);

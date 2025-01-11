@@ -20,7 +20,7 @@
 
 .content {
   max-width: var(--container-xl);
-  margin: 0 auto;
+  margin: 4rem auto;
   position: relative;
   z-index: 2;
   padding: var(--space-8);
@@ -103,6 +103,7 @@
 
   .content {
     padding: var(--space-4);
+    margin-top: 4rem;
   }
 
   .balanceTitle {
@@ -289,9 +290,6 @@
   }
 }
 
-
-
-
 .tierSection {
   margin-bottom: var(--space-8);
   background: rgba(0, 0, 0, 0.2);
@@ -360,11 +358,11 @@
   .tierTitle {
     font-size: var(--space-4);
   }
-  
+
   .tierHeader h3 {
     font-size: var(--space-4);
   }
-  
+
   .tierDetails p {
     font-size: var(--space-3);
   }
