@@ -1,5 +1,6 @@
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { RefreshCw, Trophy, Crown, Star } from "lucide-react";
+import { ConfirmedSignatureInfo } from "@solana/web3.js";
 import { useMemo, useState } from "react";
 import {
   useGetBalance,
@@ -36,6 +37,40 @@ const TIER_LEVELS: TierInfo[] = [
   },
 ];
 
+interface TokenTransfer {
+  mint: string;
+  toUserAccount: string;
+}
+
+interface Transaction extends ConfirmedSignatureInfo {
+  tokenTransfers?: TokenTransfer[];
+}
+
+function getDaysSinceFirstPurchase(transactions: Transaction[], address: string): number {
+  const jimpMintAddress = "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump";
+  
+  // Find first JIMP purchase transaction
+  const firstPurchase = transactions.find(tx => {
+    // Check if transaction involves JIMP token
+    const isJimpTransaction = tx.tokenTransfers?.some((transfer: TokenTransfer) => 
+      transfer.mint === jimpMintAddress && transfer.toUserAccount === address
+    );
+    return isJimpTransaction && !tx.err;
+  });
+
+  if (!firstPurchase || !firstPurchase.blockTime) {
+    return 0;
+  }
+
+  const purchaseDate = new Date(firstPurchase.blockTime * 1000);
+  const today = new Date();
+  const diffTime = Math.abs(today.getTime() - purchaseDate.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  return diffDays;
+}
+
+
 function LoadingBalance() {
   return (
     <div className={styles.loadingPulse}>
@@ -50,16 +85,21 @@ function LoadingBalance() {
 
 function TierLevel({ address }: { address: PublicKey }) {
   const tokenQuery = useGetTokenAccounts({ address });
+  const signaturesQuery = useGetSignatures({ address });
 
   const jimpBalance = useMemo(() => {
-    return (
-      tokenQuery.data?.find(
-        (item) =>
-          item.account.data.parsed.info.mint ===
-          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
-      )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
-    );
+    return tokenQuery.data?.find(
+      (item) =>
+        item.account.data.parsed.info.mint ===
+        "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump"
+    )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0;
   }, [tokenQuery.data]);
+
+  const daysSincePurchase = useMemo(() => {
+    if (!signaturesQuery.data) return 0;
+    return getDaysSinceFirstPurchase(signaturesQuery.data, address.toString());
+  }, [signaturesQuery.data, address]);
+  
 
   const currentTier = useMemo(() => {
     if (jimpBalance === 0) {
@@ -70,10 +110,17 @@ function TierLevel({ address }: { address: PublicKey }) {
         icon: Star,
       };
     }
-    return TIER_LEVELS[2]; // Default Silver
-  }, [jimpBalance]);
+    
+    // Determine tier based on days held
+    if (daysSincePurchase >= 90) {
+      return TIER_LEVELS[0]; // Diamond
+    } else if (daysSincePurchase >= 60) {
+      return TIER_LEVELS[1]; // Gold  
+    }
+    return TIER_LEVELS[2]; // Silver
+  }, [jimpBalance, daysSincePurchase]);
 
-  if (tokenQuery.isLoading) {
+  if (tokenQuery.isLoading || signaturesQuery.isLoading) {
     return <LoadingBalance />;
   }
 
@@ -88,14 +135,17 @@ function TierLevel({ address }: { address: PublicKey }) {
         <div className={styles.tierDetails}>
           <p>Reward Multiplier: {currentTier.multiplier}X</p>
           {currentTier.level !== "Tier 0" && (
-            <p>Required Days: {currentTier.daysRequired}+</p>
+            <>
+              <p>Required Days: {currentTier.daysRequired}+</p>
+              <p>Days Held: {daysSincePurchase}</p>
+            </>
           )}
         </div>
         {currentTier.level !== "Tier 0" && (
           <div className={styles.tierProgress}>
             <div
               className={styles.progressBar}
-              style={{ width: `${(30 / currentTier.daysRequired) * 100}%` }}
+              style={{ width: `${(daysSincePurchase / currentTier.daysRequired) * 100}%` }}
             />
           </div>
         )}
@@ -103,6 +153,7 @@ function TierLevel({ address }: { address: PublicKey }) {
     </div>
   );
 }
+
 
 export function AccountBalance({ address }: { address: PublicKey }) {
   const solQuery = useGetBalance({ address });
