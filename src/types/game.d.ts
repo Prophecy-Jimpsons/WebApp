@@ -29,21 +29,17 @@ export interface GameAction {
 }
 
 export interface WebApp {
+  close: unknown;
+  initDataUnsafe: unknown;
   ready(): unknown;
   expand(): unknown;
   sendData: (data: string) => void;
 }
 
-interface WebApp {
-  ready(): void;
-  expand(): void;
-  sendData(data: string): void;
-}
-
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp?: WebApp;
-    };
-  }
-}
+// declare global {
+//   interface Window {
+//     Telegram?: {
+//       WebApp?: WebApp;
+//     };
+//   }
+// }

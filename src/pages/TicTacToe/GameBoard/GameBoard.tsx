@@ -1,422 +1,194 @@
-import React, { useState, useCallback } from "react";
-import {
-  Star,
-  Ghost,
-  Banana,
-  Trophy,
-  Crown,
-  Sparkle,
-  Medal,
-} from "lucide-react";
-import { GameState, Player, WinLineType, GameAction } from "@/types/game";
+import { useState, useEffect } from "react";
+import { Star, Trophy, Crown, Ghost, Sparkle } from "lucide-react";
 import styles from "./GameBoard.module.css";
 
-const INITIAL_STATE: GameState = {
-  board: Array(16).fill(""),
-  currentPlayer: "X",
-  phase: "placement",
-  selectedCell: null,
-  piecesPlaced: { X: 0, O: 0 },
-  winner: null,
-};
+interface GameState {
+  board: string[];
+  currentPlayer: "X" | "O";
+  phase: "waiting" | "placement" | "movement" | "finished";
+  piecesPlaced: {
+    X: number;
+    O: number;
+  };
+  winner: string | null;
+  players: {
+    X: { id: number; name: string } | null;
+    O: { id: number; name: string } | null;
+  };
+}
 
-const moveSound = new Audio(
-  "data:audio/wav;base64,UklGRnQGAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YU8GAACAPgAAoD8AALA/AAC4PwAAuD8AALA/AACgPwAAgD8AAEg/AAAQPwAA8D4AAOg+AADwPgAAED8AAEg/",
-);
-const winSound = new Audio(
-  "data:audio/wav;base64,UklGRpIGAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YW0GAACBhYqFSkhHRkhHR0hHR0hHR0hHR0hHR0hHR0hHR0hHR0hH",
-);
+const GameBoard = () => {
+  const [gameState, setGameState] = useState<GameState>({
+    board: Array(16).fill(""),
+    currentPlayer: "X",
+    phase: "waiting",
+    piecesPlaced: { X: 0, O: 0 },
+    winner: null,
+    players: { X: null, O: null },
+  });
+  const [selectedCell, setSelectedCell] = useState<number | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
-const GameBoard: React.FC = () => {
-  const [gameState, setGameState] = useState<GameState>(INITIAL_STATE);
-  const [showModal, setShowModal] = useState(false);
-
-  const checkWinner = useCallback(
-    (
-      board: string[],
-    ): {
-      winner: Player | "draw" | null;
-      line?: { start: number; end: number; type: WinLineType };
-    } => {
-      const lines = [
-        [0, 1, 2, 3],
-        [4, 5, 6, 7],
-        [8, 9, 10, 11],
-        [12, 13, 14, 15], // Horizontal
-        [0, 4, 8, 12],
-        [1, 5, 9, 13],
-        [2, 6, 10, 14],
-        [3, 7, 11, 15], // Vertical
-        [0, 5, 10, 15],
-        [3, 6, 9, 12], // Diagonal
-      ];
-
-      for (let i = 0; i < lines.length; i++) {
-        const [a, b, c, d] = lines[i];
-        if (
-          board[a] &&
-          board[a] === board[b] &&
-          board[a] === board[c] &&
-          board[a] === board[d]
-        ) {
-          const type: WinLineType =
-            i < 4 ? "horizontal" : i < 8 ? "vertical" : "diagonal";
-
-          return {
-            winner: board[a] as Player,
-            line: { start: a, end: d, type },
-          };
-        }
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      const user = tg.initDataUnsafe?.user;
+      if (user) {
+        setCurrentUser(user);
+        tg.sendData(
+          JSON.stringify({
+            action: "join",
+            userId: user.id,
+            userName: user.first_name,
+          }),
+        );
       }
 
-      if (board.every((cell) => cell !== "")) {
-        return { winner: "draw" };
-      }
-
-      return { winner: null };
-    },
-    [],
-  );
-
-  const handlePlacement = useCallback(
-    (index: number) => {
-      if (
-        gameState.board[index] !== "" ||
-        gameState.piecesPlaced[gameState.currentPlayer] >= 4
-      )
-        return;
-
-      // Haptic feedback
-      if (window.navigator?.vibrate) {
-        window.navigator.vibrate(50);
-      }
-
-      moveSound.play().catch(() => {});
-
-      setGameState((prev: GameState) => {
-        const newBoard = [...prev.board];
-        newBoard[index] = prev.currentPlayer;
-
-        const newPiecesPlaced = {
-          ...prev.piecesPlaced,
-          [prev.currentPlayer]: prev.piecesPlaced[prev.currentPlayer] + 1,
-        };
-
-        const allPiecesPlaced =
-          newPiecesPlaced.X === 4 && newPiecesPlaced.O === 4;
-        const { winner, line } = checkWinner(newBoard);
-        const nextPlayer: Player = prev.currentPlayer === "X" ? "O" : "X";
-
-        if (winner) {
-          winSound.play().catch(() => {});
-          setTimeout(() => setShowModal(true), 500);
-        }
-
-        const newState: GameState = {
-          ...prev,
-          board: newBoard,
-          piecesPlaced: newPiecesPlaced,
-          phase: allPiecesPlaced ? "movement" : "placement",
-          currentPlayer: nextPlayer,
-          winner,
-          winningLine: line,
-        };
-
-        // Send state to Telegram WebApp if available
-        if (window.Telegram?.WebApp) {
-          const message: GameAction = {
-            action: "move",
-            gameState: newState,
-          };
-          window.Telegram.WebApp.sendData(JSON.stringify(message));
-        }
-
-        return newState;
-      });
-    },
-    [
-      gameState.board,
-      gameState.piecesPlaced,
-      gameState.currentPlayer,
-      checkWinner,
-    ],
-  );
-
-  const handleMovement = useCallback(
-    (index: number) => {
-      setGameState((prev: GameState) => {
-        if (prev.selectedCell === null) {
-          if (prev.board[index] !== prev.currentPlayer) return prev;
-
-          if (window.navigator?.vibrate) {
-            window.navigator.vibrate(30);
+      const handleGameUpdate = (event: MessageEvent) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === "gameUpdate") {
+            setGameState(data.state);
           }
-
-          return { ...prev, selectedCell: index };
+        } catch (error) {
+          console.error("Error processing game update:", error);
         }
+      };
 
-        if (prev.board[index] !== "") {
-          if (index === prev.selectedCell) {
-            return { ...prev, selectedCell: null };
-          }
-          return prev;
-        }
-
-        if (window.navigator?.vibrate) {
-          window.navigator.vibrate([30, 50]);
-        }
-        moveSound.play().catch(() => {});
-
-        const newBoard = [...prev.board];
-        newBoard[index] = newBoard[prev.selectedCell];
-        newBoard[prev.selectedCell] = "";
-
-        const { winner, line } = checkWinner(newBoard);
-        const nextPlayer: Player = prev.currentPlayer === "X" ? "O" : "X";
-
-        if (winner) {
-          winSound.play().catch(() => {});
-          setTimeout(() => setShowModal(true), 500);
-        }
-
-        const newState: GameState = {
-          ...prev,
-          board: newBoard,
-          selectedCell: null,
-          currentPlayer: nextPlayer,
-          phase: prev.phase,
-          piecesPlaced: prev.piecesPlaced,
-          winner,
-          winningLine: line,
-        };
-
-        if (window.Telegram?.WebApp) {
-          const message: GameAction = {
-            action: "move",
-            gameState: newState,
-          };
-          window.Telegram.WebApp.sendData(JSON.stringify(message));
-        }
-
-        return newState;
-      });
-    },
-    [checkWinner],
-  );
-
-  const handleCellClick = useCallback(
-    (index: number) => {
-      if (gameState.winner) return;
-
-      if (gameState.phase === "placement") {
-        handlePlacement(index);
-      } else {
-        handleMovement(index);
-      }
-    },
-    [gameState.winner, gameState.phase, handlePlacement, handleMovement],
-  );
-
-  const handleRestart = useCallback(() => {
-    setGameState(INITIAL_STATE);
-    setShowModal(false);
+      window.addEventListener("message", handleGameUpdate);
+      return () => window.removeEventListener("message", handleGameUpdate);
+    }
   }, []);
 
-  const renderWinningLine = useCallback(() => {
-    if (!gameState.winningLine) return null;
+  const handleCellClick = (index: number) => {
+    if (!currentUser || gameState.winner) return;
 
-    const { start, type } = gameState.winningLine;
-    const baseStyle: React.CSSProperties = {
-      position: "absolute",
-      backgroundColor: "var(--primary-color)",
-      zIndex: 1,
-    };
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
 
-    let style: React.CSSProperties = { ...baseStyle };
-
-    switch (type) {
-      case "horizontal": {
-        const row = Math.floor(start / 4);
-        style = {
-          ...style,
-          top: `${row * 25 + 12.5}%`,
-          left: "0",
-          width: "100%",
-          height: "4px",
-        };
-        break;
+    if (gameState.phase === "placement") {
+      if (
+        gameState.board[index] !== "" ||
+        currentUser.id !== gameState.players[gameState.currentPlayer]?.id
+      ) {
+        return;
       }
-      case "vertical": {
-        const col = start % 4;
-        style = {
-          ...style,
-          left: `${col * 25 + 12.5}%`,
-          top: "0",
-          width: "4px",
-          height: "100%",
-        };
-        break;
+      tg.sendData(
+        JSON.stringify({
+          action: "move",
+          position: index,
+        }),
+      );
+    } else if (gameState.phase === "movement") {
+      if (currentUser.id !== gameState.players[gameState.currentPlayer]?.id) {
+        return;
       }
-      case "diagonal": {
-        style = {
-          ...style,
-          width: "141.4%",
-          height: "4px",
-          top: "50%",
-          left: "-20.7%",
-          transformOrigin: "center",
-          transform: start === 0 ? "rotate(45deg)" : "rotate(-45deg)",
-        };
-        break;
+
+      if (selectedCell === null) {
+        if (gameState.board[index] === gameState.currentPlayer) {
+          setSelectedCell(index);
+        }
+      } else {
+        if (index === selectedCell) {
+          setSelectedCell(null);
+        } else if (gameState.board[index] === "") {
+          tg.sendData(
+            JSON.stringify({
+              action: "move",
+              position: index,
+              selected: selectedCell,
+            }),
+          );
+          setSelectedCell(null);
+        }
       }
     }
+  };
+
+  const renderCell = (index: number) => {
+    const value = gameState.board[index];
+    const isSelected = index === selectedCell;
+    const isCurrentPlayer =
+      currentUser?.id === gameState.players[gameState.currentPlayer]?.id;
+    const canInteract = !gameState.winner && isCurrentPlayer;
 
     return (
-      <div className={`${styles.winningLine} ${styles[type]}`} style={style} />
+      <button
+        key={index}
+        onClick={() => handleCellClick(index)}
+        className={`
+          ${styles.cell}
+          ${value === "X" ? styles.cellX : value === "O" ? styles.cellO : styles.cellEmpty}
+          ${isSelected ? styles.selected : ""}
+          ${!canInteract ? styles.disabled : ""}
+        `}
+        disabled={!canInteract}
+      >
+        {value === "X" ? (
+          <Star className={styles.icon} />
+        ) : value === "O" ? (
+          <Ghost className={styles.icon} />
+        ) : null}
+      </button>
     );
-  }, [gameState.winningLine]);
+  };
 
   return (
     <div className={styles.container}>
-      <div className={styles.gameWrapper}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>
-            <Star
-              className={`${styles.titleIcon} ${styles.monkeyIcon}`}
-              size={40}
-            />
-            Monkey Tic-Tac-Toe
-            <Banana
-              className={`${styles.titleIcon} ${styles.bananaIcon}`}
-              size={40}
-            />
-          </h1>
-          <div className={styles.status}>
-            {gameState.winner ? (
-              <div className={styles.statusWithIcon}>
-                {gameState.winner === "draw" ? (
-                  "It's a Draw!"
-                ) : (
-                  <>
-                    Winner: Player {gameState.winner}
-                    <Trophy size={24} className={styles.trophyIcon} />
-                  </>
-                )}
-              </div>
-            ) : (
-              `${gameState.phase === "placement" ? "🎯 Placement" : "🔄 Movement"} Phase - Player ${gameState.currentPlayer}'s turn`
-            )}
-          </div>
-        </div>
+      <div className={styles.wrapper}>
+        <h1 className={styles.title}>
+          <Star className={styles.titleIcon} />
+          4x4 Tic-Tac-Toe
+          <Crown className={styles.titleIcon} />
+        </h1>
 
-        <div className={styles.playerBadges}>
+        <div className={styles.playerInfo}>
           <div
-            className={`${styles.playerBadge} ${styles.playerX} ${gameState.currentPlayer === "X" ? styles.active : ""}`}
+            className={`${styles.playerCard} ${styles.playerCardX} ${gameState.currentPlayer === "X" ? styles.activePlayer : ""}`}
           >
-            <div className={styles.playerContent}>
-              <Star size={24} />
-              <span>Player X: {gameState.piecesPlaced.X}/4</span>
-            </div>
+            <Star className={styles.playerIcon} />
+            <span>Player X: {gameState.piecesPlaced.X}/4</span>
           </div>
           <div
-            className={`${styles.playerBadge} ${styles.playerO} ${gameState.currentPlayer === "O" ? styles.active : ""}`}
+            className={`${styles.playerCard} ${styles.playerCardO} ${gameState.currentPlayer === "O" ? styles.activePlayer : ""}`}
           >
-            <div className={styles.playerContent}>
-              <Ghost size={24} />
-              <span>Player O: {gameState.piecesPlaced.O}/4</span>
-            </div>
+            <Ghost className={styles.playerIcon} />
+            <span>Player O: {gameState.piecesPlaced.O}/4</span>
           </div>
         </div>
 
-        <div className={styles.gameBoard}>
-          {renderWinningLine()}
-          {gameState.board.map((cell: string, index: number) => (
-            <button
-              key={index}
-              onClick={() => handleCellClick(index)}
-              className={`${styles.cell} 
-      ${cell === "X" ? styles.cellX : ""} 
-      ${cell === "O" ? styles.cellO : ""} 
-      ${index === gameState.selectedCell ? styles.selected : ""}`}
-              aria-label={`Cell ${index}`}
-              disabled={gameState.winner !== null}
-            >
-              {cell === "X" ? (
-                <Star size={32} className={styles.monkeyIcon} />
-              ) : cell === "O" ? (
-                <Ghost size={32} className={styles.pulse} />
-              ) : null}
-            </button>
-          ))}
+        <div className={styles.board}>
+          {gameState.board.map((_, index) => renderCell(index))}
         </div>
 
-        {showModal && (
-          <div className={styles.modalOverlay} onClick={handleRestart}>
-            <div
-              className={styles.modalContent}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {gameState.winner === "draw" ? (
-                <div className={styles.drawContent}>
-                  <div className={styles.confettiContainer}>
-                    <Crown className={styles.floatingIcon} size={24} />
-                    <Sparkle className={styles.floatingIcon} size={20} />
-                    <Star className={styles.floatingIcon} size={22} />
-                  </div>
-                  <div className={styles.drawIcons}>
-                    <div className={styles.playerIconGroup}>
-                      <Star className={styles.drawIconX} size={48} />
-                      <Crown className={styles.playerCrown} size={24} />
-                    </div>
-                    <Trophy className={styles.drawTrophy} size={32} />
-                    <div className={styles.playerIconGroup}>
-                      <Ghost className={styles.drawIconO} size={48} />
-                      <Crown className={styles.playerCrown} size={24} />
-                    </div>
-                  </div>
-                  <h2 className={styles.modalTitle}>
-                    <Trophy size={24} className={styles.titleIcon} />
-                    It's a Draw!
-                    <Medal size={24} className={styles.titleIcon} />
-                  </h2>
-                  <div className={styles.sparkleContainer}>
-                    <Sparkle className={styles.sparkleIcon} size={16} />
-                    <Star className={styles.sparkleIcon} size={16} />
-                    <Sparkle className={styles.sparkleIcon} size={16} />
-                  </div>
-                </div>
-              ) : (
-                <div className={styles.winContent}>
-                  <div className={styles.confettiContainer}>
-                    <Sparkle className={styles.floatingIcon} size={20} />
-                    <Star className={styles.floatingIcon} size={24} />
-                    <Crown className={styles.floatingIcon} size={22} />
-                  </div>
-                  <div className={styles.trophyContainer}>
-                    <Crown className={styles.crownIcon} size={32} />
-                    <Trophy className={styles.trophyIcon} size={64} />
-                  </div>
-                  <div className={styles.winnerContainer}>
-                    {gameState.winner === "X" ? (
-                      <div className={styles.playerIconGroup}>
-                        <Star className={styles.winnerIcon} size={48} />
-                        <Medal className={styles.medalIcon} size={24} />
-                      </div>
-                    ) : null}
-                  </div>
-                  <h2 className={styles.modalTitle}>
-                    <Crown size={24} className={styles.titleIcon} />
-                    Player <span>{gameState.winner}</span> Wins!
-                    <Trophy size={24} className={styles.titleIcon} />
-                  </h2>
-                </div>
-              )}
-              <button onClick={handleRestart} className={styles.restartButton}>
-                Play Again
-              </button>
+        <div className={styles.status}>
+          {gameState.phase === "waiting" ? (
+            <div className={styles.statusContent}>
+              <Sparkle className={styles.statusIcon} />
+              Waiting for opponent... 🎮
             </div>
-          </div>
-        )}
+          ) : gameState.phase === "placement" ? (
+            <div className={styles.statusContent}>
+              <Sparkle className={styles.statusIcon} />
+              Placement Phase - Player {gameState.currentPlayer}'s turn 🎯
+            </div>
+          ) : gameState.phase === "movement" ? (
+            <div className={styles.statusContent}>
+              <Crown className={styles.statusIcon} />
+              Movement Phase - Player {gameState.currentPlayer}'s turn 🔄
+            </div>
+          ) : (
+            <div className={styles.statusContent}>
+              <Trophy className={styles.statusIcon} />
+              {gameState.winner
+                ? `Player ${gameState.winner} wins! 🎉`
+                : "Game Over! 🏁"}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
