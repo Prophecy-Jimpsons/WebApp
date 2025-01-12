@@ -23,7 +23,6 @@ const WorkInProgress = lazy(
   () => import("@/pages/WorkInProgress/WorkInProgressPage"),
 );
 const HowToBuy = lazy(() => import("@/pages/HowToBuy/HowToBuyPage"));
-const TicTacToe = lazy(() => import("@/pages/TicTacToe/GameBoard/GameBoard"));
 
 // Layout components should be eager loaded
 import DashBoardLayout from "@/layouts/DashboardLayout/DashboardLayout";
@@ -111,14 +110,6 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <HowToBuy />
-          </Suspense>
-        ),
-      },
-      {
-        path: PATHS.PUBLIC.TIC_TAC_TOE,
-        element: (
-          <Suspense fallback={<LoadingSpinner />}>
-            <TicTacToe />
           </Suspense>
         ),
       },
