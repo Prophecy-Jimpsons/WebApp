@@ -23,7 +23,7 @@ const WorkInProgress = lazy(
   () => import("@/pages/WorkInProgress/WorkInProgressPage"),
 );
 const HowToBuy = lazy(() => import("@/pages/HowToBuy/HowToBuyPage"));
-const TicTacToe = lazy(() => import("@/pages/TicTacToe/GameBoard"));
+const TicTacToe = lazy(() => import("@/pages/TicTacToe/GameBoard/GameBoard"));
 
 // Layout components should be eager loaded
 import DashBoardLayout from "@/layouts/DashboardLayout/DashboardLayout";
