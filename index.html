@@ -241,38 +241,6 @@
         }
       }
     </style>
-
-    <!-- Telegram Game  -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-      window.Telegram.WebApp.ready();
-    </script>
-    <meta
-      name="telegram-mini-app-verification"
-      content="%REACT_APP_TELEGRAM_BOT_TOKEN%"
-    />
-    <script
-      async
-      src="https://telegram.org/js/telegram-widget.js?22"
-      data-telegram-login="jimp_games_bot"
-      data-size="large"
-      data-onauth="onTelegramAuth(user)"
-      data-request-access="write"
-    ></script>
-    <script type="text/javascript">
-      function onTelegramAuth(user) {
-        alert(
-          "Logged in as " +
-            user.first_name +
-            " " +
-            user.last_name +
-            " (" +
-            user.id +
-            (user.username ? ", @" + user.username : "") +
-            ")",
-        );
-      }
-    </script>
   </head>
   <body>
     <noscript>
