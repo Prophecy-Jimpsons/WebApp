@@ -96,7 +96,7 @@ function getDaysSinceFirstPurchase(transactions: Transaction[], _address: string
   }
 
   const purchaseDate = new Date(firstPurchase.blockTime * 1000);
-  const today = new Date("2025-01-11T22:00:00.000Z"); // 5 PM EST
+  const today = new Date(); // 5 PM EST
   
   console.log("Date calculations:", {
     purchaseDate: purchaseDate.toISOString(),
@@ -149,7 +149,7 @@ function TierLevel({ address }: { address: PublicKey }) {
     return tokenQuery.data?.find(
       (item) =>
         item.account.data.parsed.info.mint ===
-        "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump"
+        "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump"
     )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0;
   }, [tokenQuery.data]);
 
@@ -231,7 +231,7 @@ export function AccountBalance({ address }: { address: PublicKey }) {
       tokenQuery.data?.find(
         (item) =>
           item.account.data.parsed.info.mint ===
-          "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump",
+          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
       )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
     );
   }, [tokenQuery.data]);
