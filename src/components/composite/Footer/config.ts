@@ -36,7 +36,7 @@ export const socialLinks = [
     icon: telegramLogo,
   },
   {
-    path: "https://x.com/jimpsons_org",
+    path: "https://x.com/PJimpsons",
     label: "X",
     icon: xLogo,
   },

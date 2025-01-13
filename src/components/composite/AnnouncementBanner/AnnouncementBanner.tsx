@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from "react";
 import { Send, X } from "lucide-react";
 import styles from "./AnnouncementBanner.module.css";
 
-const TELEGRAM_LINK = "https://t.me/ProphecyJimpsons";
+const TELEGRAM_LINK = "https://t.me/+GpIAuMKh_6xkZjgx";
 const SCROLL_THRESHOLD = 100; // Amount of scroll before hiding
 
 interface AnnouncementBannerProps {
