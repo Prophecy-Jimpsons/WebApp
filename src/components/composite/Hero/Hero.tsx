@@ -6,6 +6,7 @@ import SOLANA from "@/assets/icons/chains/Solana_Network_Logo.png";
 import BASE from "@/assets/icons/chains/Base_Network_Logo.svg";
 import POLYGON from "@/assets/icons/chains/Polygon_Network_Logo.png";
 import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
+import { Link } from "react-router-dom";
 
 const Hero: FC = () => {
   const [copied, setCopied] = useState(false);
@@ -77,9 +78,17 @@ const Hero: FC = () => {
             <span className={styles.contractLabel}>Contract Address</span>
             <div className={styles.addressWrapper}>
               <span className={styles.chainLabel}>JIMP</span>
-              <span className={styles.address}>
+              {/* <span className={styles.address}>
                 {formatAddress(solanaAddress)}
-              </span>
+              </span> */}
+              <Link
+                to={`https://pump.fun/coin/${solanaAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.address}
+              >
+                {formatAddress(solanaAddress)}
+              </Link>
               <button
                 onClick={copyToClipboard}
                 className={styles.copyButton}
@@ -110,6 +119,26 @@ const Hero: FC = () => {
                   </svg>
                 )}
               </button>
+              <Link
+                to={`https://pump.fun/coin/${solanaAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <button className={styles.linkAddress} aria-label="Pump Solana">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </button>
+              </Link>
             </div>
           </div>
         </div>
