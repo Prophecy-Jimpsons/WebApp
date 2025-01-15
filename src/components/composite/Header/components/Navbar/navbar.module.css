@@ -13,7 +13,8 @@
 .navLink {
   color: var(--color-grey);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .navLink:hover {
@@ -22,6 +23,96 @@
 
 .activeLink {
   color: var(--color-primary);
+}
+
+/* Beta Feature Styling */
+.betaWrapper {
+  position: relative;
+  display: inline-block;
+  font-size: 1.2rem;
+}
+
+.betaLink {
+  background: rgba(5, 104, 252, 0.05);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--space-2);
+  position: relative;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid rgba(5, 104, 252, 0.3);
+  color: #0568fc;
+  font-weight: 600;
+  overflow: visible;
+}
+
+.betaLink::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(252, 175, 5, 0.1),
+    rgba(5, 104, 252, 0.1)
+  );
+  background-size: 200% 200%;
+  pointer-events: none;
+}
+
+.betaLink:hover {
+  border-color: #0568fc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(5, 104, 252, 0.15);
+}
+
+.betaBadge {
+  position: absolute;
+  top: -10px;
+  right: -15px;
+  background: var(--color-primary);
+  color: var(--color-black-background);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  z-index: 1;
+  font-size: 8px;
+}
+
+.star {
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 4px rgba(252, 175, 5, 0.4));
+  animation: starRotate 12s linear infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes starRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Mobile styles */
@@ -41,5 +132,20 @@
     display: block;
     width: 100%;
     padding: var(--space-2) 0;
+  }
+
+  .betaWrapper {
+    display: inline-block;
+  }
+
+  .betaLink {
+    display: inline-flex;
+    padding: var(--space-2) var(--space-3);
+    width: auto;
+  }
+
+  .betaBadge {
+    top: -10px;
+    right: -15px;
   }
 }
