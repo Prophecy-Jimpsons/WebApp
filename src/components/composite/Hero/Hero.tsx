@@ -6,17 +6,18 @@ import SOLANA from "@/assets/icons/chains/Solana_Network_Logo.png";
 import BASE from "@/assets/icons/chains/Base_Network_Logo.svg";
 import POLYGON from "@/assets/icons/chains/Polygon_Network_Logo.png";
 import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
-import { Link } from "react-router-dom";
 
 const Hero: FC = () => {
   const [copied, setCopied] = useState(false);
-  // Change Address
   const solanaAddress = "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump";
 
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(solanaAddress);
       setCopied(true);
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
@@ -30,6 +31,7 @@ const Hero: FC = () => {
   return (
     <section className={styles.heroWrapper}>
       <div className={styles.hero}>
+        {/* Floating Icons */}
         <div className={styles.floatingIcons}>
           <div className={`${styles.icon} ${styles.icon1}`}>
             <img src={SOLANA} alt="Solana logo" />
@@ -74,21 +76,24 @@ const Hero: FC = () => {
             </Button>
           </div>
 
+          {/* Contract Address Section */}
           <div className={styles.contractContainer}>
             <span className={styles.contractLabel}>Contract Address</span>
             <div className={styles.addressWrapper}>
               <span className={styles.chainLabel}>JIMP</span>
-              {/* <span className={styles.address}>
-                {formatAddress(solanaAddress)}
-              </span> */}
-              <Link
-                to={`https://pump.fun/coin/${solanaAddress}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <span
                 className={styles.address}
+                onClick={copyToClipboard}
+                role="button"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    copyToClipboard();
+                  }
+                }}
               >
                 {formatAddress(solanaAddress)}
-              </Link>
+              </span>
               <button
                 onClick={copyToClipboard}
                 className={styles.copyButton}
@@ -119,15 +124,23 @@ const Hero: FC = () => {
                   </svg>
                 )}
               </button>
-              <Link
-                to={`https://pump.fun/coin/${solanaAddress}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <button className={styles.linkAddress} aria-label="Pump Solana">
+            </div>
+
+            {/* Trading Section */}
+            <div className={styles.tradingContainer}>
+              <span className={styles.tradingLabel}>Trading on</span>
+              <div className={styles.tradingWrapper}>
+                <a
+                  href="https://pump.fun/coin/D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.buyLink}
+                >
+                  pump.fun
                   <svg
-                    width="16"
-                    height="16"
+                    className={styles.buyIcon}
+                    width="24"
+                    height="24"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -137,8 +150,8 @@ const Hero: FC = () => {
                     <polyline points="15 3 21 3 21 9" />
                     <line x1="10" y1="14" x2="21" y2="3" />
                   </svg>
-                </button>
-              </Link>
+                </a>
+              </div>
             </div>
           </div>
         </div>

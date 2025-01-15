@@ -148,22 +148,15 @@
     var(--color-secondary),
     transparent
   );
-  mask:
+  -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
-  -webkit-mask:
+  mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-}
-
-.chainLabel {
-  color: var(--color-secondary);
-  font-size: var(--space-3);
-  font-weight: 700;
-  margin-right: var(--space-3);
-  text-transform: uppercase;
+  pointer-events: none; /* This is the key fix */
 }
 
 .address {
@@ -173,11 +166,24 @@
   text-decoration: none;
   opacity: 0.7;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  padding: var(--space-1);
+  border-radius: var(--space-1);
 }
 
-.address:hover {
+.address:hover,
+.address:active {
   opacity: 1;
-  text-decoration: underline;
+  background: rgba(252, 175, 5, 0.1);
+}
+
+.chainLabel {
+  color: var(--color-secondary);
+  font-size: var(--space-3);
+  font-weight: 700;
+  margin-right: var(--space-3);
+  text-transform: uppercase;
 }
 
 .copyButton {
@@ -219,6 +225,103 @@
   margin-bottom: var(--space-2);
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+.tradingContainer {
+  margin-top: var(--space-6);
+  text-align: center;
+  position: relative;
+  padding: var(--space-4);
+}
+
+.tradingContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-secondary),
+    transparent
+  );
+}
+
+.tradingWrapper {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  background: rgba(252, 175, 5, 0.05);
+  border-radius: var(--space-2);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tradingWrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--space-2);
+  padding: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-secondary),
+    transparent
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.tradingWrapper:hover {
+  transform: translateY(-2px);
+  background: rgba(252, 175, 5, 0.1);
+}
+
+.tradingLabel {
+  display: block;
+  color: var(--color-grey);
+  font-size: var(--space-3);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.buyLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: var(--space-3);
+  font-weight: 500;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--space-1);
+  transition: all 0.3s ease;
+}
+
+.buyLink:hover {
+  color: var(--color-secondary);
+}
+
+.buyIcon {
+  width: var(--space-4);
+  height: var(--space-4);
+  transition: transform 0.3s ease;
+}
+
+.buyLink:hover .buyIcon {
+  transform: translate(2px, -2px);
 }
 
 /* Mobile First Icon Styles */
