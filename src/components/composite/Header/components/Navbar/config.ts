@@ -5,6 +5,7 @@ export const navLinks = [
   { path: PATHS.PUBLIC.HOW_TO_BUY, label: "How To Buy" },
   { path: PATHS.PUBLIC.ROADMAP, label: "Roadmap" },
   { path: PATHS.PUBLIC.APP, label: "Application" },
+  { path: PATHS.PUBLIC.AI_PREVIEW, label: "AI Preview" },
   // { path: PATHS.PROTECTED.PREDICTIONS, label: "Predictions" },
   // { path: PATHS.PROTECTED.NFT, label: "NFTs" },
   // { path: PATHS.PUBLIC.BLOG, label: "Blog" },

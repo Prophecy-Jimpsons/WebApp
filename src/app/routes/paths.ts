@@ -23,6 +23,7 @@ const PATHS = {
       "https://jimpsons.gitbook.io/jimpsons.org/getting-started/prediction-guide",
     PJ_UNVEILED:
       "https://jimpsons.gitbook.io/jimpsons.org/getting-started/how-prophecyjimpsons-works",
+    AI_PREVIEW: "/ai-preview",
   },
 
   // Protected routes (require wallet connection)
