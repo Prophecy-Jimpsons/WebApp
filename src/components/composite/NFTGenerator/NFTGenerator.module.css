@@ -82,6 +82,16 @@
   box-shadow: 0 0 0 var(--space-1) rgba(5, 104, 252, 0.3);
 }
 
+.promptInput.error {
+  border-color: var(--color-error);
+}
+
+.errorMessage {
+  color: var(--color-error);
+  font-size: var(--space-3);
+  margin-top: var(--space-2);
+}
+
 .generateButton {
   background: linear-gradient(
     45deg,
