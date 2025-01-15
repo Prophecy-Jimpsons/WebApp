@@ -23,6 +23,9 @@ const PATHS = {
       "https://jimpsons.gitbook.io/jimpsons.org/getting-started/prediction-guide",
     PJ_UNVEILED:
       "https://jimpsons.gitbook.io/jimpsons.org/getting-started/how-prophecyjimpsons-works",
+
+    //TODO: need to change this to private routes
+    GERERATE_NFT: "/generate-nft",
   },
 
   // Protected routes (require wallet connection)

@@ -27,6 +27,9 @@ const HowToBuy = lazy(() => import("@/pages/HowToBuy/HowToBuyPage"));
 // Layout components should be eager loaded
 import DashBoardLayout from "@/layouts/DashboardLayout/DashboardLayout";
 
+// NFT Generator page needs to change to private routes later
+import NFTGeneratorPage from "@/pages/NFTGenerator/NFTGeneratorPage";
+
 // Public Routes - No authentication needed
 export const publicRoutes: RouteConfig[] = [
   {
@@ -110,6 +113,15 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <HowToBuy />
+          </Suspense>
+        ),
+      },
+      //need to change this to private routes later
+      {
+        path: PATHS.PUBLIC.GERERATE_NFT,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <NFTGeneratorPage />
           </Suspense>
         ),
       },

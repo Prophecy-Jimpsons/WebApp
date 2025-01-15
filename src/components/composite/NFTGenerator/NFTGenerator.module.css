@@ -1,0 +1,320 @@
+.container {
+  min-height: 100dvh;
+  width: 100%;
+  padding: var(--space-5);
+  background: linear-gradient(
+    135deg,
+    var(--color-dark-blue),
+    var(--color-darker-blue)
+  );
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: var(--space-8);
+  overflow-x: hidden;
+}
+
+/* Grid Background */
+.container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+      to right,
+      rgba(252, 175, 5, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(252, 175, 5, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+}
+
+.glassCard {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(var(--space-2));
+  border-radius: var(--space-5);
+  padding: var(--space-5);
+  width: min(95%, var(--container-md));
+  margin: 0 auto;
+  box-shadow: 0 var(--space-2) var(--space-8) rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: 100%;
+}
+
+.title {
+  color: var(--color-primary);
+  font-size: var(--space-6);
+  text-align: center;
+  margin-bottom: var(--space-5);
+  text-shadow: 0 0 var(--space-2) rgba(252, 175, 5, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.promptInput {
+  background: var(--color-black-background);
+  border: 2px solid var(--color-secondary);
+  border-radius: var(--space-3);
+  padding: var(--space-2);
+  color: var(--color-white);
+  min-height: var(--space-20);
+  max-height: var(--space-24);
+  width: 100%;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+.promptInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 var(--space-1) rgba(5, 104, 252, 0.3);
+}
+
+.generateButton {
+  background: linear-gradient(
+    45deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--space-3);
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--space-3);
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.generateButton:hover:not(:disabled) {
+  transform: translateY(calc(var(--space-1) * -1));
+}
+
+.generateButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.previewSection {
+  width: 100%;
+}
+
+.nftCard {
+  background: var(--color-black-background-alt);
+  border-radius: var(--space-4);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  overflow: hidden;
+}
+
+.imageContainer img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+.nftInfo {
+  padding: var(--space-4);
+}
+
+.nftInfo h3 {
+  color: var(--color-primary);
+  margin-bottom: var(--space-1);
+  word-break: break-word;
+}
+
+.nftInfo p {
+  color: var(--color-text-secondary);
+  font-size: var(--space-4);
+  word-break: break-word;
+}
+
+.nftInfo small {
+  color: var(--color-text-secondary);
+  font-size: var(--space-3);
+  word-break: break-word;
+}
+
+/* Skeleton Loading Styles */
+.skeleton {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-black-background) 0%,
+    rgba(252, 175, 5, 0.1) 50%,
+    var(--color-black-background) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerAnimation 2s ease-in-out infinite;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: var(--space-4) var(--space-4) 0 0;
+}
+
+.skeletonText {
+  height: var(--space-4);
+  border-radius: var(--space-2);
+  margin-bottom: var(--space-3);
+  animation: shimmerAnimation 2s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    var(--color-black-background) 0%,
+    rgba(252, 175, 5, 0.1) 50%,
+    var(--color-black-background) 100%
+  );
+  background-size: 200% 100%;
+  position: relative;
+}
+
+.skeletonText::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(252, 175, 5, 0.05),
+    transparent
+  );
+  animation: shimmerOverlay 2s ease-in-out infinite;
+}
+
+.skeletonText:first-child {
+  width: 40%;
+  height: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+.skeletonText:nth-child(2) {
+  width: 90%;
+  margin-bottom: var(--space-4);
+}
+
+.skeletonText:last-child {
+  width: 60%;
+  height: var(--space-3);
+  opacity: 0.7;
+}
+
+.error {
+  background: rgba(255, 0, 0, 0.1);
+  color: var(--color-error);
+  padding: var(--space-3);
+  border-radius: var(--space-2);
+  text-align: center;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes shimmerAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-2);
+    padding-top: var(--space-4);
+  }
+
+  .glassCard {
+    width: 100%;
+    padding: var(--space-3);
+    margin: 0;
+  }
+
+  .title {
+    font-size: var(--space-5);
+    margin-bottom: var(--space-3);
+  }
+
+  .content {
+    gap: var(--space-3);
+  }
+
+  .promptInput {
+    min-height: var(--space-16);
+  }
+
+  .generateButton {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--space-2);
+  }
+
+  .nftInfo {
+    padding: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-1);
+  }
+
+  .glassCard {
+    padding: var(--space-2);
+  }
+
+  .title {
+    font-size: var(--space-4);
+  }
+
+  .promptInput {
+    min-height: var(--space-12);
+  }
+}
