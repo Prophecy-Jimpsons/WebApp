@@ -118,7 +118,7 @@ export const publicRoutes: RouteConfig[] = [
       },
       //need to change this to private routes later
       {
-        path: PATHS.PUBLIC.GERERATE_NFT,
+        path: PATHS.PUBLIC.AI_PREVIEW,
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <NFTGeneratorPage />
