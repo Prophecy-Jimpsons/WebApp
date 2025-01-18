@@ -100,6 +100,8 @@ function getDaysSinceFirstPurchase(
 
   const purchaseDate = new Date(firstPurchase.blockTime * 1000);
   const today = new Date(); // 5 PM EST
+
+  today.setHours(0, 0, 0, 0);
   
   console.log("Date calculations:", {
     purchaseDate: purchaseDate.toISOString(),
