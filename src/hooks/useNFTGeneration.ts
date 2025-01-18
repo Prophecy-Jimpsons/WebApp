@@ -18,8 +18,8 @@ export const useNFTGeneration = (): UseMutationResult<
   string,
   unknown
 > => {
-  console.log(Error);
   return useMutation({
+    mutationKey: ["nft-generation"],
     mutationFn: generateNFT,
     onError: (error: Error) => {
       console.error("NFT generation failed:", error);
