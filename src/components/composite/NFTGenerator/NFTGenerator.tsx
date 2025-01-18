@@ -1,18 +1,36 @@
 import { useState, ChangeEvent } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import styles from "./NFTGenerator.module.css";
-
+import "@solana/wallet-adapter-react-ui/styles.css";
 import { useNFTGeneration } from "@/hooks/useNFTGeneration";
+import {
+  Boxes,
+  Sparkles,
+  Code2,
+  Fingerprint,
+  AlertCircle,
+  RefreshCw,
+  Wallet,
+} from "lucide-react";
 
 const NFTGenerator = () => {
-  const [prompt, setPrompt] = useState<string>("");
-  const [inputError, setInputError] = useState<string>("");
+  const { connected } = useWallet();
+  const [prompt, setPrompt] = useState("");
+  const [inputError, setInputError] = useState("");
   const [touched, setTouched] = useState(false);
+  const [hasAttempted, setHasAttempted] = useState(false);
 
-  const { mutate, isLoading, data: generatedNFT, error } = useNFTGeneration();
+  const {
+    mutate,
+    isPending,
+    data: generatedNFT,
+    error: generationError,
+    reset: resetGeneration,
+  } = useNFTGeneration();
 
   const validatePrompt = (value: string): string => {
     if (!value.trim()) return "Prompt cannot be empty";
-    // Allow letters, numbers, basic punctuation, and spaces
     const textOnlyPattern = /^[a-zA-Z0-9\s.,!?'"()-]+$/;
     const isValid = textOnlyPattern.test(value);
     if (!isValid)
@@ -23,9 +41,13 @@ const NFTGenerator = () => {
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setPrompt(e.target.value);
+    const newPrompt = e.target.value;
+    setPrompt(newPrompt);
     if (touched) {
-      setInputError(validatePrompt(e.target.value));
+      setInputError(validatePrompt(newPrompt));
+    }
+    if (generationError) {
+      resetGeneration();
     }
   };
 
@@ -36,83 +58,244 @@ const NFTGenerator = () => {
 
   const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!prompt.trim()) return;
+    if (!connected) return;
+
+    const error = validatePrompt(prompt);
+    if (error) {
+      setInputError(error);
+      setTouched(true);
+      return;
+    }
+
+    setHasAttempted(true);
     mutate(prompt);
+  };
+
+  const handleNewGeneration = () => {
+    setPrompt("");
+    setInputError("");
+    setTouched(false);
+    setHasAttempted(false);
+    resetGeneration();
+  };
+
+  const getButtonContent = () => {
+    if (!connected) {
+      return (
+        <>
+          <Wallet className={styles.buttonIcon} size={20} />
+          Connect Wallet to Generate
+        </>
+      );
+    }
+
+    if (isPending) {
+      return (
+        <>
+          <RefreshCw className={styles.spinIcon} size={20} />
+          Generating...
+        </>
+      );
+    }
+
+    if (generationError) {
+      return (
+        <>
+          <Sparkles className={styles.buttonIcon} size={20} />
+          Generate Again
+        </>
+      );
+    }
+
+    if (generatedNFT) {
+      return (
+        <>
+          <Sparkles className={styles.buttonIcon} size={20} />
+          Generate New NFT
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Sparkles className={styles.buttonIcon} size={20} />
+        Generate NFT
+      </>
+    );
+  };
+
+  const renderPreviewContent = () => {
+    if (!connected) {
+      return (
+        <div className={styles.emptyPreview}>
+          <Wallet size={64} />
+          <p>Connect your wallet to start generating NFTs</p>
+          <div className={styles.walletButtonWrapper}>
+            <WalletMultiButton />
+          </div>
+        </div>
+      );
+    }
+
+    if (isPending) {
+      return (
+        <div className={styles.nftCard}>
+          <div className={styles.imageContainer}>
+            <div className={styles.skeleton}></div>
+          </div>
+          <div className={styles.loadingOverlay}>
+            <RefreshCw className={styles.loadingIcon} size={32} />
+            <p>Creating your unique NFT...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (generationError) {
+      return (
+        <div className={styles.nftCard}>
+          <div className={styles.errorPreview}>
+            <AlertCircle size={48} className={styles.errorIcon} />
+            <p>Unable to generate NFT</p>
+            <p className={styles.hint}>Please try adjusting your prompt</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (generatedNFT) {
+      return (
+        <div className={styles.nftCard}>
+          <div className={styles.imageContainer}>
+            <img
+              src={generatedNFT.ipfs.url}
+              alt={generatedNFT.prompt}
+              loading="lazy"
+            />
+          </div>
+          <button
+            onClick={handleNewGeneration}
+            className={styles.newGenerationButton}
+          >
+            <Sparkles size={20} />
+            Create Another
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className={styles.emptyPreview}>
+        <Boxes size={64} />
+        <p>Your NFT preview will appear here</p>
+        {hasAttempted && (
+          <p className={styles.hint}>Type your prompt and click Generate</p>
+        )}
+      </div>
+    );
   };
 
   return (
     <div className={styles.container}>
+      <div className={styles.abstractLines}>
+        <div className={styles.line}></div>
+        <div className={styles.line}></div>
+        <div className={styles.line}></div>
+      </div>
+
       <div className={styles.glassCard}>
-        <h2 className={styles.title}>Create Your NFT</h2>
+        <div className={styles.cardHeader}>
+          <Sparkles className={styles.headerIcon} size={32} />
+          <h2 className={styles.title}>Create Your NFT</h2>
+          <Sparkles className={styles.headerIcon} size={32} />
+        </div>
 
         <div className={styles.content}>
-          <form onSubmit={handleSubmit}>
-            <div className={styles.inputSection}>
-              <textarea
-                className={`${styles.promptInput} ${error && touched ? styles.error : ""}`}
-                value={prompt}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Describe your NFT idea..."
-                disabled={isLoading}
-              />
-              {error && touched && (
-                <div className={styles.errorMessage}>{inputError}</div>
+          <div className={styles.previewSection}>{renderPreviewContent()}</div>
+
+          <div className={styles.inputSection}>
+            <form onSubmit={handleSubmit}>
+              <div className={styles.inputWrapper}>
+                <Code2 className={styles.inputIcon} size={20} />
+                <textarea
+                  className={`${styles.promptInput} ${
+                    inputError && touched ? styles.error : ""
+                  }`}
+                  value={prompt}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder={
+                    connected
+                      ? "Describe your NFT idea..."
+                      : "Connect wallet to start creating..."
+                  }
+                  disabled={!connected || isPending}
+                />
+              </div>
+
+              {inputError && touched && (
+                <div className={styles.errorMessage}>
+                  <AlertCircle size={16} />
+                  {inputError}
+                </div>
               )}
 
               <button
                 className={styles.generateButton}
                 type="submit"
-                disabled={isLoading || !prompt.trim()}
+                disabled={
+                  !connected ||
+                  isPending ||
+                  (!prompt.trim() && !generationError)
+                }
               >
-                {isLoading ? "Generating..." : "Generate NFT"}
+                {getButtonContent()}
               </button>
-            </div>
-          </form>
+            </form>
 
-          {error ? (
-            <div role="alert" className={styles.error}>
-              "Generation failed. Please try again."
-            </div>
-          ) : null}
-
-          {isLoading && (
-            <div className={styles.previewSection}>
-              <div className={styles.nftCard}>
-                <div className={styles.imageContainer}>
-                  <div className={styles.skeleton}></div>
-                </div>
-                <div className={styles.nftInfo}>
-                  <div className={styles.skeletonText}></div>
-                  <div className={styles.skeletonText}></div>
-                  <div className={styles.skeletonText}></div>
+            {generationError && (
+              <div
+                className={`${styles.errorMessage} ${styles.errorContainer}`}
+              >
+                <AlertCircle size={16} />
+                <div className={styles.errorContent}>
+                  <p>Adjust your prompt and try generating again</p>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+        </div>
 
-          {generatedNFT && (
-            <div className={styles.previewSection}>
-              <div className={styles.nftCard}>
-                <div className={styles.imageContainer}>
-                  {isLoading && <div className={styles.shimmer}></div>}
-                  <img
-                    src={generatedNFT.ipfs.url}
-                    alt={generatedNFT.prompt}
-                    loading="lazy"
-                  />
-                </div>
-                <div className={styles.nftInfo}>
-                  <h3>Generated NFT</h3>
-                  <p>
-                    <b>Prompt: </b>
-                    {generatedNFT.prompt}
-                  </p>
-                  <small>IPFS Hash: {generatedNFT.ipfs.cid}</small>
-                </div>
+        {generatedNFT && (
+          <div className={styles.nftDetails}>
+            <div className={styles.detailsGrid}>
+              <div className={styles.detailItem}>
+                <h3>
+                  <Sparkles className={styles.infoIcon} size={16} />
+                  Prompt
+                </h3>
+                <p>{generatedNFT.prompt}</p>
+              </div>
+              <div className={styles.detailItem}>
+                <h3>
+                  <Fingerprint className={styles.infoIcon} size={16} />
+                  IPFS Hash
+                </h3>
+                <p className={styles.hash}>{generatedNFT.ipfs.cid}</p>
               </div>
             </div>
-          )}
+          </div>
+        )}
+
+        <div className={styles.legalNotes}>
+          <p>
+            No intellectual property rights are infringed in the generation of
+            these NFTs. All AI-generated content is original and unique.
+          </p>
+          <p>
+            Generated images and NFTs are subject to our terms of service and
+            content guidelines.
+          </p>
         </div>
       </div>
     </div>

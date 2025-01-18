@@ -38,6 +38,7 @@ export const generateNFT = async (
       },
       body: JSON.stringify(requestBody),
     });
+    console.log(response.body);
 
     if (!response.ok) {
       throw new Error("Failed to generate image");
