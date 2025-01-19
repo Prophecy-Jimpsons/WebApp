@@ -17,6 +17,7 @@ export interface AIGenerationResponse {
   status: string;
   ipfs: IPFSResponse;
   prompt: string;
+  "Image hash": string;
 }
 
 export const generateNFT = async (

@@ -1,9 +1,19 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import styles from "./NFTGenerator.module.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { useNFTGeneration } from "@/hooks/useNFTGeneration";
+import { db } from "@/config/firebase";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+
 import {
   Boxes,
   Sparkles,
@@ -12,14 +22,20 @@ import {
   AlertCircle,
   RefreshCw,
   Wallet,
+  Download,
+  CheckCircle,
 } from "lucide-react";
 
 const NFTGenerator = () => {
-  const { connected } = useWallet();
+  const { connected, publicKey } = useWallet();
   const [prompt, setPrompt] = useState("");
   const [inputError, setInputError] = useState("");
   const [touched, setTouched] = useState(false);
   const [hasAttempted, setHasAttempted] = useState(false);
+  const [storeError, setStoreError] = useState<string | null>(null);
+  const [verificationStatus, setVerificationStatus] = useState<string | null>(
+    null,
+  );
 
   const {
     generatedNFT,
@@ -28,6 +44,80 @@ const NFTGenerator = () => {
     generationError,
     resetGeneration,
   } = useNFTGeneration();
+
+  const storeNFTData = async (imageHash: string, walletAddress: string) => {
+    try {
+      const nftCollection = collection(db, "nfts");
+      const docRef = await addDoc(nftCollection, {
+        imageHash,
+        walletAddress,
+        prompt: generatedNFT?.prompt,
+        ipfsCid: generatedNFT?.ipfs.cid,
+        ipfsUrl: generatedNFT?.ipfs.url,
+        createdAt: serverTimestamp(),
+      });
+
+      console.log("NFT data stored successfully with ID:", docRef.id);
+      setStoreError(null);
+    } catch (error) {
+      console.error("Error storing NFT data:", error);
+      setStoreError("Failed to store NFT data");
+    }
+  };
+
+  // Effect to handle NFT generation response
+  useEffect(() => {
+    if (generatedNFT && publicKey) {
+      // Store data when NFT is generated and wallet is connected
+      storeNFTData(generatedNFT["Image hash"], publicKey.toString());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [generatedNFT, publicKey]);
+
+  const verifyNFT = async (imageHash: string, walletAddress: string) => {
+    try {
+      const nftsRef = collection(db, "nfts");
+      const q = query(
+        nftsRef,
+        where("imageHash", "==", imageHash),
+        where("walletAddress", "==", walletAddress),
+      );
+
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        setVerificationStatus("verified");
+        console.log("NFT verified successfully!");
+        return true;
+      } else {
+        setVerificationStatus("not-found");
+        console.log("NFT not found or not owned by this wallet");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error verifying NFT:", error);
+      setVerificationStatus("error");
+      return false;
+    }
+  };
+
+  const downloadNFT = async (url: string, prompt: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `${prompt.trim().replace(/\s+/g, "_")}_nft.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Error downloading NFT:", error);
+      setStoreError("Failed to download NFT");
+    }
+  };
+
   const validatePrompt = (value: string): string => {
     if (!value.trim()) return "Prompt cannot be empty";
     const textOnlyPattern = /^[a-zA-Z0-9\s.,!?'"()-]+$/;
@@ -68,14 +158,6 @@ const NFTGenerator = () => {
 
     setHasAttempted(true);
     nftGenerate(prompt);
-  };
-
-  const handleNewGeneration = () => {
-    setPrompt("");
-    setInputError("");
-    setTouched(false);
-    setHasAttempted(false);
-    resetGeneration();
   };
 
   const getButtonContent = () => {
@@ -172,13 +254,41 @@ const NFTGenerator = () => {
               loading="lazy"
             />
           </div>
-          <button
-            onClick={handleNewGeneration}
-            className={styles.newGenerationButton}
-          >
-            <Sparkles size={20} />
-            Create Another
-          </button>
+          <div className={styles.actionButtons}>
+            <button
+              onClick={() =>
+                publicKey &&
+                verifyNFT(generatedNFT["Image hash"], publicKey.toString())
+              }
+              className={`${styles.verifyButton} ${verificationStatus === "verified" ? styles.verified : ""}`}
+            >
+              {verificationStatus === "verified" ? (
+                <>
+                  <CheckCircle size={20} />
+                  Verified
+                </>
+              ) : (
+                <>
+                  <Fingerprint size={20} />
+                  Verify NFT
+                </>
+              )}
+            </button>
+            <button
+              onClick={() =>
+                downloadNFT(generatedNFT.ipfs.url, generatedNFT.prompt)
+              }
+              className={styles.downloadButton}
+            >
+              <Download size={20} />
+              Download
+            </button>
+          </div>
+          {verificationStatus === "not-found" && (
+            <p className={styles.verificationError}>
+              NFT not found or not owned by this wallet
+            </p>
+          )}
         </div>
       );
     }
@@ -236,6 +346,13 @@ const NFTGenerator = () => {
                 <div className={styles.errorMessage}>
                   <AlertCircle size={16} />
                   {inputError}
+                </div>
+              )}
+
+              {storeError && (
+                <div className={styles.errorMessage}>
+                  <AlertCircle size={16} />
+                  {storeError}
                 </div>
               )}
 

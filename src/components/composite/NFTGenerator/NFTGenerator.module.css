@@ -356,6 +356,10 @@
   font-size: var(--space-4);
 }
 
+.detailItem p {
+  color: var(--color-grey);
+}
+
 .hash {
   font-family: monospace;
   word-break: break-all;
@@ -617,7 +621,7 @@
 
   .nftCard {
     max-width: 500px;
-    margin: 0 auto;
+    /* margin: 0 auto; */
   }
 }
 
@@ -812,5 +816,185 @@
   .walletButtonWrapper :global(.wallet-adapter-button) {
     font-size: var(--space-3);
     padding: var(--space-2) var(--space-4);
+  }
+}
+
+/* Action Buttons Container */
+
+.actionButtonWrapper {
+  position: relative;
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  background: rgba(10, 10, 20, 0.3);
+  border-radius: var(--space-3);
+  border: 1px solid rgba(254, 218, 3, 0.1);
+  overflow: hidden;
+}
+
+/* Hexagon background pattern */
+
+.actionButtons {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+  z-index: 1;
+  margin: 1rem;
+}
+
+/* Base button styles */
+.actionButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--space-2);
+  font-weight: 600;
+  font-size: var(--space-3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(10, 10, 20, 0.9);
+  overflow: hidden;
+}
+
+/* Verify Button Styles */
+.verifyButton {
+  composes: actionButton;
+  background: rgba(var(--color-primary), 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.verifyButton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(var(--color-primary), 0.1) rgba(var(--color-primary), 0.2)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.verifyButton:hover::after {
+  opacity: 1;
+}
+
+.verifyButton:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 20px rgba(var(--color-primary), 0.2),
+    0 0 40px rgba(var(--color-primary), 0.1);
+}
+
+/* Verified state */
+.verifyButton.verified {
+  background: rgba(254, 218, 3, 0.15);
+  border-color: var(--color-primary);
+  color: #feda03;
+}
+
+/* Download Button */
+.downloadButton {
+  composes: actionButton;
+  background: rgba(252, 175, 5, 0.1);
+  border: 1px solid rgba(252, 175, 5, 0.5);
+  color: rgba(252, 175, 5, 0.9);
+}
+
+.downloadButton:hover {
+  background: rgba(252, 175, 5, 0.15);
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 20px rgba(252, 175, 5, 0.15),
+    0 0 40px rgba(252, 175, 5, 0.1);
+}
+
+/* Verification Details */
+
+.verificationItem.success {
+  border-color: #feda03;
+  background: rgba(254, 218, 3, 0.05);
+}
+
+.verificationItem.failure {
+  border-color: rgba(252, 175, 5, 0.5);
+  background: rgba(252, 175, 5, 0.05);
+}
+
+.verificationMessage {
+  position: relative;
+  text-align: center;
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border-top: 1px solid rgba(254, 218, 3, 0.1);
+  color: rgba(254, 218, 3, 0.8);
+  font-size: var(--space-3);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Loading Animation */
+.spinIcon {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Status Icons */
+.statusIcon {
+  color: currentColor;
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* Responsive Styles */
+@media (max-width: 1023px) {
+  .actionButtons {
+    gap: var(--space-3);
+  }
+
+  .actionButton {
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+@media (max-width: 767px) {
+  .actionButtons {
+    grid-template-columns: 1fr;
+  }
+
+  .verificationDetails {
+    padding: var(--space-3);
+  }
+}
+
+@media (max-width: 639px) {
+  .actionButtonWrapper {
+    margin-top: var(--space-4);
+  }
+
+  .actionButton {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--space-2);
+  }
+
+  .verificationItem {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--space-2);
   }
 }
