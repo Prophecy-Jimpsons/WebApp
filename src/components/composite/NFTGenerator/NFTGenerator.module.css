@@ -260,7 +260,8 @@
   animation: fadeIn 0.3s ease;
 }
 
-.loadingIcon {
+.loadingIcon,
+.spinIcon {
   animation: spin 1.5s linear infinite;
 }
 

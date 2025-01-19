@@ -1,4 +1,4 @@
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { generateNFT } from "@/services/ai/nft";
 
 export interface IPFSResponse {
@@ -12,24 +12,30 @@ export interface AIGenerationResponse {
   prompt: string;
 }
 
-export const useNFTGeneration = (): UseMutationResult<
-  AIGenerationResponse,
-  Error,
-  string,
-  unknown
-> => {
-  return useMutation({
+export const useNFTGeneration = () => {
+  const {
+    data: generatedNFT,
+    mutate: nftGenerate,
+    isLoading,
+    error: generationError,
+    reset: resetGeneration,
+  } = useMutation({
     mutationKey: ["nft-generation"],
     mutationFn: generateNFT,
     onError: (error: Error) => {
       console.error("NFT generation failed:", error);
     },
-    retry: (failureCount, error) => {
-      if (error.message.includes("rate limit") && failureCount < 2) {
-        return true;
-      }
-      return false;
-    },
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    // onSuccess: () => {
+    //   console.log("successfully generated NFT");
+    // },
+    retry: 3,
+    retryDelay: 1500,
   });
+  return {
+    nftGenerate,
+    isLoading,
+    generationError,
+    resetGeneration,
+    generatedNFT,
+  };
 };

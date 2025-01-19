@@ -22,13 +22,12 @@ const NFTGenerator = () => {
   const [hasAttempted, setHasAttempted] = useState(false);
 
   const {
-    mutate,
-    isPending,
-    data: generatedNFT,
-    error: generationError,
-    reset: resetGeneration,
+    generatedNFT,
+    nftGenerate,
+    isLoading,
+    generationError,
+    resetGeneration,
   } = useNFTGeneration();
-
   const validatePrompt = (value: string): string => {
     if (!value.trim()) return "Prompt cannot be empty";
     const textOnlyPattern = /^[a-zA-Z0-9\s.,!?'"()-]+$/;
@@ -68,7 +67,7 @@ const NFTGenerator = () => {
     }
 
     setHasAttempted(true);
-    mutate(prompt);
+    nftGenerate(prompt);
   };
 
   const handleNewGeneration = () => {
@@ -89,7 +88,7 @@ const NFTGenerator = () => {
       );
     }
 
-    if (isPending) {
+    if (isLoading) {
       return (
         <>
           <RefreshCw className={styles.spinIcon} size={20} />
@@ -137,7 +136,7 @@ const NFTGenerator = () => {
       );
     }
 
-    if (isPending) {
+    if (isLoading) {
       return (
         <div className={styles.nftCard}>
           <div className={styles.imageContainer}>
@@ -229,7 +228,7 @@ const NFTGenerator = () => {
                       ? "Describe your NFT idea..."
                       : "Connect wallet to start creating..."
                   }
-                  disabled={!connected || isPending}
+                  disabled={!connected || isLoading}
                 />
               </div>
 
@@ -245,7 +244,7 @@ const NFTGenerator = () => {
                 type="submit"
                 disabled={
                   !connected ||
-                  isPending ||
+                  isLoading ||
                   (!prompt.trim() && !generationError)
                 }
               >
@@ -259,7 +258,7 @@ const NFTGenerator = () => {
               >
                 <AlertCircle size={16} />
                 <div className={styles.errorContent}>
-                  <p>Adjust your prompt and try generating again</p>
+                  <p>NFT generation failed. Please try again.</p>
                 </div>
               </div>
             )}
