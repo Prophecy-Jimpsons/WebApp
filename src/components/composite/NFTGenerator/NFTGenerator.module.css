@@ -1,5 +1,5 @@
 .container {
-  min-height: 100dvh;
+  /* min-height: 100dvh; */
   width: 100%;
   padding: var(--space-5);
   background: var(--color-black-background);

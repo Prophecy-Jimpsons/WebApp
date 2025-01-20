@@ -5,6 +5,8 @@ import styles from "./NFTGenerator.module.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { useNFTGeneration } from "@/hooks/useNFTGeneration";
 import { db } from "@/config/firebase";
+import VerifyNFT from "../VerifyNFT/VerifyNFT";
+
 import {
   collection,
   addDoc,
@@ -305,116 +307,125 @@ const NFTGenerator = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.abstractLines}>
-        <div className={styles.line}></div>
-        <div className={styles.line}></div>
-        <div className={styles.line}></div>
-      </div>
-
-      <div className={styles.glassCard}>
-        <div className={styles.cardHeader}>
-          <Sparkles className={styles.headerIcon} size={32} />
-          <h2 className={styles.title}>Create Your NFT</h2>
-          <Sparkles className={styles.headerIcon} size={32} />
+    <>
+      <div className={styles.container}>
+        <div className={styles.abstractLines}>
+          <div className={styles.line}></div>
+          <div className={styles.line}></div>
+          <div className={styles.line}></div>
         </div>
 
-        <div className={styles.content}>
-          <div className={styles.previewSection}>{renderPreviewContent()}</div>
-
-          <div className={styles.inputSection}>
-            <form onSubmit={handleSubmit}>
-              <div className={styles.inputWrapper}>
-                <Code2 className={styles.inputIcon} size={20} />
-                <textarea
-                  className={`${styles.promptInput} ${
-                    inputError && touched ? styles.error : ""
-                  }`}
-                  value={prompt}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  placeholder={
-                    connected
-                      ? "Describe your NFT idea..."
-                      : "Connect wallet to start creating..."
-                  }
-                  disabled={!connected || isLoading}
-                />
-              </div>
-
-              {inputError && touched && (
-                <div className={styles.errorMessage}>
-                  <AlertCircle size={16} />
-                  {inputError}
-                </div>
-              )}
-
-              {storeError && (
-                <div className={styles.errorMessage}>
-                  <AlertCircle size={16} />
-                  {storeError}
-                </div>
-              )}
-
-              <button
-                className={styles.generateButton}
-                type="submit"
-                disabled={
-                  !connected ||
-                  isLoading ||
-                  (!prompt.trim() && !generationError)
-                }
-              >
-                {getButtonContent()}
-              </button>
-            </form>
-
-            {generationError && (
-              <div
-                className={`${styles.errorMessage} ${styles.errorContainer}`}
-              >
-                <AlertCircle size={16} />
-                <div className={styles.errorContent}>
-                  <p>NFT generation failed. Please try again.</p>
-                </div>
-              </div>
-            )}
+        <div className={styles.glassCard}>
+          <div className={styles.cardHeader}>
+            <Sparkles className={styles.headerIcon} size={32} />
+            <h2 className={styles.title}>Create Your NFT</h2>
+            <Sparkles className={styles.headerIcon} size={32} />
           </div>
-        </div>
 
-        {generatedNFT && (
-          <div className={styles.nftDetails}>
-            <div className={styles.detailsGrid}>
-              <div className={styles.detailItem}>
-                <h3>
-                  <Sparkles className={styles.infoIcon} size={16} />
-                  Prompt
-                </h3>
-                <p>{generatedNFT.prompt}</p>
-              </div>
-              <div className={styles.detailItem}>
-                <h3>
-                  <Fingerprint className={styles.infoIcon} size={16} />
-                  IPFS Hash
-                </h3>
-                <p className={styles.hash}>{generatedNFT.ipfs.cid}</p>
-              </div>
+          <div className={styles.content}>
+            <div className={styles.previewSection}>
+              {renderPreviewContent()}
+            </div>
+
+            <div className={styles.inputSection}>
+              <form onSubmit={handleSubmit}>
+                <div className={styles.inputWrapper}>
+                  <Code2 className={styles.inputIcon} size={20} />
+                  <textarea
+                    className={`${styles.promptInput} ${
+                      inputError && touched ? styles.error : ""
+                    }`}
+                    value={prompt}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder={
+                      connected
+                        ? "Describe your NFT idea..."
+                        : "Connect wallet to start creating..."
+                    }
+                    disabled={!connected || isLoading}
+                  />
+                </div>
+
+                {inputError && touched && (
+                  <div className={styles.errorMessage}>
+                    <AlertCircle size={16} />
+                    {inputError}
+                  </div>
+                )}
+
+                {storeError && (
+                  <div className={styles.errorMessage}>
+                    <AlertCircle size={16} />
+                    {storeError}
+                  </div>
+                )}
+
+                <button
+                  className={styles.generateButton}
+                  type="submit"
+                  disabled={
+                    !connected ||
+                    isLoading ||
+                    (!prompt.trim() && !generationError)
+                  }
+                >
+                  {getButtonContent()}
+                </button>
+              </form>
+
+              {generationError && (
+                <div
+                  className={`${styles.errorMessage} ${styles.errorContainer}`}
+                >
+                  <AlertCircle size={16} />
+                  <div className={styles.errorContent}>
+                    <p>NFT generation failed. Please try again.</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        )}
 
-        <div className={styles.legalNotes}>
-          <p>
-            No intellectual property rights are infringed in the generation of
-            these NFTs. All AI-generated content is original and unique.
-          </p>
-          <p>
-            Generated images and NFTs are subject to our terms of service and
-            content guidelines.
-          </p>
+          {generatedNFT && (
+            <div className={styles.nftDetails}>
+              <div className={styles.detailsGrid}>
+                <div className={styles.detailItem}>
+                  <h3>
+                    <Sparkles className={styles.infoIcon} size={16} />
+                    Prompt
+                  </h3>
+                  <p>{generatedNFT.prompt}</p>
+                </div>
+                <div className={styles.detailItem}>
+                  <h3>
+                    <Fingerprint className={styles.infoIcon} size={16} />
+                    IPFS Hash
+                  </h3>
+                  <p className={styles.hash}>{generatedNFT.ipfs.cid}</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+      <div className="styles.container">
+        <div className={styles.glassCard}>
+          <VerifyNFT />
+
+          <div className={styles.legalNotes}>
+            <p>
+              No intellectual property rights are infringed in the generation of
+              these NFTs. All AI-generated content is original and unique.
+            </p>
+            <p>
+              Generated images and NFTs are subject to our terms of service and
+              content guidelines.
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
