@@ -27,6 +27,7 @@ export default defineConfig({
     "process.env.VITE_FIREBASE_API_KEY": JSON.stringify(
       env.VITE_FIREBASE_API_KEY,
     ),
+    "process.browser": true,
   },
   css: {
     postcss: "./postcss.config.js",

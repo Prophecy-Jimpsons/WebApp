@@ -37,29 +37,40 @@ const generateImageHash = async (imageFile: File): Promise<string> => {
           const ctx = canvas.getContext("2d", { willReadFrequently: true });
           if (!ctx) throw new Error("Could not get canvas context");
 
+          // Disable image smoothing and set color space
           ctx.imageSmoothingEnabled = false;
+
+          // Draw image to canvas
           ctx.drawImage(img, 0, 0);
 
+          // Get image data
           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const data = imageData.data;
 
+          // Calculate stride (must match PowerShell's calculation)
           const width = canvas.width;
           const height = canvas.height;
           const bytesPerPixel = 3;
           const stride = Math.floor((width * bytesPerPixel + 3) / 4) * 4;
+
+          // Create a Uint8Array with stride padding
           const paddedData = new Uint8Array(stride * height);
 
+          // Copy pixels in BGR order (matching System.Drawing)
           for (let row = 0; row < height; row++) {
             const rowOffset = row * stride;
             for (let col = 0; col < width; col++) {
               const srcIdx = (row * width + col) * 4;
               const dstIdx = rowOffset + col * 3;
-              paddedData[dstIdx + 2] = data[srcIdx];
-              paddedData[dstIdx + 1] = data[srcIdx + 1];
-              paddedData[dstIdx] = data[srcIdx + 2];
+
+              // Copy in BGR order to match System.Drawing
+              paddedData[dstIdx + 2] = data[srcIdx]; // B
+              paddedData[dstIdx + 1] = data[srcIdx + 1]; // G
+              paddedData[dstIdx] = data[srcIdx + 2]; // R
             }
           }
 
+          // Generate SHA-256 hash
           const hashBuffer = await crypto.subtle.digest("SHA-256", paddedData);
           const hashArray = Array.from(new Uint8Array(hashBuffer));
           const hashHex = hashArray
