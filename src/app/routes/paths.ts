@@ -25,6 +25,7 @@ const PATHS = {
       "https://jimpsons.gitbook.io/jimpsons.org/getting-started/how-prophecyjimpsons-works",
 
     AI_PREVIEW: "/ai-preview",
+    NFT_COLLECTION: "/nft-collection",
   },
 
   // Protected routes (require wallet connection)

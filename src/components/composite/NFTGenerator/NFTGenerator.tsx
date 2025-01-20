@@ -6,6 +6,7 @@ import "@solana/wallet-adapter-react-ui/styles.css";
 import { useNFTGeneration } from "@/hooks/useNFTGeneration";
 import { db } from "@/config/firebase";
 import VerifyNFT from "../VerifyNFT/VerifyNFT";
+import { Link } from "react-router-dom";
 
 import {
   collection,
@@ -26,6 +27,7 @@ import {
   Wallet,
   Download,
   CheckCircle,
+  ArrowRight,
 } from "lucide-react";
 
 const NFTGenerator = () => {
@@ -317,9 +319,15 @@ const NFTGenerator = () => {
 
         <div className={styles.glassCard}>
           <div className={styles.cardHeader}>
-            <Sparkles className={styles.headerIcon} size={32} />
-            <h2 className={styles.title}>Create Your NFT</h2>
-            <Sparkles className={styles.headerIcon} size={32} />
+            <div className={styles.titleGroup}>
+              <Sparkles className={styles.headerIcon} size={32} />
+              <h2 className={styles.title}>Create Your NFT</h2>
+              <Sparkles className={styles.headerIcon} size={32} />
+            </div>
+            <Link to="/nft-collection" className={styles.headerLink}>
+              Check Your Collection
+              <ArrowRight size={16} />
+            </Link>
           </div>
 
           <div className={styles.content}>
