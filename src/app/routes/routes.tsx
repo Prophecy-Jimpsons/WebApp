@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { lazy, Suspense } from "react";
 import PATHS from "./paths";
 import { RouteConfig } from "./types";
@@ -29,6 +28,9 @@ import DashBoardLayout from "@/layouts/DashboardLayout/DashboardLayout";
 
 // NFT Generator page needs to change to private routes later
 import NFTGeneratorPage from "@/pages/NFTGenerator/NFTGeneratorPage";
+
+// NFT CollectionPage
+import NFTCollectionPage from "@/pages/NFTCollection/NFTCollectionPage";
 
 // Public Routes - No authentication needed
 export const publicRoutes: RouteConfig[] = [
@@ -122,6 +124,14 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <NFTGeneratorPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.NFT_COLLECTION,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <NFTCollectionPage />
           </Suspense>
         ),
       },

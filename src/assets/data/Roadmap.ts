@@ -51,9 +51,9 @@ export const roadmapData: RoadmapPhase[] = [
     icon: "rocket-solid",
     items: [
       "Initial token deployment on Pump.fun platform",
+      "Establishment of initial liquidity pools",
       "Community building and early adopter rewards",
       "Launch of core prediction features",
-      "Establishment of initial liquidity pools",
     ],
   },
   {
@@ -68,6 +68,8 @@ export const roadmapData: RoadmapPhase[] = [
         items: [
           "Migration to Solana mainnet",
           "Integration with Polygon network",
+          "StarkNet integration",
+          "Base chain deployment",
           "Development of cross-chain bridges",
           "Launch of proprietary trading platform",
         ],
@@ -75,8 +77,6 @@ export const roadmapData: RoadmapPhase[] = [
       {
         subtitle: "Community Growth",
         items: [
-          "DAO structure implementation",
-          "Community governance activation",
           "Incentive programs for early adopters",
           "Migration support for Pump.fun early investors",
         ],
@@ -120,10 +120,10 @@ export const roadmapData: RoadmapPhase[] = [
       {
         subtitle: "Ecosystem Development",
         items: [
-          "StarkNet integration",
-          "Base chain deployment",
           "Partnership announcements",
           "Market maker relationships",
+          "DAO structure implementation",
+          "Community governance activation",
         ],
       },
       {
