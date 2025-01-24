@@ -1,8 +1,24 @@
-/* AIStatusContent.module.css */
 .aiStatusContent {
   color: var(--color-light-white);
   text-align: center;
   padding: var(--space-4);
+}
+
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.statusImage {
+  width: var(--space-16);
+  height: var(--space-16);
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    width: var(--space-10);
+    height: var(--space-10);
+  }
 }
 
 .title {

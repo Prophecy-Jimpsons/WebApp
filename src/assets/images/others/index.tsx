@@ -1,3 +1,4 @@
-import workInProgress from "./work-in-progress.png";
+import maintananceJimp from "./maintanance-jimp.png";
+import sleepingJimp from "./chilling-jimp.png";
 
-export { workInProgress };
+export { maintananceJimp, sleepingJimp };

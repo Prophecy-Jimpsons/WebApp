@@ -1,9 +1,18 @@
 import React from "react";
 import styles from "./AIStatusContent.module.css";
 
+import { sleepingJimp } from "@/assets/images/others";
+
 const AIStatusContent: React.FC = () => {
   return (
     <div className={styles.aiStatusContent}>
+      <div className={styles.imageContainer}>
+        <img
+          src={sleepingJimp}
+          alt="Sleeping Jimp"
+          className={styles.statusImage}
+        />
+      </div>
       <h3 className={styles.title}>
         Oops! Our AI is taking a quick digital nap! 😴💤
       </h3>
