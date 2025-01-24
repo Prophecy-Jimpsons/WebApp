@@ -115,15 +115,57 @@ const VerifyNFT: React.FC = () => {
 
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFile = e.target.files?.[0];
+  const handleFileUpload = (uploadedFile: File) => {
     if (uploadedFile) {
       setFile(uploadedFile);
       const reader = new FileReader();
       reader.onloadend = () => setPreview(reader.result as string);
       reader.readAsDataURL(uploadedFile);
-
       resetVerification();
+    }
+  };
+
+  // Functions to handle file drag and drop
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      handleFileUpload(files[0]);
+    }
+  };
+
+  // Function to trigger a click on the file input
+  const triggerFileInput = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    fileInputRef.current?.click();
+  };
+
+  // Function to cancel the file upload
+  const cancelFileUpload = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setFile(null);
+    setPreview(null);
+    resetVerification();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -242,29 +284,46 @@ const VerifyNFT: React.FC = () => {
         <h2 className={styles.verifyTitle}>Verify NFT</h2>
         <Sparkles className={styles.headerIcon} size={24} />
       </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        onChange={(e) => e.target.files && handleFileUpload(e.target.files[0])}
+        accept="image/*"
+        className={styles.fileInput}
+        style={{ display: "none" }}
+      />
+
       {preview ? (
-        <div className={styles.previewWrapper}>
-          <input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleFileUpload}
-            accept="image/*"
-            className={styles.previewInput}
+        <div
+          className={styles.previewWrapper}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+          <img
+            src={preview}
+            alt="NFT Preview"
+            className={styles.preview}
+            onClick={triggerFileInput}
           />
-          <img src={preview} alt="NFT Preview" className={styles.preview} />
+          <button
+            className={styles.cancelButton}
+            onClick={cancelFileUpload}
+            aria-label="Cancel file upload"
+          >
+            <XCircle size={24} />
+          </button>
         </div>
       ) : (
         <div
           className={styles.uploadWrapper}
-          onClick={() => fileInputRef.current?.click()}
+          onClick={triggerFileInput}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
         >
-          <input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleFileUpload}
-            accept="image/*"
-            className={styles.fileInput}
-          />
           <Upload className={styles.uploadIcon} size={64} />
           <div className={styles.uploadText}>Drop your NFT here</div>
           <div className={styles.uploadSubText}>or click to browse files</div>

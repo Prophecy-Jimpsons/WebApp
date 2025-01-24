@@ -29,6 +29,8 @@ import {
   CheckCircle,
   ArrowRight,
 } from "lucide-react";
+import Modal from "@/components/ui/Modal";
+import AIStatusContent from "../AIStatusContent";
 
 const NFTGenerator = () => {
   const { connected, publicKey } = useWallet();
@@ -40,6 +42,7 @@ const NFTGenerator = () => {
   const [verificationStatus, setVerificationStatus] = useState<string | null>(
     null,
   );
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const {
     generatedNFT,
@@ -48,6 +51,12 @@ const NFTGenerator = () => {
     generationError,
     resetGeneration,
   } = useNFTGeneration();
+
+  useEffect(() => {
+    if (generationError) {
+      setIsModalOpen(true);
+    }
+  }, [generationError]);
 
   const storeNFTData = async (imageHash: string, walletAddress: string) => {
     try {
@@ -375,7 +384,8 @@ const NFTGenerator = () => {
                   disabled={
                     !connected ||
                     isLoading ||
-                    (!prompt.trim() && !generationError)
+                    (!prompt.trim() && !generationError) ||
+                    !!inputError
                   }
                 >
                   {getButtonContent()}
@@ -383,14 +393,15 @@ const NFTGenerator = () => {
               </form>
 
               {generationError && (
-                <div
-                  className={`${styles.errorMessage} ${styles.errorContainer}`}
+                <Modal
+                  isOpen={isModalOpen}
+                  onClose={() => {
+                    setIsModalOpen(false);
+                  }}
+                  title="🛠️ AI Under Maintenance: Recharging Its Witty Circuits!"
                 >
-                  <AlertCircle size={16} />
-                  <div className={styles.errorContent}>
-                    <p>NFT generation failed. Please try again.</p>
-                  </div>
-                </div>
+                  <AIStatusContent />
+                </Modal>
               )}
             </div>
           </div>
