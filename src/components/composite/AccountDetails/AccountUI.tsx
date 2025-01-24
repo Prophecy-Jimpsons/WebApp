@@ -1,120 +1,21 @@
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
-import { RefreshCw, Trophy, Crown, Star } from "lucide-react";
-import { ConfirmedSignatureInfo } from "@solana/web3.js";
-import { useMemo, useState } from "react";
+import { RefreshCw, Star } from "lucide-react";
+import { useState } from "react";
+
+import styles from "./AccountUI.module.css";
 import {
   useGetBalance,
-  useGetTokenAccounts,
   useGetSignatures,
-} from "./AccountDataAccess";
-import styles from "./AccountUI.module.css";
+  useGetTokenAccounts,
+  useGetTxs,
+} from "@/hooks/useAccount";
+import { getDaysSinceFirstPurchase } from "@/utils/helpers";
 
-type TierInfo = {
-  level: string;
-  multiplier: number;
-  daysRequired: number;
-  icon: React.ElementType;
-};
-
-const TIER_LEVELS: TierInfo[] = [
-  {
-    level: "Diamond",
-    multiplier: 5,
-    daysRequired: 90,
-    icon: Trophy,
-  },
-  {
-    level: "Gold",
-    multiplier: 3,
-    daysRequired: 60,
-    icon: Crown,
-  },
-  {
-    level: "Silver",
-    multiplier: 2,
-    daysRequired: 30,
-    icon: Star,
-  },
-];
-
-interface TokenTransfer {
-  mint: string;
-  toUserAccount: string;
-  fromUserAccount: string;  
-  amount: number;         
-}
-
-interface TokenBalance {
-  mint: string;
-  owner: string;
-  uiAmount: number;
-}
-
-interface TransactionMeta {
-  preTokenBalances: TokenBalance[];
-  postTokenBalances: TokenBalance[];
-}
-
-interface Transaction extends ConfirmedSignatureInfo {
-  tokenTransfers?: TokenTransfer[];
-  meta?: TransactionMeta;
-}
-
-function getDaysSinceFirstPurchase(
-  transactions: Transaction[],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _address: string,
-): number {
-  // const jimpMintAddress = "8x1VMnPCSFn2TJGCTu96KufcLbbZq6XCK1XqpYH5pump";
-  const startDate = new Date("2025-01-03T00:00:00.000Z");
-
-  // Sort and filter transactions after Jan 3, 2025
-  const relevantTransactions = transactions
-    .filter((tx) => {
-      if (!tx.blockTime) return false;
-      const txDate = new Date(tx.blockTime * 1000);
-      return txDate >= startDate;
-    })
-    .sort((a, b) => (a.blockTime || 0) - (b.blockTime || 0));
-
-  console.log("Filtered transactions:", {
-    total: transactions.length,
-    filtered: relevantTransactions.length,
-  });
-
-  // Find first JIMP purchase transaction after Jan 3
-  const firstPurchase = relevantTransactions.find((tx) => {
-    console.log("Checking transaction:", {
-      date: new Date(tx.blockTime! * 1000).toISOString(),
-      signature: tx.signature,
-    });
-
-    if (tx.err) return false;
-    return true; // For now, consider any successful transaction
-  });
-
-  if (!firstPurchase || !firstPurchase.blockTime) {
-    console.log("No valid purchase found after Jan 3, 2025");
-    return 0;
-  }
-
-  const purchaseDate = new Date(firstPurchase.blockTime * 1000);
-  const today = new Date(); // 5 PM EST
-
-  today.setHours(0, 0, 0, 0);
-  
-  console.log("Date calculations:", {
-    purchaseDate: purchaseDate.toISOString(),
-    today: today.toISOString(),
-  });
-
-  const diffTime = Math.abs(today.getTime() - purchaseDate.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  console.log(`Days held: ${diffDays}`);
-
-  return diffDays;
-}
+import { TIER_LEVELS } from "./config";
+import SignatureTable from "./SignaturesTable";
+import { getTxsByToken, useSPLTransfers } from "@/hooks/useSPLTransfers";
+import TokenHistory from "./TokenHistory";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
 function LoadingBalance() {
   return (
@@ -129,31 +30,26 @@ function LoadingBalance() {
 }
 
 function TierLevel({ address }: { address: PublicKey }) {
-  const tokenQuery = useGetTokenAccounts({ address });
-  const signaturesQuery = useGetSignatures({ address });
+  const tokenMint = "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump";
+  const walletAdd = "5fiyYUBDeearyqFGvZ4VCb6z4UXhQzNsGQqFNuiNVg9V";
+  const { data: tokenAccounts, isLoading: isTokenLoading } =
+    useGetTokenAccounts({ address });
+  const { data: signatures, isLoading: isSignaturesLoading } = useGetSignatures(
+    { address },
+  );
 
-  const jimpBalance = useMemo(() => {
-    return tokenQuery.data?.find(
+  const jimpBalance =
+    tokenAccounts?.find(
       (item) =>
         item.account.data.parsed.info.mint ===
-        "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump"
+        "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
     )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0;
-  }, [tokenQuery.data]);
 
-  const daysSincePurchase = useMemo(() => {
-    if (!signaturesQuery.data) {
-      return 0;
-    }
+  const daysSincePurchase = signatures
+    ? getDaysSinceFirstPurchase(signatures, address.toString())
+    : 0;
 
-    const days = getDaysSinceFirstPurchase(
-      signaturesQuery.data,
-      address.toString(),
-    );
-
-    return days;
-  }, [signaturesQuery.data, address]);
-
-  const currentTier = useMemo(() => {
+  const currentTier = (() => {
     if (jimpBalance === 0) {
       return {
         level: "Tier 0",
@@ -170,9 +66,9 @@ function TierLevel({ address }: { address: PublicKey }) {
       return TIER_LEVELS[1]; // Gold
     }
     return TIER_LEVELS[2]; // Silver
-  }, [jimpBalance, daysSincePurchase]);
+  })();
 
-  if (tokenQuery.isLoading || signaturesQuery.isLoading) {
+  if (isTokenLoading || isSignaturesLoading) {
     return <LoadingBalance />;
   }
 
@@ -209,19 +105,25 @@ function TierLevel({ address }: { address: PublicKey }) {
 }
 
 export function AccountBalance({ address }: { address: PublicKey }) {
-  const solQuery = useGetBalance({ address });
-  const tokenQuery = useGetTokenAccounts({ address });
+  const { data: solBalance, isLoading: solLoading } = useGetBalance({
+    address,
+  });
 
-  const jimpBalance = useMemo(() => {
-    return (
-      tokenQuery.data?.find(
-        (item) =>
-          item.account.data.parsed.info.mint ===
-          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
-          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
-      )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
-    );
-  }, [tokenQuery.data]);
+  const { data: tokenAccounts, isLoading: tokenLoading } = useGetTokenAccounts({
+    address,
+  });
+
+  const jimpBalance =
+    tokenAccounts?.find(
+      (token) =>
+        token.account.data.parsed.info.mint ===
+        "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
+      "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
+    )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0;
+
+  if (solLoading || tokenLoading) {
+    return <LoadingBalance />;
+  }
 
   return (
     <>
@@ -231,16 +133,13 @@ export function AccountBalance({ address }: { address: PublicKey }) {
       <div className={styles.balanceSection}>
         <div className={styles.balanceItem}>
           <h2 className={styles.balanceLabel}>SOL Balance</h2>
-          <h1
-            className={styles.balanceTitle}
-            onClick={() => solQuery.refetch()}
-          >
-            {solQuery.isLoading ? (
+          <h1 className={styles.balanceTitle}>
+            {solLoading ? (
               <LoadingBalance />
             ) : (
               <>
-                {solQuery.data
-                  ? Math.round((solQuery.data / LAMPORTS_PER_SOL) * 100000) /
+                {solBalance
+                  ? Math.round((solBalance / LAMPORTS_PER_SOL) * 100000) /
                     100000
                   : "0"}{" "}
                 SOL
@@ -252,11 +151,7 @@ export function AccountBalance({ address }: { address: PublicKey }) {
         <div className={styles.balanceItem}>
           <h2 className={styles.balanceLabel}>JIMP Balance</h2>
           <h1 className={styles.balanceTitle}>
-            {tokenQuery.isLoading ? (
-              <LoadingBalance />
-            ) : (
-              <>{jimpBalance} JIMP</>
-            )}
+            {tokenLoading ? <LoadingBalance /> : <>{jimpBalance} JIMP</>}
           </h1>
         </div>
         <TierLevel address={address} />
@@ -265,33 +160,48 @@ export function AccountBalance({ address }: { address: PublicKey }) {
   );
 }
 
+const tokenMint = "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump";
+const walletAddress = "5fiyYUBDeearyqFGvZ4VCb6z4UXhQzNsGQqFNuiNVg9V";
+const ataAddress = "Do4A8XFQJJrb1UA5tnzcK9JkZgoFHVFpAPfFXfEAVSqf";
 export function AccountTransactions({ address }: { address: PublicKey }) {
-  const query = useGetSignatures({ address });
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState<boolean>(false);
 
-  const items = useMemo(() => {
-    if (!query.data) return [];
-    return query.data.slice(0, showAll ? undefined : 5).map((item) => ({
-      signature: item.signature,
-      slot: item.slot,
-      time: new Date((item.blockTime ?? 0) * 1000).toLocaleString(),
-      status: item.err ? "Failed" : "Success",
-    }));
-  }, [query.data, showAll]);
+  // if (splError) {
+  //   return (
+  //     <div>
+  //       <p>Error: {splError}</p>
+  //       <button onClick={fetchSPLTransfers}>Try Again</button>
+  //     </div>
+  //   );
+  // }
+
+  const ataAddPubkey = new PublicKey(ataAddress);
+
+  const {
+    data: signatures,
+    refetch,
+    isLoading,
+    isError,
+    error,
+  } = useGetSignatures({ address });
+  const { data: txs, isLoading: txsLoading } = useGetTxs({ ataAddPubkey });
+
+  console.log("txs:", txs);
+
+  const displayedSignatures = showAll
+    ? signatures || []
+    : signatures?.slice(0, 5) || [];
 
   return (
     <div className={styles.transactionsSection}>
       <div className={styles.header}>
         <h2 className={styles.title}>Transaction History</h2>
-        <button
-          className={styles.refreshButton}
-          onClick={() => query.refetch()}
-        >
+        <button className={styles.refreshButton} onClick={() => refetch()}>
           <RefreshCw size={16} />
         </button>
       </div>
 
-      {query.isLoading ? (
+      {isLoading ? (
         <div>
           {[...Array(3)].map((_, i) => (
             <div
@@ -305,46 +215,18 @@ export function AccountTransactions({ address }: { address: PublicKey }) {
             </div>
           ))}
         </div>
-      ) : query.isError ? (
+      ) : isError ? (
         <div className={styles.errorMessage}>
-          Error: {(query.error as Error)?.message || "An error occurred"}
+          Error: {(error as Error)?.message || "An error occurred"}
         </div>
-      ) : items.length === 0 ? (
+      ) : signatures.length === 0 ? (
         <div className={styles.emptyMessage}>No transactions found</div>
       ) : (
         <>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Signature</th>
-                <th>Slot</th>
-                <th>Time</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.signature}>
-                  <td style={{ fontFamily: "monospace" }}>
-                    {item.signature.slice(0, 8)}...
-                  </td>
-                  <td>{item.slot}</td>
-                  <td>{item.time}</td>
-                  <td
-                    className={
-                      item.status === "Success"
-                        ? styles.statusSuccess
-                        : styles.statusFailed
-                    }
-                  >
-                    {item.status}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <SignatureTable signatures={displayedSignatures} />
+          {/* <TokenHistory /> */}
 
-          {query.data && query.data.length > 5 && (
+          {signatures && signatures.length > 5 && (
             <div style={{ textAlign: "center", marginTop: "1rem" }}>
               <button
                 className={styles.refreshButton}
