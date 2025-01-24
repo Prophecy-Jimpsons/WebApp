@@ -1,5 +1,4 @@
 import { SERVER_BASE_URL } from "@/config/constants";
-import { clear } from "console";
 
 export interface GenerateNFTRequest {
   prompt: string;

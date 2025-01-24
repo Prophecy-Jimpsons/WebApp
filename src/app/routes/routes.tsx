@@ -18,9 +18,6 @@ const TermsOfService = lazy(
 const AccountDetails = lazy(
   () => import("@/pages/AccountDetails/AccountDetailsPage"),
 );
-const WorkInProgress = lazy(
-  () => import("@/pages/WorkInProgress/WorkInProgressPage"),
-);
 const HowToBuy = lazy(() => import("@/pages/HowToBuy/HowToBuyPage"));
 
 // Layout components should be eager loaded
@@ -51,14 +48,6 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <App />
-          </Suspense>
-        ),
-      },
-      {
-        path: PATHS.PUBLIC.MARKETPLACE,
-        element: (
-          <Suspense fallback={<LoadingSpinner />}>
-            <WorkInProgress />
           </Suspense>
         ),
       },
@@ -99,14 +88,6 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <TermsOfService />
-          </Suspense>
-        ),
-      },
-      {
-        path: PATHS.PUBLIC.WORK_IN_PROGRESS,
-        element: (
-          <Suspense fallback={<LoadingSpinner />}>
-            <WorkInProgress />
           </Suspense>
         ),
       },

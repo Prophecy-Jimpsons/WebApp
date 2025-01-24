@@ -13,8 +13,6 @@ const PATHS = {
     TERMS_OF_SERVICE: "/terms-of-service",
     WHITEPAPER: "https://jimpsons.gitbook.io/jimpsons.org",
 
-    WORK_IN_PROGRESS: "/work-in-progress",
-
     ACCOUNT_DETAILS: "/account-details",
     HOW_TO_BUY: "/how-to-buy",
     AI_NEUTRALITY:
