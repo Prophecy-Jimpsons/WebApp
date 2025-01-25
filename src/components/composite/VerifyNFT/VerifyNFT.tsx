@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Upload,
   CheckCircle,
@@ -7,9 +7,12 @@ import {
   Sparkles,
   Hash,
 } from "lucide-react";
-import styles from "./VerifyNFT.module.css";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/config/firebase";
+import { verifyIPFSContent } from "./VerifyIPFSContent";
+import { MetadataDisplay } from "./MetadataDisplay";
+import { IPFSMetadata } from "./VerifyIPFSContent";
+import styles from "./VerifyNFT.module.css";
 
 interface VerificationStep {
   status: "pending" | "processing" | "complete" | "error";
@@ -37,40 +40,28 @@ const generateImageHash = async (imageFile: File): Promise<string> => {
           const ctx = canvas.getContext("2d", { willReadFrequently: true });
           if (!ctx) throw new Error("Could not get canvas context");
 
-          // Disable image smoothing and set color space
           ctx.imageSmoothingEnabled = false;
-
-          // Draw image to canvas
           ctx.drawImage(img, 0, 0);
-
-          // Get image data
           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const data = imageData.data;
 
-          // Calculate stride (must match PowerShell's calculation)
           const width = canvas.width;
           const height = canvas.height;
           const bytesPerPixel = 3;
           const stride = Math.floor((width * bytesPerPixel + 3) / 4) * 4;
-
-          // Create a Uint8Array with stride padding
           const paddedData = new Uint8Array(stride * height);
 
-          // Copy pixels in BGR order (matching System.Drawing)
           for (let row = 0; row < height; row++) {
             const rowOffset = row * stride;
             for (let col = 0; col < width; col++) {
               const srcIdx = (row * width + col) * 4;
               const dstIdx = rowOffset + col * 3;
-
-              // Copy in BGR order to match System.Drawing
-              paddedData[dstIdx + 2] = data[srcIdx]; // B
-              paddedData[dstIdx + 1] = data[srcIdx + 1]; // G
-              paddedData[dstIdx] = data[srcIdx + 2]; // R
+              paddedData[dstIdx + 2] = data[srcIdx];
+              paddedData[dstIdx + 1] = data[srcIdx + 1];
+              paddedData[dstIdx] = data[srcIdx + 2];
             }
           }
 
-          // Generate SHA-256 hash
           const hashBuffer = await crypto.subtle.digest("SHA-256", paddedData);
           const hashArray = Array.from(new Uint8Array(hashBuffer));
           const hashHex = hashArray
@@ -96,6 +87,7 @@ const VerifyNFT: React.FC = () => {
   const [verificationStatus, setVerificationStatus] = useState<
     "idle" | "verifying" | "verified" | "not-verified"
   >("idle");
+  const [metadata, setMetadata] = useState<IPFSMetadata | null>(null);
   const [verificationSteps, setVerificationSteps] = useState<VerificationState>(
     {
       imageHash: {
@@ -113,7 +105,7 @@ const VerifyNFT: React.FC = () => {
     },
   );
 
-  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileUpload = (uploadedFile: File) => {
     if (uploadedFile) {
@@ -125,7 +117,6 @@ const VerifyNFT: React.FC = () => {
     }
   };
 
-  // Functions to handle file drag and drop
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -150,14 +141,12 @@ const VerifyNFT: React.FC = () => {
     }
   };
 
-  // Function to trigger a click on the file input
   const triggerFileInput = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
     fileInputRef.current?.click();
   };
 
-  // Function to cancel the file upload
   const cancelFileUpload = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
@@ -171,6 +160,7 @@ const VerifyNFT: React.FC = () => {
 
   const resetVerification = () => {
     setVerificationStatus("idle");
+    setMetadata(null);
     setVerificationSteps({
       imageHash: {
         status: "pending",
@@ -220,45 +210,58 @@ const VerifyNFT: React.FC = () => {
         },
       }));
 
-      // Step 2: IPFS check (simulated)
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Step 2: IPFS and Database check
+      const ipfsMetadata = await verifyIPFSContent(imageHash);
+      setMetadata(ipfsMetadata);
 
-      setVerificationSteps((prev) => ({
-        ...prev,
-        ipfsCheck: {
-          ...prev.ipfsCheck,
-          status: "complete",
-          description: "Content verified on IPFS",
-        },
-        databaseCheck: {
-          ...prev.databaseCheck,
-          status: "processing",
-          description: "Checking blockchain records...",
-        },
-      }));
-
-      // Step 3: Check database
-      const nftsRef = collection(db, "nfts");
-      const q = query(nftsRef, where("imageHash", "==", imageHash));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
+      if (ipfsMetadata) {
         setVerificationSteps((prev) => ({
           ...prev,
+          ipfsCheck: {
+            ...prev.ipfsCheck,
+            status: "complete",
+            description: `Found on IPFS: ${ipfsMetadata.ipfsCid}`,
+          },
           databaseCheck: {
             ...prev.databaseCheck,
-            status: "complete",
-            description: "Ownership verified successfully",
+            status: "processing",
+            description: "Checking blockchain records...",
           },
         }));
-        setVerificationStatus("verified");
+
+        // Step 3: Check database
+        const nftsRef = collection(db, "nfts");
+        const q = query(nftsRef, where("imageHash", "==", imageHash));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          setVerificationSteps((prev) => ({
+            ...prev,
+            databaseCheck: {
+              ...prev.databaseCheck,
+              status: "complete",
+              description: "Ownership verified successfully",
+            },
+          }));
+          setVerificationStatus("verified");
+        } else {
+          setVerificationSteps((prev) => ({
+            ...prev,
+            databaseCheck: {
+              ...prev.databaseCheck,
+              status: "error",
+              description: "No matching records found",
+            },
+          }));
+          setVerificationStatus("not-verified");
+        }
       } else {
         setVerificationSteps((prev) => ({
           ...prev,
-          databaseCheck: {
-            ...prev.databaseCheck,
+          ipfsCheck: {
+            ...prev.ipfsCheck,
             status: "error",
-            description: "No matching records found",
+            description: "Content not found on IPFS",
           },
         }));
         setVerificationStatus("not-verified");
@@ -329,6 +332,7 @@ const VerifyNFT: React.FC = () => {
           <div className={styles.uploadSubText}>or click to browse files</div>
         </div>
       )}
+
       {verificationStatus !== "idle" && (
         <div className={styles.verificationSteps}>
           {Object.entries(verificationSteps).map(([key, step]) => (
@@ -368,6 +372,9 @@ const VerifyNFT: React.FC = () => {
           ))}
         </div>
       )}
+
+      {metadata && <MetadataDisplay metadata={metadata} />}
+
       {verificationStatus === "verified" && (
         <div className={`${styles.resultContainer} ${styles.verified}`}>
           <CheckCircle size={24} />
@@ -380,6 +387,7 @@ const VerifyNFT: React.FC = () => {
           <p>NFT verification failed</p>
         </div>
       )}
+
       <div className={styles.buttonContainer}>
         {verificationStatus === "verified" ? (
           <>
