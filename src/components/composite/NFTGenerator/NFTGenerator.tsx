@@ -99,11 +99,10 @@ const NFTGenerator = () => {
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
         setVerificationStatus("verified");
-        console.log("NFT verified successfully!");
         return true;
       } else {
         setVerificationStatus("not-found");
-        console.log("NFT not found or not owned by this wallet");
+        console.warn("NFT not found or not owned by this wallet");
         return false;
       }
     } catch (error) {

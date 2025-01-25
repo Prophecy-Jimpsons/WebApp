@@ -40,8 +40,8 @@ const TIER_LEVELS: TierInfo[] = [
 interface TokenTransfer {
   mint: string;
   toUserAccount: string;
-  fromUserAccount: string;  
-  amount: number;         
+  fromUserAccount: string;
+  amount: number;
 }
 
 interface TokenBalance {
@@ -77,24 +77,14 @@ function getDaysSinceFirstPurchase(
     })
     .sort((a, b) => (a.blockTime || 0) - (b.blockTime || 0));
 
-  console.log("Filtered transactions:", {
-    total: transactions.length,
-    filtered: relevantTransactions.length,
-  });
-
   // Find first JIMP purchase transaction after Jan 3
   const firstPurchase = relevantTransactions.find((tx) => {
-    console.log("Checking transaction:", {
-      date: new Date(tx.blockTime! * 1000).toISOString(),
-      signature: tx.signature,
-    });
-
     if (tx.err) return false;
     return true; // For now, consider any successful transaction
   });
 
   if (!firstPurchase || !firstPurchase.blockTime) {
-    console.log("No valid purchase found after Jan 3, 2025");
+    console.warn("No valid purchase found after Jan 3, 2025");
     return 0;
   }
 
@@ -102,16 +92,9 @@ function getDaysSinceFirstPurchase(
   const today = new Date(); // 5 PM EST
 
   today.setHours(0, 0, 0, 0);
-  
-  console.log("Date calculations:", {
-    purchaseDate: purchaseDate.toISOString(),
-    today: today.toISOString(),
-  });
 
   const diffTime = Math.abs(today.getTime() - purchaseDate.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  console.log(`Days held: ${diffDays}`);
 
   return diffDays;
 }
@@ -133,11 +116,13 @@ function TierLevel({ address }: { address: PublicKey }) {
   const signaturesQuery = useGetSignatures({ address });
 
   const jimpBalance = useMemo(() => {
-    return tokenQuery.data?.find(
-      (item) =>
-        item.account.data.parsed.info.mint ===
-        "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump"
-    )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0;
+    return (
+      tokenQuery.data?.find(
+        (item) =>
+          item.account.data.parsed.info.mint ===
+          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
+      )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
+    );
   }, [tokenQuery.data]);
 
   const daysSincePurchase = useMemo(() => {
@@ -218,7 +203,7 @@ export function AccountBalance({ address }: { address: PublicKey }) {
         (item) =>
           item.account.data.parsed.info.mint ===
           "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
-          "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
+        "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
       )?.account.data.parsed.info.tokenAmount.uiAmount ?? 0
     );
   }, [tokenQuery.data]);

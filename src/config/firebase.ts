@@ -1,9 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// For debugging - remove in production
-console.log("Firebase Project ID:", import.meta.env.VITE_FIREBASE_PROJECT_ID);
-
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -24,7 +21,6 @@ try {
   dbInstance = getFirestore(app);
 
   // Verify database connection
-  console.log("Firestore initialized with project:", firebaseConfig.projectId);
 } catch (error) {
   console.error("Firebase initialization error:", error);
   throw error;
