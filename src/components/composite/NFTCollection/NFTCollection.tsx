@@ -15,24 +15,9 @@ const NFTCollection: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const getConnectedWallet = async () => {
-      try {
-        if (window.solana && window.solana.isPhantom) {
-          const response = await window.solana.connect({ onlyIfTrusted: true });
-          setWalletAddress(response.publicKey.toString());
-        }
-      } catch (error) {
-        console.error("Error connecting to wallet:", error);
-      }
-    };
-
-    getConnectedWallet();
-  }, []);
-
-  const fetchNFTs = async () => {
-    if (!walletAddress) {
-      setError("Please enter a wallet address");
+  const fetchNFTs = async (address: string) => {
+    if (!address) {
+      setError("No wallet address available");
       return;
     }
 
@@ -41,7 +26,7 @@ const NFTCollection: React.FC = () => {
 
     try {
       const response = await fetch(
-        "https://mainnet.helius-rpc.com/?api-key=70eef812-8d6b-496f-bc30-1725d5acb800",
+        "https://devnet.helius-rpc.com/?api-key=70eef812-8d6b-496f-bc30-1725d5acb800",
         {
           method: "POST",
           headers: {
@@ -52,7 +37,7 @@ const NFTCollection: React.FC = () => {
             id: "my-id",
             method: "getAssetsByOwner",
             params: {
-              ownerAddress: walletAddress,
+              ownerAddress: address,
               page: 1,
               limit: 9,
             },
@@ -60,10 +45,19 @@ const NFTCollection: React.FC = () => {
         },
       );
 
-      const { result } = await response.json();
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("API Response:", data);
+
+      if (!data.result?.items) {
+        throw new Error("Invalid response format");
+      }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const nftMetadata = result.items.map((item: any) => ({
+      const nftMetadata = data.result.items.map((item: any) => ({
         NFTAddress: item.id,
         OwnerAddress: item.ownership.owner,
         name: item.content?.metadata?.name,
@@ -79,6 +73,27 @@ const NFTCollection: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const getConnectedWallet = async () => {
+      try {
+        if (window.solana && window.solana.isPhantom) {
+          const response = await window.solana.connect({ onlyIfTrusted: true });
+          const address = response.publicKey.toString();
+          setWalletAddress(address);
+          fetchNFTs(address);
+        }
+      } catch (error) {
+        console.error("Error connecting to wallet:", error);
+      }
+    };
+
+    getConnectedWallet();
+  }, []);
+
+  const handleManualFetch = () => {
+    fetchNFTs(walletAddress);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -92,8 +107,12 @@ const NFTCollection: React.FC = () => {
               placeholder="Enter Wallet Address"
               className={styles.input}
             />
-            <button onClick={fetchNFTs} className={styles.button}>
-              Fetch NFTs
+            <button
+              onClick={handleManualFetch}
+              className={styles.button}
+              disabled={isLoading}
+            >
+              {isLoading ? "Loading..." : "Fetch NFTs"}
             </button>
           </div>
         </div>

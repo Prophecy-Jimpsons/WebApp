@@ -105,6 +105,7 @@
   max-width: 800px;
   margin: 0 auto;
 }
+/* ----------------------------------- */
 
 .roadmapGrid {
   display: grid;
@@ -222,7 +223,7 @@
   gap: var(--space-2);
   color: var(--color-grey);
   margin-bottom: var(--space-3);
-  font-size: var(--space-3);
+  font-size: 12px;
 }
 
 .dot {
@@ -418,4 +419,416 @@
 }
 .card:nth-child(4) {
   animation-delay: 0.4s;
+}
+
+/* --------------------------------------- */
+.roadmapGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-8);
+  padding: var(--space-16) var(--space-4);
+  position: relative;
+}
+
+.cardWrapper {
+  position: relative;
+}
+
+.card {
+  background: rgba(18, 18, 18, 0.8);
+  border-radius: var(--space-4);
+  padding: var(--space-8);
+  min-height: 400px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.progressLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  height: 0;
+  background: linear-gradient(to top, var(--color-primary), transparent);
+  transition: height 0.8s ease;
+}
+
+.card:hover .progressLine {
+  height: 100%;
+}
+
+.connectingLine {
+  position: absolute;
+  background: linear-gradient(90deg, var(--color-primary), transparent);
+  height: 2px;
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+
+.line1 {
+  width: 100%;
+  top: 50%;
+  right: -12px;
+}
+.line2 {
+  width: 100%;
+  top: 50%;
+  left: -12px;
+}
+.line3 {
+  width: 100%;
+  top: 50%;
+  right: -12px;
+}
+.line4 {
+  width: 100%;
+  top: 50%;
+  left: -12px;
+}
+
+.card:hover .connectingLine {
+  opacity: 0.3;
+  width: calc(100% + 24px);
+}
+
+.phaseNumber {
+  position: absolute;
+  right: -20px;
+  top: -30px;
+  font-size: 120px;
+  font-weight: 800;
+  opacity: 0.03;
+  color: var(--color-white);
+  transition: all 0.4s ease;
+}
+
+.card:hover .phaseNumber {
+  transform: scale(1.2) rotate(-10deg);
+  opacity: 0.05;
+}
+
+.cardContent {
+  position: relative;
+  z-index: 2;
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(252, 175, 5, 0.1);
+  margin-bottom: var(--space-4);
+}
+
+.cardHeader {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.phaseTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.phase {
+  color: var(--color-primary);
+  font-size: var(--space-4);
+  font-weight: 600;
+}
+
+.timing {
+  color: var(--color-grey);
+  font-size: var(--space-3);
+}
+
+.titleWrapper {
+  position: relative;
+  margin-bottom: var(--space-6);
+}
+
+.cardTitle {
+  color: var(--color-white);
+  font-size: var(--space-5);
+  margin-bottom: var(--space-2);
+}
+
+.titleUnderline {
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary), transparent);
+  width: 100%;
+}
+
+.itemList {
+  list-style: none;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-2);
+  margin-bottom: var(--space-2);
+  border-radius: var(--space-2);
+  transition: all 0.3s ease;
+}
+
+.item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.checkbox {
+  min-width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.completed {
+  background: var(--color-primary);
+  color: white;
+}
+
+.itemText {
+  color: var(--color-grey);
+  font-size: var(--space-3);
+  line-height: 1.5;
+}
+
+.section {
+  margin-bottom: var(--space-6);
+}
+
+.sectionTitle {
+  color: var(--color-primary);
+  font-size: var(--space-4);
+  margin-bottom: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sectionIcon {
+  font-size: 10px;
+}
+
+.progressIndicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--color-primary);
+  width: 0;
+  transition: width 0.4s ease;
+}
+
+.card:hover .progressIndicator {
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .roadmapGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .roadmapGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    min-height: auto;
+  }
+}
+
+.roadmapGrid {
+  display: grid;
+  flex-direction: column;
+  gap: var(--space-20);
+  padding: var(--space-16) var(--space-8);
+  position: relative;
+}
+
+.cardWrapper {
+  display: flex;
+  gap: var(--space-8);
+  position: relative;
+}
+
+.cardWrapper:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.line {
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
+  opacity: 0.3;
+}
+
+.dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #000;
+  position: relative;
+  z-index: 2;
+}
+
+/* Positions for 1 and 3 */
+.cardWrapper:nth-child(odd) .dot {
+  background: linear-gradient(
+    45deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  left: 0;
+}
+
+/* Positions for 2 and 4 */
+.cardWrapper:nth-child(even) .dot {
+  background: linear-gradient(
+    225deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  right: 0;
+}
+
+@media (max-width: 768px) {
+  .cardWrapper:nth-child(odd) .dot,
+  .cardWrapper:nth-child(even) .dot {
+    left: auto;
+    right: auto;
+  }
+}
+
+.card {
+  flex: 1;
+  background: rgba(18, 18, 18, 0.8);
+  border-radius: var(--space-4);
+  padding: var(--space-8);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cardGlow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--mouse-x) var(--mouse-y),
+    rgba(252, 175, 5, 0.1) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card:hover .cardGlow {
+  opacity: 1;
+}
+
+.phase {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: var(--space-5);
+  font-weight: bold;
+}
+
+.cardTitle {
+  color: #fff;
+  font-size: var(--space-6);
+  margin: var(--space-4) 0;
+  border-bottom: 2px solid rgba(252, 175, 5, 0.2);
+  padding-bottom: var(--space-4);
+}
+
+.item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  color: var(--color-grey);
+  transition: all 0.3s;
+}
+
+.item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(var(--space-2));
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.completed {
+  background: linear-gradient(
+    45deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .cardWrapper {
+    flex-direction: column !important;
+    align-items: flex-start;
+  }
+
+  .connector {
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: var(--space-4);
+  }
+
+  .line {
+    height: 2px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .item > span {
+    font-size: 1.4rem;
+  }
 }

@@ -6,6 +6,7 @@ export interface RoadmapItem {
 export interface RoadmapSection {
   subtitle: string;
   items: string[];
+  completedItems: number[];
 }
 
 export interface RoadmapPhase {
@@ -15,6 +16,7 @@ export interface RoadmapPhase {
   status: "completed" | "current" | "upcoming";
   icon: string;
   items?: string[];
+  completedItems?: number[];
   mainItems?: RoadmapSection[];
 }
 
@@ -55,6 +57,7 @@ export const roadmapData: RoadmapPhase[] = [
       "Community building and early adopter rewards",
       "Launch of core prediction features",
     ],
+    completedItems: [0, 1],
   },
   {
     phase: "Phase 2",
@@ -73,6 +76,7 @@ export const roadmapData: RoadmapPhase[] = [
           "Development of cross-chain bridges",
           "Launch of proprietary trading platform",
         ],
+        completedItems: [1, 3],
       },
       {
         subtitle: "Community Growth",
@@ -80,6 +84,7 @@ export const roadmapData: RoadmapPhase[] = [
           "Incentive programs for early adopters",
           "Migration support for Pump.fun early investors",
         ],
+        completedItems: [],
       },
     ],
   },
@@ -98,6 +103,7 @@ export const roadmapData: RoadmapPhase[] = [
           "Cross-chain trading capabilities",
           "Advanced minting mechanisms",
         ],
+        completedItems: [],
       },
       {
         subtitle: "Platform Enhancement",
@@ -107,6 +113,7 @@ export const roadmapData: RoadmapPhase[] = [
           "Enhanced security protocols",
           "Improved user interface",
         ],
+        completedItems: [],
       },
     ],
   },
@@ -125,6 +132,7 @@ export const roadmapData: RoadmapPhase[] = [
           "DAO structure implementation",
           "Community governance activation",
         ],
+        completedItems: [],
       },
       {
         subtitle: "Community Initiatives",
@@ -134,6 +142,7 @@ export const roadmapData: RoadmapPhase[] = [
           "Community events",
           "Influencer collaborations",
         ],
+        completedItems: [],
       },
     ],
   },

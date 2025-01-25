@@ -20,7 +20,7 @@ import {
 import {
   Boxes,
   Sparkles,
-  Code2,
+  Wand,
   Fingerprint,
   AlertCircle,
   RefreshCw,
@@ -346,7 +346,7 @@ const NFTGenerator = () => {
             <div className={styles.inputSection}>
               <form onSubmit={handleSubmit}>
                 <div className={styles.inputWrapper}>
-                  <Code2 className={styles.inputIcon} size={20} />
+                  <Wand className={styles.inputIcon} size={20} />
                   <textarea
                     className={`${styles.promptInput} ${
                       inputError && touched ? styles.error : ""
@@ -427,8 +427,8 @@ const NFTGenerator = () => {
           )}
         </div>
       </div>
-      <div className="styles.container">
-        <div className={styles.glassCard}>
+      <div className="styles.container_verify">
+        <div className={styles.glassCard_verify}>
           <VerifyNFT />
 
           <div className={styles.legalNotes}>

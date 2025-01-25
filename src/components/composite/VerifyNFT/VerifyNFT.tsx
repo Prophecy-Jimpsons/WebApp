@@ -284,7 +284,7 @@ const VerifyNFT: React.FC = () => {
     <div className={styles.verifyCard}>
       <div className={styles.verifyHeader}>
         <Sparkles className={styles.headerIcon} size={24} />
-        <h2 className={styles.verifyTitle}>Verify NFT</h2>
+        <h2 className={styles.verifyTitle}>Verify Your NFT</h2>
         <Sparkles className={styles.headerIcon} size={24} />
       </div>
       <input

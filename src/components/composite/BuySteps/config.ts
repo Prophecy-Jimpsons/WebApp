@@ -20,7 +20,7 @@ const steps: Step[] = [
     number: "01",
     title: "Get the Official Address",
     description:
-      "Visit jimpsons.org and copy the official Pump.fun contract address.",
+      "Visit jimpsons.org and copy the official Pump.fun contract address: D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump",
     icon: Search,
   },
   {
