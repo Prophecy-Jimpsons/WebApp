@@ -9,6 +9,7 @@ interface NFTMetadata {
   image?: string;
 }
 
+const HELIUS_API_KEY = import.meta.env.VITE_HELIUS_API;
 const NFTCollection: React.FC = () => {
   const [walletAddress, setWalletAddress] = useState("");
   const [nfts, setNfts] = useState<NFTMetadata[]>([]);
@@ -26,7 +27,7 @@ const NFTCollection: React.FC = () => {
 
     try {
       const response = await fetch(
-        "https://devnet.helius-rpc.com/?api-key=70eef812-8d6b-496f-bc30-1725d5acb800",
+        `https://devnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`,
         {
           method: "POST",
           headers: {
