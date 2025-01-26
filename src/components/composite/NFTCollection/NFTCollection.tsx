@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import styles from "./NFTCollection.module.css";
 
 interface NFTMetadata {
@@ -7,32 +7,76 @@ interface NFTMetadata {
   OwnerAddress: string;
   name?: string;
   image?: string;
+  network: "mainnet" | "devnet";
+  verified?: boolean;
+  prompt?: string;
+  ipfsHash?: string;
+}
+
+interface HeliusItem {
+  id: string;
+  ownership: {
+    owner: string;
+  };
+  content?: {
+    metadata?: {
+      name?: string;
+      description?: string;
+    };
+    files?: Array<{
+      uri?: string;
+    }>;
+    links?: {
+      image?: string;
+    };
+  };
 }
 
 const HELIUS_API_KEY = import.meta.env.VITE_HELIUS_API;
+
 const NFTCollection: React.FC = () => {
-  const [walletAddress, setWalletAddress] = useState("");
   const [nfts, setNfts] = useState<NFTMetadata[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchNFTs = async (address: string) => {
-    if (!address) {
-      setError("No wallet address available");
-      return;
+  const verifyNFT = async (nft: NFTMetadata): Promise<NFTMetadata> => {
+    try {
+      if (!nft.image?.includes("myfilebase.com")) {
+        return { ...nft, verified: false };
+      }
+
+      const ipfsHash = nft.image.split("/ipfs/")?.[1];
+      if (!ipfsHash) return { ...nft, verified: false };
+
+      const response = await fetch(
+        `https://ipfs.filebase.io/ipfs/${ipfsHash}`,
+        {
+          method: "HEAD",
+          mode: "no-cors",
+        },
+      );
+
+      return {
+        ...nft,
+        verified: !!response,
+        ipfsHash,
+      };
+    } catch (error) {
+      console.error("Verification failed:", error);
+      return { ...nft, verified: false };
     }
+  };
 
-    setIsLoading(true);
-    setError(null);
-
+  const fetchNFTsFromNetwork = async (
+    address: string,
+    network: "mainnet" | "devnet",
+  ) => {
     try {
       const response = await fetch(
-        `https://devnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`,
+        `https://${network}.helius-rpc.com/?api-key=${HELIUS_API_KEY}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             jsonrpc: "2.0",
             id: "my-id",
@@ -40,114 +84,146 @@ const NFTCollection: React.FC = () => {
             params: {
               ownerAddress: address,
               page: 1,
-              limit: 9,
+              limit: 50,
             },
           }),
         },
       );
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
       const data = await response.json();
+      if (!data.result?.items) return [];
 
-      if (!data.result?.items) {
-        throw new Error("Invalid response format");
+      const verifiedNFTs = await Promise.all(
+        (data.result.items as HeliusItem[]).map(async (item) => {
+          const baseNFT = {
+            NFTAddress: item.id,
+            OwnerAddress: item.ownership.owner,
+            name: item.content?.metadata?.name,
+            image: item.content?.files?.[0]?.uri || item.content?.links?.image,
+            network,
+            verified: false,
+          };
+          return await verifyNFT(baseNFT);
+        }),
+      );
+
+      return verifiedNFTs;
+    } catch (err) {
+      console.error(`Error fetching NFTs from ${network}:`, err);
+      return [];
+    }
+  };
+
+  const fetchAllNFTs = useCallback(async (address: string) => {
+    if (!address) return;
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const [mainnetNFTs, devnetNFTs] = await Promise.all([
+        fetchNFTsFromNetwork(address, "mainnet"),
+        fetchNFTsFromNetwork(address, "devnet"),
+      ]);
+
+      const allNFTs = [...mainnetNFTs, ...devnetNFTs];
+      setNfts(allNFTs);
+
+      if (allNFTs.length === 0) {
+        setError("No NFTs found in your wallet");
       }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const nftMetadata = data.result.items.map((item: any) => ({
-        NFTAddress: item.id,
-        OwnerAddress: item.ownership.owner,
-        name: item.content?.metadata?.name,
-        image: item.content?.files?.[0]?.uri,
-      }));
-
-      setNfts(nftMetadata);
     } catch (err) {
       console.error("Error fetching NFTs:", err);
       setError("Failed to fetch NFTs. Please try again later.");
     } finally {
       setIsLoading(false);
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const getConnectedWallet = async () => {
       try {
-        if (window.solana && window.solana.isPhantom) {
+        if (window.solana?.isPhantom) {
           const response = await window.solana.connect({ onlyIfTrusted: true });
           const address = response.publicKey.toString();
-          setWalletAddress(address);
-          fetchNFTs(address);
+          fetchAllNFTs(address);
         }
       } catch (error) {
         console.error("Error connecting to wallet:", error);
+        setError("Please connect your wallet to view NFTs");
       }
     };
 
     getConnectedWallet();
-  }, []);
-
-  const handleManualFetch = () => {
-    fetchNFTs(walletAddress);
-  };
+  }, [fetchAllNFTs]);
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-          <h1 className={styles.title}>NFT Collection</h1>
-          <div className={styles.inputWrapper}>
-            <input
-              type="text"
-              value={walletAddress}
-              onChange={(e) => setWalletAddress(e.target.value)}
-              placeholder="Enter Wallet Address"
-              className={styles.input}
-            />
-            <button
-              onClick={handleManualFetch}
-              className={styles.button}
-              disabled={isLoading}
-            >
-              {isLoading ? "Loading..." : "Fetch NFTs"}
-            </button>
-          </div>
+          <h1 className={styles.title}>Your NFT Collection</h1>
         </div>
 
         <div className={styles.content}>
           {isLoading ? (
             <div className={styles.loadingState}>
               <Loader2 className={styles.loadingIcon} />
-              <p>Loading NFTs...</p>
+              <p>Loading your NFTs...</p>
             </div>
           ) : error ? (
             <div className={styles.errorState}>
               <p className={styles.errorMessage}>{error}</p>
             </div>
-          ) : nfts.length === 0 ? (
-            <p className={styles.placeholder}>No NFTs found for this wallet</p>
           ) : (
             <div className={styles.nftGrid}>
-              {nfts.map((nft, index) => (
-                <div key={index} className={styles.nftCard}>
+              {nfts.map((nft) => (
+                <div
+                  key={`${nft.NFTAddress}-${nft.network}`}
+                  className={styles.nftCard}
+                >
+                  <div className={styles.badges}>
+                    <span
+                      className={`${styles.networkBadge} ${styles[nft.network]}`}
+                    >
+                      {nft.network}
+                    </span>
+                    <span
+                      className={`${styles.verificationBadge} ${nft.verified ? styles.verified : styles.unverified}`}
+                    >
+                      {nft.verified ? (
+                        <>
+                          <CheckCircle size={12} /> <span>Verified</span>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle size={12} /> <span>Unverified</span>
+                        </>
+                      )}
+                    </span>
+                  </div>
                   {nft.image && (
                     <img
                       src={nft.image}
                       alt={nft.name || "NFT"}
                       className={styles.nftImage}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "/placeholder-nft.png";
+                      }}
                     />
                   )}
                   <div className={styles.nftInfo}>
                     <h3 className={styles.nftName}>
                       {nft.name || "Unnamed NFT"}
                     </h3>
+                    {nft.prompt && (
+                      <p className={styles.nftPrompt}>Prompt: {nft.prompt}</p>
+                    )}
                     <p className={styles.nftAddress}>
-                      NFT Address: {nft.NFTAddress}
+                      NFT: {nft.NFTAddress.slice(0, 6)}...
+                      {nft.NFTAddress.slice(-4)}
                     </p>
-                    <p className={styles.nftOwner}>Owner: {nft.OwnerAddress}</p>
                   </div>
                 </div>
               ))}

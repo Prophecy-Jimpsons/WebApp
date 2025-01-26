@@ -1,5 +1,5 @@
 .container {
-  min-height: 100dvh;
+  /* min-height: 100dvh; */
   width: 100%;
   padding: 2rem;
   background: #0a0a14;
@@ -122,7 +122,7 @@
 .nftAddress,
 .nftOwner {
   color: #aaa;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   word-break: break-all;
   margin-top: 0.75rem;
   line-height: 1.4;
@@ -232,4 +232,224 @@
   .placeholder {
     font-size: 1.8rem;
   }
+}
+
+.networkBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.networkBadge.mainnet {
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.networkBadge.devnet {
+  background: rgba(255, 165, 0, 0.1);
+  color: #ffa500;
+  border: 1px solid rgba(255, 165, 0, 0.2);
+}
+
+.nftPrompt {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.verifiedBadge {
+  position: absolute;
+  top: 40px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.container {
+  width: 100%;
+  padding: 2rem;
+  background: var(--color-black-background);
+}
+
+.card {
+  background: rgba(10, 10, 20, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  padding: 2rem;
+  width: min(95%, 1200px);
+  margin: 0 auto;
+  box-shadow: 0 0 40px rgba(5, 104, 252, 0.1);
+  border: 1px solid rgba(252, 175, 5, 0.2);
+}
+
+.header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(252, 175, 5, 0.1);
+}
+
+.title {
+  font-size: 2rem;
+  color: var(--color-white);
+  text-align: center;
+}
+
+.nftGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.nftCard {
+  position: relative;
+  background: rgba(10, 10, 20, 0.9);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(252, 175, 5, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.nftCard:hover {
+  transform: translateY(-5px);
+}
+
+.networkBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.networkBadge.mainnet {
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.networkBadge.devnet {
+  background: rgba(255, 165, 0, 0.1);
+  color: #ffa500;
+  border: 1px solid rgba(255, 165, 0, 0.2);
+}
+
+.nftImage {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.nftInfo {
+  padding: 1rem;
+}
+
+.nftName {
+  font-size: 1.2rem;
+  color: var(--color-white);
+  margin-bottom: 0.5rem;
+}
+
+.nftPrompt {
+  font-size: 0.9rem;
+  color: var(--color-grey);
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.nftAddress {
+  color: var(--color-grey);
+  font-family: monospace;
+}
+
+.loadingState,
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--color-grey);
+}
+
+.loadingIcon {
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.errorMessage {
+  color: #ff4444;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .nftGrid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+}
+
+.verificationBadge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.verified {
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.unverified {
+  background: rgba(255, 165, 0, 0.1);
+  color: #ffa500;
+  border: 1px solid rgba(255, 165, 0, 0.2);
 }

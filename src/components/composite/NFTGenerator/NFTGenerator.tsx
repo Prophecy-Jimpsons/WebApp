@@ -106,14 +106,14 @@ const NFTGenerator = () => {
   };
 
   const handleSymbolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.toLowerCase();
+    const value = e.target.value;
     setSymbol(value);
-    const symbolPattern = /^[a-z0-9]{1,10}$/;
+    const symbolPattern = /^[a-zA-Z0-9]{1,10}$/;
     if (!value.trim()) {
       setSymbolError("Ticker cannot be empty");
       setSymbolValid(false);
     } else if (!symbolPattern.test(value)) {
-      setSymbolError("Must be 1-10 lowercase letters/numbers, no spaces");
+      setSymbolError("Must be 1-10 letters/numbers, no spaces");
       setSymbolValid(false);
     } else {
       setSymbolError("");
