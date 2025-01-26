@@ -371,6 +371,26 @@
   word-break: break-all;
 }
 
+.detailItem:last-child {
+  .hash {
+    font-family: monospace;
+    word-break: break-all;
+    color: var(--color-blue-400, 0.4);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 10px rgba(252, 175, 5, 0.3);
+  }
+
+  .hash:hover {
+    color: var(--color-secondary);
+    text-shadow:
+      0 0 10px rgba(252, 175, 5, 0.5),
+      0 0 20px rgba(252, 175, 5, 0.3);
+    transform: translateY(-1px);
+  }
+}
+
 /* Legal Notes */
 .legalNotes {
   margin-top: var(--space-8);

@@ -420,7 +420,20 @@ const NFTGenerator = () => {
                     <Fingerprint className={styles.infoIcon} size={16} />
                     IPFS Hash
                   </h3>
-                  <p className={styles.hash}>{generatedNFT.ipfs.cid}</p>
+                  {/* <p className={styles.hash}>{generatedNFT.ipfs.cid}</p> */}
+                  <p
+                    className={styles.hash}
+                    onClick={() =>
+                      window.open(
+                        generatedNFT.ipfs.url,
+                        "_blank",
+                        "noopener,noreferrer",
+                      )
+                    }
+                    style={{ cursor: "pointer" }}
+                  >
+                    {generatedNFT.ipfs.cid}
+                  </p>
                 </div>
               </div>
             </div>

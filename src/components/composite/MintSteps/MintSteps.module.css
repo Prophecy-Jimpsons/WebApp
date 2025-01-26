@@ -1,0 +1,304 @@
+.wrapper {
+  width: 100%;
+  min-height: 100vh;
+  padding: var(--space-20) 0;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0a0a14 0%, #0a051e 50%, #0f0a2a 100%);
+}
+
+.wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      circle at 20% 20%,
+      rgba(252, 175, 5, 0.015),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(139, 92, 246, 0.15),
+      transparent 40%
+    );
+  pointer-events: none;
+}
+
+.wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+      to right,
+      rgba(100, 72, 12, 0.034) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(252, 175, 5, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+  animation: gridPulse 8s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.container {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  position: relative;
+  z-index: 1;
+}
+
+.titleSection {
+  text-align: center;
+  margin-bottom: var(--space-20);
+  position: relative;
+}
+
+.mainTitle {
+  font-size: var(--space-12);
+  font-weight: 800;
+  background: linear-gradient(to right, #fcaf05, #f59e0b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(252, 175, 5, 0.3);
+  margin-bottom: var(--space-4);
+}
+
+.subtitle {
+  font-size: var(--space-6);
+  color: var(--color-white);
+  opacity: 0.9;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.stepsContainer {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-8);
+}
+
+.stepCard {
+  position: relative;
+  padding: var(--space-6);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stepCard:nth-child(1),
+.stepCard:nth-child(4) {
+  grid-column: span 7;
+}
+
+.stepCard:nth-child(2),
+.stepCard:nth-child(3) {
+  grid-column: span 5;
+}
+
+.stepCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(252, 175, 5, 0.1),
+    rgba(139, 92, 246, 0.1)
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.stepCard:hover::before {
+  opacity: 1;
+}
+
+.stepCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  border-radius: 24px;
+  background: linear-gradient(45deg, #fcaf05, #8b5cf6) border-box;
+  mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0.3;
+  transition: opacity 0.4s ease;
+}
+
+.stepCard:hover::after {
+  opacity: 1;
+}
+
+.stepNumber {
+  font-size: var(--space-8);
+  font-weight: 800;
+  background: linear-gradient(45deg, #fcaf05, #f59e0b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: var(--space-4);
+}
+
+.stepContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  height: 100%;
+}
+
+.stepCard:nth-child(even) .stepContent {
+  grid-template-columns: 1fr;
+}
+
+.textContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stepTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-white);
+  font-size: var(--space-5);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+}
+
+.stepIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #fcaf05;
+  transition: transform 0.3s ease;
+}
+
+.stepCard:hover .stepIcon {
+  transform: rotate(-10deg) scale(1.1);
+}
+
+.stepDescription {
+  color: #94a3b8;
+  font-size: var(--space-4);
+  line-height: 1.6;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border-radius: 16px;
+  overflow: hidden;
+  transform: perspective(1000px) rotateY(-5deg);
+  transform-style: preserve-3d;
+  transition: all 0.5s ease;
+}
+
+.stepCard:hover .imageContainer {
+  transform: perspective(1000px) rotateY(0);
+}
+
+.stepImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.stepCard:hover .stepImage {
+  transform: scale(1.05);
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, rgba(10, 5, 30, 0.4));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stepCard:hover .imageOverlay {
+  opacity: 1;
+}
+
+@media (max-width: 1280px) {
+  .stepCard:nth-child(n) {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 1023px) {
+  .stepCard:nth-child(n) {
+    grid-column: 1 / -1;
+  }
+
+  .stepContent {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .imageContainer {
+    height: 240px;
+  }
+}
+
+@media (max-width: 767px) {
+  .wrapper {
+    padding: var(--space-8) 0;
+  }
+
+  .mainTitle {
+    font-size: var(--space-8);
+  }
+
+  .subtitle {
+    font-size: var(--space-4);
+  }
+
+  .imageContainer {
+    height: 200px;
+  }
+}
+
+.stepCard:first-child {
+  background: rgba(255, 255, 255, 0.02);
+  transform: translateY(-5px);
+}
+
+.stepCard:first-child::before {
+  opacity: 1;
+}
+
+.stepCard:first-child::after {
+  opacity: 1;
+}
+
+.stepCard:first-child .stepIcon {
+  transform: rotate(-10deg) scale(1.1);
+}
+
+.stepCard:first-child .imageContainer {
+  transform: perspective(1000px) rotateY(0);
+}
+
+.stepCard:first-child .stepImage {
+  transform: scale(1.05);
+}
+
+.stepCard:first-child .imageOverlay {
+  opacity: 1;
+}
