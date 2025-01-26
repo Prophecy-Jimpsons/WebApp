@@ -46,8 +46,10 @@ const MintSteps = () => {
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <div className={styles.titleSection}>
-          <h2 className={styles.mainTitle}>Prophecy Creation</h2>
-          <h3 className={styles.subtitle}>Four Steps to Digital Prophecy</h3>
+          <h2 className={styles.mainTitle}>Jimpsons Playground</h2>
+          <h3 className={styles.subtitle}>
+            Four Magical Steps to <span>Jimpsons Power</span>
+          </h3>
         </div>
 
         <div className={styles.stepsContainer}>

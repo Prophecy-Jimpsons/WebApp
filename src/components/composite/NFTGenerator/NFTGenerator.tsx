@@ -356,7 +356,7 @@ const NFTGenerator = () => {
                     onBlur={handleBlur}
                     placeholder={
                       connected
-                        ? "Describe your NFT idea..."
+                        ? "Elon Musk will go to mars in 2030"
                         : "Connect wallet to start creating..."
                     }
                     disabled={!connected || isLoading}
