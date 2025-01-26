@@ -50,7 +50,6 @@ const NFTCollection: React.FC = () => {
       }
 
       const data = await response.json();
-      console.log("API Response:", data);
 
       if (!data.result?.items) {
         throw new Error("Invalid response format");
