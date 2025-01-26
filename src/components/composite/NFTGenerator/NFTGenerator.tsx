@@ -87,10 +87,10 @@ const NFTGenerator = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [generatedNFT, publicKey]);
 
-  const validateSymbol = (value: string): boolean => {
-    const symbolPattern = /^[a-z0-9]{1,10}$/;
-    return symbolPattern.test(value);
-  };
+  // const validateSymbol = (value: string): boolean => {
+  //   const symbolPattern = /^[A-Z0-9]{1,10}$/; // Now matches the uppercase pattern
+  //   return symbolPattern.test(value);
+  // };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -106,18 +106,23 @@ const NFTGenerator = () => {
   };
 
   const handleSymbolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const value = e.target.value.trim().toUpperCase();
     setSymbol(value);
-    const symbolPattern = /^[a-zA-Z0-9]{1,10}$/;
-    if (!value.trim()) {
+
+    const symbolPattern = /^[A-Z0-9]{1,10}$/;
+
+    if (!value) {
       setSymbolError("Ticker cannot be empty");
       setSymbolValid(false);
+      setInputError("Ticker cannot be empty"); // Also clear main error message
     } else if (!symbolPattern.test(value)) {
-      setSymbolError("Must be 1-10 letters/numbers, no spaces");
+      setSymbolError("Ticker must be 1-10 letters/numbers, no spaces");
       setSymbolValid(false);
+      setInputError("Ticker must be 1-10 letters/numbers, no spaces");
     } else {
-      setSymbolError("");
+      setSymbolError(""); // Clear field-specific error
       setSymbolValid(true);
+      setInputError(""); // Clear main error message
     }
     setTouched(true);
   };
@@ -141,15 +146,31 @@ const NFTGenerator = () => {
   };
 
   const validateInputs = (): string => {
-    if (!name.trim()) return "Prediction cannot be empty";
-    if (!symbol.trim()) return "Ticker cannot be empty";
-    if (!validateSymbol(symbol))
-      return "Ticker must be 1-10 lowercase letters/numbers, no spaces";
-    if (!description.trim()) return "Description cannot be empty";
-    if (description.length > 200)
+    if (!name.trim()) {
+      setInputError("Prediction cannot be empty");
+      return "Prediction cannot be empty";
+    }
+    if (!symbol.trim()) {
+      setInputError("Ticker cannot be empty");
+      return "Ticker cannot be empty";
+    }
+    const symbolPattern = /^[A-Z0-9]{1,10}$/;
+    if (!symbolPattern.test(symbol)) {
+      setInputError("Ticker must be 1-10 letters/numbers, no spaces");
+      return "Ticker must be 1-10 letters/numbers, no spaces";
+    }
+    if (!description.trim()) {
+      setInputError("Description cannot be empty");
+      return "Description cannot be empty";
+    }
+    if (description.length > 200) {
+      setInputError("Description must be less than 200 characters");
       return "Description must be less than 200 characters";
+    }
+    setInputError(""); // Clear error if all validations pass
     return "";
   };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!connected) return;

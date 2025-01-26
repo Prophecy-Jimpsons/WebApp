@@ -32,8 +32,8 @@ interface HeliusItem {
   };
 }
 
-const HELIUS_API_KEY =
-  process.env.VITE_HELIUS_API || import.meta.env.VITE_HELIUS_API;
+// const HELIUS_API_KEY =
+//   process.env.VITE_HELIUS_API || import.meta.env.VITE_HELIUS_API;
 
 const NFTCollection: React.FC = () => {
   const [nfts, setNfts] = useState<NFTMetadata[]>([]);
@@ -74,7 +74,7 @@ const NFTCollection: React.FC = () => {
   ) => {
     try {
       const response = await fetch(
-        `https://${network}.helius-rpc.com/?api-key=${HELIUS_API_KEY}`,
+        `https://${network}.helius-rpc.com/?api-key=70eef812-8d6b-496f-bc30-1725d5acb800`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
