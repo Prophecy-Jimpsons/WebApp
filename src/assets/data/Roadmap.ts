@@ -146,6 +146,7 @@ export const roadmapData: RoadmapPhase[] = [
           "Establish tokenomics structure",
           "Deploy smart contracts",
           "Complete security audits",
+          "Multiple chain integration",
         ],
         completedItems: [],
       },

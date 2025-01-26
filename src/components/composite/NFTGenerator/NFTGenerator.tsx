@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import styles from "./NFTGenerator.module.css";
@@ -7,7 +7,6 @@ import { useNFTGeneration } from "@/hooks/useNFTGeneration";
 import { db } from "@/config/firebase";
 import VerifyNFT from "../VerifyNFT/VerifyNFT";
 import { Link } from "react-router-dom";
-
 import {
   collection,
   addDoc,
@@ -16,11 +15,9 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-
 import {
   Boxes,
   Sparkles,
-  Wand,
   Fingerprint,
   AlertCircle,
   RefreshCw,
@@ -31,26 +28,33 @@ import {
 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import AIStatusContent from "../AIStatusContent";
+import { SERVER_BASE_URL } from "@/config/constants";
 
 const NFTGenerator = () => {
   const { connected, publicKey } = useWallet();
-  const [prompt, setPrompt] = useState("");
-  const [inputError, setInputError] = useState("");
-  const [touched, setTouched] = useState(false);
-  const [hasAttempted, setHasAttempted] = useState(false);
-  const [storeError, setStoreError] = useState<string | null>(null);
+  const [name, setName] = useState<string>("");
+  const [symbol, setSymbol] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [inputError, setInputError] = useState<string>("");
+  const [touched, setTouched] = useState<boolean>(false);
+  const [hasAttempted, setHasAttempted] = useState<boolean>(false);
   const [verificationStatus, setVerificationStatus] = useState<string | null>(
     null,
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [symbolValid, setSymbolValid] = useState<boolean>(false);
+  const [nameValid, setNameValid] = useState<boolean>(false);
+  const [descriptionValid, setDescriptionValid] = useState<boolean>(false);
+  const [nameError, setNameError] = useState<string>("");
+  const [symbolError, setSymbolError] = useState<string>("");
+  const [descriptionError, setDescriptionError] = useState<string>("");
+  const [metadata, setMetadata] = useState<{ cid: string; url: string } | null>(
+    null,
+  );
+  const [isGeneratingMetadata, setIsGeneratingMetadata] = useState(false);
 
-  const {
-    generatedNFT,
-    nftGenerate,
-    isLoading,
-    generationError,
-    resetGeneration,
-  } = useNFTGeneration();
+  const { generatedNFT, nftGenerate, isLoading, generationError } =
+    useNFTGeneration();
 
   useEffect(() => {
     if (generationError) {
@@ -69,23 +73,98 @@ const NFTGenerator = () => {
         ipfsUrl: generatedNFT?.ipfs.url,
         createdAt: serverTimestamp(),
       });
-
       console.log("NFT data stored successfully with ID:", docRef.id);
-      setStoreError(null);
     } catch (error) {
       console.error("Error storing NFT data:", error);
-      setStoreError("Failed to store NFT data");
     }
   };
 
-  // Effect to handle NFT generation response
   useEffect(() => {
     if (generatedNFT && publicKey) {
-      // Store data when NFT is generated and wallet is connected
       storeNFTData(generatedNFT["Image hash"], publicKey.toString());
+      generateMetadata(); // Call here
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [generatedNFT, publicKey]);
+
+  const validateSymbol = (value: string): boolean => {
+    const symbolPattern = /^[a-z0-9]{1,10}$/;
+    return symbolPattern.test(value);
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setName(value);
+    if (!value.trim()) {
+      setNameError("Prediction cannot be empty");
+      setNameValid(false);
+    } else {
+      setNameError("");
+      setNameValid(true);
+    }
+    setTouched(true);
+  };
+
+  const handleSymbolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase();
+    setSymbol(value);
+    const symbolPattern = /^[a-z0-9]{1,10}$/;
+    if (!value.trim()) {
+      setSymbolError("Ticker cannot be empty");
+      setSymbolValid(false);
+    } else if (!symbolPattern.test(value)) {
+      setSymbolError("Must be 1-10 lowercase letters/numbers, no spaces");
+      setSymbolValid(false);
+    } else {
+      setSymbolError("");
+      setSymbolValid(true);
+    }
+    setTouched(true);
+  };
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    const value = e.target.value;
+    setDescription(value);
+    if (!value.trim()) {
+      setDescriptionError("Description cannot be empty");
+      setDescriptionValid(false);
+    } else if (value.length > 200) {
+      setDescriptionError("Must be less than 200 characters");
+      setDescriptionValid(false);
+    } else {
+      setDescriptionError("");
+      setDescriptionValid(true);
+    }
+    setTouched(true);
+  };
+
+  const validateInputs = (): string => {
+    if (!name.trim()) return "Prediction cannot be empty";
+    if (!symbol.trim()) return "Ticker cannot be empty";
+    if (!validateSymbol(symbol))
+      return "Ticker must be 1-10 lowercase letters/numbers, no spaces";
+    if (!description.trim()) return "Description cannot be empty";
+    if (description.length > 200)
+      return "Description must be less than 200 characters";
+    return "";
+  };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!connected) return;
+
+    const error = validateInputs();
+    if (error) {
+      setInputError(error);
+      setTouched(true);
+      return;
+    }
+
+    setHasAttempted(true);
+    const prompt = `${name} | ${symbol.toUpperCase()} | ${description}`;
+    nftGenerate(prompt);
+  };
 
   const verifyNFT = async (imageHash: string, walletAddress: string) => {
     try {
@@ -102,11 +181,10 @@ const NFTGenerator = () => {
         return true;
       } else {
         setVerificationStatus("not-found");
-        console.warn("NFT not found or not owned by this wallet");
         return false;
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Error verifying NFT:", error);
       setVerificationStatus("error");
       return false;
     }
@@ -126,95 +204,7 @@ const NFTGenerator = () => {
       window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
       console.error("Error downloading NFT:", error);
-      setStoreError("Failed to download NFT");
     }
-  };
-
-  const validatePrompt = (value: string): string => {
-    if (!value.trim()) return "Prompt cannot be empty";
-    const textOnlyPattern = /^[a-zA-Z0-9\s.,!?'"()-]+$/;
-    const isValid = textOnlyPattern.test(value);
-    if (!isValid)
-      return "Prompt can only contain letters, numbers, and basic punctuation";
-    if (value.length < 3) return "Prompt must be at least 3 characters";
-    if (value.length > 500) return "Prompt must be less than 500 characters";
-    return "";
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const newPrompt = e.target.value;
-    setPrompt(newPrompt);
-    if (touched) {
-      setInputError(validatePrompt(newPrompt));
-    }
-    if (generationError) {
-      resetGeneration();
-    }
-  };
-
-  const handleBlur = () => {
-    setTouched(true);
-    setInputError(validatePrompt(prompt));
-  };
-
-  const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!connected) return;
-
-    const error = validatePrompt(prompt);
-    if (error) {
-      setInputError(error);
-      setTouched(true);
-      return;
-    }
-
-    setHasAttempted(true);
-    nftGenerate(prompt);
-  };
-
-  const getButtonContent = () => {
-    if (!connected) {
-      return (
-        <>
-          <Wallet className={styles.buttonIcon} size={20} />
-          Connect Wallet to Generate
-        </>
-      );
-    }
-
-    if (isLoading) {
-      return (
-        <>
-          <RefreshCw className={styles.spinIcon} size={20} />
-          Generating...
-        </>
-      );
-    }
-
-    if (generationError) {
-      return (
-        <>
-          <Sparkles className={styles.buttonIcon} size={20} />
-          Generate Again
-        </>
-      );
-    }
-
-    if (generatedNFT) {
-      return (
-        <>
-          <Sparkles className={styles.buttonIcon} size={20} />
-          Generate New NFT
-        </>
-      );
-    }
-
-    return (
-      <>
-        <Sparkles className={styles.buttonIcon} size={20} />
-        Generate NFT
-      </>
-    );
   };
 
   const renderPreviewContent = () => {
@@ -250,7 +240,7 @@ const NFTGenerator = () => {
           <div className={styles.errorPreview}>
             <AlertCircle size={48} className={styles.errorIcon} />
             <p>Unable to generate NFT</p>
-            <p className={styles.hint}>Please try adjusting your prompt</p>
+            <p className={styles.hint}>Please try adjusting your inputs</p>
           </div>
         </div>
       );
@@ -310,10 +300,40 @@ const NFTGenerator = () => {
         <Boxes size={64} />
         <p>Your NFT preview will appear here</p>
         {hasAttempted && (
-          <p className={styles.hint}>Type your prompt and click Generate</p>
+          <p className={styles.hint}>Fill in the details and click Generate</p>
         )}
       </div>
     );
+  };
+
+  const generateMetadata = async () => {
+    try {
+      setIsGeneratingMetadata(true);
+      const metadataPayload = {
+        name,
+        symbol: symbol.toUpperCase(),
+        description,
+        wallet_address: publicKey?.toString(),
+        ipfs_url: generatedNFT?.ipfs.url,
+      };
+
+      const response = await fetch(`${SERVER_BASE_URL}/generate-metadata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(metadataPayload),
+      });
+
+      const data = await response.json();
+      if (data.status === "success") {
+        setMetadata(data.metadata_uri);
+      }
+    } catch (error) {
+      console.error("Error generating metadata:", error);
+    } finally {
+      setIsGeneratingMetadata(false);
+    }
   };
 
   return (
@@ -345,22 +365,68 @@ const NFTGenerator = () => {
 
             <div className={styles.inputSection}>
               <form onSubmit={handleSubmit}>
-                <div className={styles.inputWrapper}>
-                  <Wand className={styles.inputIcon} size={20} />
-                  <textarea
-                    className={`${styles.promptInput} ${
-                      inputError && touched ? styles.error : ""
-                    }`}
-                    value={prompt}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder={
-                      connected
-                        ? "Elon Musk will go to mars in 2030"
-                        : "Connect wallet to start creating..."
-                    }
+                <div className={styles.formGroup}>
+                  <label className={styles.inputLabel}>
+                    Enter Your Prediction
+                  </label>
+                  <input
+                    type="text"
+                    className={`${styles.inputField} 
+      ${nameError && touched ? styles.error : ""} 
+      ${nameValid && touched ? styles.valid : ""}`}
+                    placeholder="Example: Bitcoin will reach $100K by Dec 2024"
+                    value={name}
+                    onChange={handleNameChange}
                     disabled={!connected || isLoading}
                   />
+                  {nameError && touched && (
+                    <div className={styles.fieldError}>
+                      <AlertCircle size={12} />
+                      {nameError}
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.inputLabel}>
+                    Prediction Ticker / Token Symbol
+                  </label>
+                  <input
+                    type="text"
+                    className={`${styles.inputField} 
+      ${symbolError && touched ? styles.error : ""} 
+      ${symbolValid && touched ? styles.valid : ""}`}
+                    placeholder="Example: btc100k"
+                    value={symbol}
+                    onChange={handleSymbolChange}
+                    maxLength={10}
+                    disabled={!connected || isLoading}
+                  />
+                  {symbolError && touched && (
+                    <div className={styles.fieldError}>
+                      <AlertCircle size={12} />
+                      {symbolError}
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.inputLabel}>Brief Description</label>
+                  <textarea
+                    className={`${styles.descriptionField} 
+      ${descriptionError && touched ? styles.error : ""} 
+      ${descriptionValid && touched ? styles.valid : ""}`}
+                    placeholder="Brief details about your prediction"
+                    value={description}
+                    onChange={handleDescriptionChange}
+                    disabled={!connected || isLoading}
+                  />
+                  {descriptionError && touched && (
+                    <div className={styles.fieldError}>
+                      <AlertCircle size={12} />
+                      {descriptionError}
+                    </div>
+                  )}
                 </div>
 
                 {inputError && touched && (
@@ -370,33 +436,35 @@ const NFTGenerator = () => {
                   </div>
                 )}
 
-                {storeError && (
-                  <div className={styles.errorMessage}>
-                    <AlertCircle size={16} />
-                    {storeError}
-                  </div>
-                )}
-
                 <button
                   className={styles.generateButton}
                   type="submit"
                   disabled={
                     !connected ||
                     isLoading ||
-                    (!prompt.trim() && !generationError) ||
-                    !!inputError
+                    !nameValid ||
+                    !symbolValid ||
+                    !descriptionValid
                   }
                 >
-                  {getButtonContent()}
+                  {isLoading ? (
+                    <>
+                      <RefreshCw className={styles.spinIcon} size={20} />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className={styles.buttonIcon} size={20} />
+                      Generate NFT
+                    </>
+                  )}
                 </button>
               </form>
 
               {generationError && (
                 <Modal
                   isOpen={isModalOpen}
-                  onClose={() => {
-                    setIsModalOpen(false);
-                  }}
+                  onClose={() => setIsModalOpen(false)}
                   title="🛠️ AI Under Maintenance: Recharging Its Witty Circuits!"
                 >
                   <AIStatusContent />
@@ -420,30 +488,47 @@ const NFTGenerator = () => {
                     <Fingerprint className={styles.infoIcon} size={16} />
                     IPFS Hash
                   </h3>
-                  {/* <p className={styles.hash}>{generatedNFT.ipfs.cid}</p> */}
                   <p
                     className={styles.hash}
-                    onClick={() =>
-                      window.open(
-                        generatedNFT.ipfs.url,
-                        "_blank",
-                        "noopener,noreferrer",
-                      )
-                    }
-                    style={{ cursor: "pointer" }}
+                    onClick={() => window.open(generatedNFT.ipfs.url, "_blank")}
                   >
                     {generatedNFT.ipfs.cid}
                   </p>
                 </div>
+                {isGeneratingMetadata ? (
+                  <div className={styles.detailItem}>
+                    <h3>
+                      <RefreshCw
+                        className={`${styles.spinIcon} ${styles.infoIcon}`}
+                        size={16}
+                      />
+                      Generating Metadata...
+                    </h3>
+                  </div>
+                ) : (
+                  metadata && (
+                    <div className={styles.detailItem}>
+                      <h3>
+                        <Fingerprint className={styles.infoIcon} size={16} />
+                        Metadata URI
+                      </h3>
+                      <p
+                        className={styles.hash}
+                        onClick={() => window.open(metadata.url, "_blank")}
+                      >
+                        {metadata.cid}
+                      </p>
+                    </div>
+                  )
+                )}
               </div>
             </div>
           )}
         </div>
       </div>
-      <div className="styles.container_verify">
+      <div className={styles.container_verify}>
         <div className={styles.glassCard_verify}>
           <VerifyNFT />
-
           <div className={styles.legalNotes}>
             <p>
               No intellectual property rights are infringed in the generation of

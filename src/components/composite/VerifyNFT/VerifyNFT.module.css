@@ -6,7 +6,7 @@
   border-radius: var(--space-5);
   padding: var(--space-8);
   width: 100%;
-  margin-top: var(--space-8);
+  /* margin-top: var(--space-8); */
 }
 
 .verifyHeader {
@@ -496,9 +496,9 @@
   .verifyCard {
     padding: var(--space-8);
   }
-  .verifyTitle {
+  /* .verifyTitle {
     font-size: var(--space-8);
-  }
+  } */
 }
 
 /* Slightly smaller screens */
