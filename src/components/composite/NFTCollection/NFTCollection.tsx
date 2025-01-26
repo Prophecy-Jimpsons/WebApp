@@ -32,7 +32,8 @@ interface HeliusItem {
   };
 }
 
-const HELIUS_API_KEY = import.meta.env.VITE_HELIUS_API;
+const HELIUS_API_KEY =
+  process.env.VITE_HELIUS_API || import.meta.env.VITE_HELIUS_API;
 
 const NFTCollection: React.FC = () => {
   const [nfts, setNfts] = useState<NFTMetadata[]>([]);

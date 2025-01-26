@@ -72,7 +72,7 @@ const AnnouncementBanner: FC<AnnouncementBannerProps> = ({
           <Send className={styles.icon} size={20} />
           <span>
             🎮 <span className={styles.highlight}>Telegram Game</span> unleased
-            beta version of JIMP 4x4 tic-tac-toe
+            beta version of JIMP tic-tac-toe
           </span>
         </a>
         <button
