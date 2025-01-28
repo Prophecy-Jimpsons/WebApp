@@ -1,5 +1,7 @@
 # 🔮 ProphecyJimpsons
 
+https://jimpsons.org 
+
 ProphecyJimpsons is a revolutionary multi-chain platform for creating, trading, and verifying predictive NFTs. Turn your crystal ball gazing into crypto with zero-cost minting, AI-generated art, and cross-chain compatibility.
 
 ## 🚀 Features
