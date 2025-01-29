@@ -1,0 +1,89 @@
+.tableContainer {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-2); /* Space for scrollbar */
+}
+
+/* Custom scrollbar for the table container */
+.tableContainer::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+  background: var(--color-thin-grey);
+  border-radius: 2px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+  background: var(--color-grey);
+  border-radius: 2px;
+}
+
+.table {
+  width: 100%;
+  min-width: min-content;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--space-2);
+}
+
+.table th,
+.table td {
+  padding: var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.table th {
+  color: var(--color-white);
+  font-size: large;
+  font-weight: 500;
+}
+
+.table td {
+  color: var(--color-grey);
+}
+
+.signatureCell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  padding: 0;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.copyButton:hover {
+  opacity: 1;
+}
+
+.copyIcon {
+  display: flex;
+  align-items: center;
+}
+
+.success,
+.failed {
+  color: var(--color-black);
+  border-radius: var(--space-3);
+  padding: var(--space-2);
+  font-size: var(--space-3);
+  font-weight: 500;
+}
+.success {
+  background-color: var(--color-primary);
+}
+
+.failed {
+  background-color: var(--color-danger);
+}

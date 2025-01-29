@@ -1,8 +1,8 @@
-import { FC } from "react";
-import { useWallet } from '@solana/wallet-adapter-react'
-import MainLayout from "../../layouts/MainLayout/MainLayout";
-import { AccountBalance, AccountTransactions } from "@/components/composite/AccountDetails";
+import { AccountDetail } from "@/components/composite/AccountDetails";
 import styles from "@/components/composite/AccountDetails/AccountUI.module.css";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { FC } from "react";
+import MainLayout from "../../layouts/MainLayout/MainLayout";
 
 const AccountDetails: FC = () => {
   const { publicKey } = useWallet();
@@ -23,9 +23,7 @@ const AccountDetails: FC = () => {
     <MainLayout>
       <div className={styles.container}>
         <div className={styles.content}>
-          <AccountBalance address={publicKey} />
-          
-          <AccountTransactions address={publicKey} />
+          <AccountDetail address={publicKey} />
         </div>
       </div>
     </MainLayout>

@@ -3,6 +3,7 @@ import styles from "./TierLevel.module.css";
 import { ParsedTransactionWithMeta, PublicKey } from "@solana/web3.js";
 import { getDaysSinceFirstPurchase } from "@/utils/helpers";
 import { TIER_LEVELS } from "./config";
+import { Card } from "./Card";
 
 interface TierInfoProps {
   address: PublicKey;
@@ -40,67 +41,49 @@ export default function TierLevel({
     return TIER_LEVELS[2]; // Silver
   })();
 
-
   return (
-    <div className={styles.tierSection}>
-      <h2 className={styles.tierTitle}>HODL Tier Level</h2>
-      <div className={`${styles.tierCard} ${isLoading ? styles.loading : ""}`}>
+    <Card title="HODL Tier Level">
+      <div className={styles.tierSection}>
         <div className={styles.tierHeader}>
-          {isLoading ? (
-            <div className={styles.loadingIcon} />
-          ) : (
-            <currentTier.icon size={24} className={styles.tierIcon} />
-          )}
-          <h3>
-            {isLoading ? (
-              <div className={styles.loadingText} />
-            ) : (
-              currentTier.level
-            )}
-          </h3>
+          <currentTier.icon size={24} className={styles.tierIcon} />
+          <h3>{currentTier.level}</h3>
         </div>
         <div className={styles.tierDetails}>
-          <p>
-            {isLoading ? (
-              <div className={styles.loadingText} />
-            ) : (
-              `Reward Multiplier: ${currentTier.multiplier}X`
-            )}
-          </p>
+          <p>Reward Multiplier: {currentTier.multiplier}X</p>
           {currentTier.level !== "Tier 0" && (
             <>
               <p>
-                {isLoading ? (
-                  <div className={styles.loadingText} />
-                ) : (
-                  `Required Days: ${currentTier.daysRequired}+`
-                )}
+                Required Days: <span>{currentTier.daysRequired}+ </span> days
               </p>
+
               <p>
+                Days Held:{" "}
                 {isLoading ? (
-                  <div className={styles.loadingText} />
+                  <span className={styles.loading}>00</span>
                 ) : (
-                  `Days Held: ${daysSincePurchase}`
-                )}
+                  daysSincePurchase.toString()
+                )}{" "}
+                days
               </p>
             </>
           )}
         </div>
         {currentTier.level !== "Tier 0" && (
           <div className={styles.tierProgress}>
-            {isLoading ? (
-              <div className={styles.loadingProgressBar} />
-            ) : (
+            {isLoading && (
               <div
-                className={styles.progressBar}
-                style={{
-                  width: `${(daysSincePurchase / currentTier.daysRequired) * 100}%`,
-                }}
+                className={`${styles.loadingProgressBar} ${styles.loading}`}
               />
             )}
+            <div
+              className={styles.progressBar}
+              style={{
+                width: `${(daysSincePurchase / currentTier.daysRequired) * 100}%`,
+              }}
+            />
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

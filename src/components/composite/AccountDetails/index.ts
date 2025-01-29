@@ -1,5 +1,1 @@
-export { 
-    AccountBalance,
-    AccountTransactions 
-  } from './AccountUI'
-  
+export { AccountDetail } from "./AccountUI";

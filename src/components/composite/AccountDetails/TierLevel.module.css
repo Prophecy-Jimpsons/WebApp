@@ -2,29 +2,16 @@
   margin-bottom: var(--space-8);
   background: rgba(0, 0, 0, 0.2);
   border-radius: var(--space-4);
-  padding: var(--space-4);
   width: 80%;
   margin: 0 auto;
-}
-
-.tierTitle {
-  font-size: var(--space-5);
-  color: var(--color-white);
-  margin-bottom: var(--space-4);
-}
-
-.tierCard {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--space-4);
-  padding: var(--space-4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tierHeader {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  margin: var(--space-4) 0;
 }
 
 .tierHeader h3 {
@@ -42,7 +29,7 @@
 }
 
 .tierDetails p {
-  color: var(--color-grey);
+  color: var(--color-white);
   margin-bottom: var(--space-2);
   font-size: var(--space-4);
 }
@@ -67,24 +54,9 @@
   animation: pulse 1.5s infinite;
 }
 
-.loadingIcon {
-  width: var(--space-6);
-  height: var(--space-6);
-  border-radius: 50%;
-  background-color: var(--color-thin-grey);
-}
-
-.loadingText {
-  height: var(--space-4);
-  background-color: var(--color-thin-grey);
-  border-radius: var(--space-1);
-  margin: var(--space-2) 0;
-  width: 70%;
-}
-
 .loadingProgressBar {
   height: 100%;
-  background-color: var(--color-thin-grey);
+  background-color: var(--color-grey);
   border-radius: 2px;
   width: 100%;
 }

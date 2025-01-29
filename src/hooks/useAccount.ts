@@ -1,167 +1,111 @@
 import {
-  getAccount,
-  getMint,
-  TOKEN_2022_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddress,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import {
-  Connection,
-  ParsedTransactionWithMeta,
-  PublicKey,
-} from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
 
-// Use Alchemy endpoint for better reliability
-// const connection = new Connection(
-//   "https://solana-mainnet.g.alchemy.com/v2/Q9hG9amWf8wxM9S8od2WfcsqF9TvhIn1",
-//   "confirmed",
-// );
+const syndicaHostUrl = import.meta.env.VITE_MAINNET_SYNDICA_HOST_URL;
 
-const connection = new Connection(
-  "https://hidden-sparkling-layer.solana-devnet.quiknode.pro/1be62921eb289ad9ca82d198727bfce355d225c4/",
-  "confirmed",
-);
+const connection = new Connection(syndicaHostUrl, "confirmed");
 
-const connection2 = new Connection(
-  "https://go.getblock.io/5042a92f574145edb15f4c567848d2e4",
-  "confirmed",
-);
-
-const connection3 = new Connection(
-  "https://solana-mainnet.api.syndica.io/api-key/3RUqQ1hDkbrXkK9Ptnid8uE9tYXSgZzrwcnozwefj2qUqXmEgZg68zt6HQ8Y8v4gvYDDf2e4ZaAnox5YrdLFAwb2qsdtpzq266b",
-  "confirmed",
-);
-console.log("connection", connection);
-console.log("connection2", connection2);
-console.log("connection3", connection3);
-
+// Fetch the balance of a given solana address
 export function useGetBalance({ address }: { address: PublicKey }) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-balance", address.toString()],
     queryFn: async () => {
       try {
-        return await connection3.getBalance(address);
+        return await connection.getBalance(address);
       } catch (error) {
         console.error("Error fetching balance:", error);
         throw error;
       }
     },
     enabled: !!address,
-    refetchInterval: 10000,
+    refetchInterval: 1000 * 30, // Refetch every 30 seconds
+    staleTime: 1000 * 60, // Data is fresh for 1 minute
+    retry: 2, // Retry failed requests 2 times
   });
   return { data, isLoading, error };
 }
 
-// async function getTokenBalanceSpl(connection, tokenAccount) {
-//   const info = await getAccount(connection, tokenAccount);
-//   const amount = Number(info.amount);
-//   const mint = await getMint(connection, info.mint);
-//   const balance = amount / 10 ** mint.decimals;
-//   console.log("Balance (using Solana-Web3.js): ", balance);
-//   return balance;
-// }
-
-// getTokenBalanceSpl(SOLANA_CONNECTION, TOKEN_ADDRESS).catch((err) =>
-//   console.log(err),
-// );
-export function useGetTokenAccounts({ address }: { address: PublicKey }) {
-  return useQuery({
-    queryKey: ["get-token-accounts", address.toString()],
+//Fetch token information (e.g., token accounts) for a Solana account.
+export function useGetTokenInfo({ address }: { address: PublicKey }) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["get-token-info", address.toString()],
     queryFn: async () => {
       try {
-        const [tokenAccounts, token2022Accounts] = await Promise.all([
-          connection3.getParsedTokenAccountsByOwner(address, {
-            programId: TOKEN_PROGRAM_ID,
-          }),
-          connection3.getParsedTokenAccountsByOwner(address, {
-            programId: TOKEN_2022_PROGRAM_ID,
-          }),
-        ]);
-        return [...tokenAccounts.value, ...token2022Accounts.value];
+        return await connection.getParsedTokenAccountsByOwner(address, {
+          programId: TOKEN_PROGRAM_ID,
+        });
       } catch (error) {
-        console.error("Error fetching token accounts:", error);
+        console.error("Error fetching token info:", error);
         throw error;
       }
     },
     enabled: !!address,
-    refetchInterval: 10000,
+    retry: 2, // Retry failed requests 3 times
+    staleTime: 1000 * 60 * 5, // Data is fresh for 5 minutes
+    refetchInterval: 1000 * 60 * 10, // Refetch every 10 minutes
+  });
+  return { data, isLoading, error };
+}
+
+// Fetch the Associated Token Account (ATA) for a given mint and owner.
+export function useGetATA(mint?: string, address?: PublicKey) {
+  return useQuery({
+    queryKey: ["ata", mint, address?.toBase58()],
+    queryFn: async () => {
+      if (!mint || !address) {
+        throw new Error("Missing required parameters");
+      }
+      const tokenAccount = await getAssociatedTokenAddress(
+        new PublicKey(mint),
+        address,
+        true,
+        TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+      );
+      return tokenAccount.toString();
+    },
+    enabled: !!mint && !!address,
+    staleTime: 1000 * 60 * 60, // Data is fresh for 1 hour
+    refetchOnWindowFocus: false, // No need to refetch
+    refetchOnMount: false, // No need to refetch
   });
 }
 
-export function useGetSignatures({ address }: { address: PublicKey }) {
+// Fetch transaction history for a given Associated Token Account (ATA).
+export function useGetTxs({ ata }: { ata: string }) {
   return useQuery({
-    queryKey: ["get-signatures", address.toString()],
+    queryKey: ["get-txs", ata],
     queryFn: async () => {
       try {
-        const signatures = await connection.getSignaturesForAddress(address, {
-          limit: 1000,
-        });
-        console.log("signatures call to blockchain", signatures);
+        const signatures = await connection.getSignaturesForAddress(
+          new PublicKey(ata),
+          {
+            limit: 1000,
+          },
+        );
 
-        const transactions = await connection.getTransactions(
+        const txs = await connection.getTransactions(
           signatures.map((sig) => sig.signature),
           { maxSupportedTransactionVersion: 0 },
         );
-        console.log("transactions", transactions);
-        return signatures;
+
+        return txs;
       } catch (error) {
-        console.error("Error fetching signatures:", error);
+        console.error("Error fetching data:", error);
         throw error;
       }
     },
-    enabled: !!address,
-  });
-}
-
-export function useGetTxs({ ataAddPubkey }: { ataAddPubkey: PublicKey }) {
-  return useQuery({
-    queryKey: ["get-txs", ataAddPubkey.toString()],
-    queryFn: async () => {
-      const maxRetries = 3;
-      let retries = 0;
-
-      while (retries < maxRetries) {
-        try {
-          const signatures = await connection3.getSignaturesForAddress(
-            ataAddPubkey,
-            { limit: 1000 },
-          );
-          console.log("Signatures fetched:", signatures.length);
-
-          if (signatures.length === 0) {
-            console.log("No signatures found, retrying...");
-            retries++;
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
-            continue;
-          }
-
-          const txs = await connection3.getTransactions(
-            signatures.map((sig) => sig.signature),
-            { maxSupportedTransactionVersion: 0 },
-          );
-          console.log("Transactions fetched:", txs.length);
-
-          if (txs.length === 0) {
-            console.log("No transactions found, retrying...");
-            retries++;
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
-            continue;
-          }
-
-          return txs;
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          retries++;
-          if (retries >= maxRetries) {
-            throw error;
-          }
-        }
-      }
-
-      return []; // Return empty array if all retries fail
-    },
-    enabled: !!ataAddPubkey,
-    staleTime: 60000, // Data will be considered fresh for 1 minute
-    retry: 3, // React Query will retry failed requests 3 times
+    enabled: !!ata,
+    refetchOnMount: true, // Get fresh data on component mount
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnReconnect: false, // Don't refetch when reconnecting
+    staleTime: 1000 * 60 * 2, // Data becomes stale after 2 minutes
+    cacheTime: 1000 * 60 * 30, // Cache for 30 minutes
+    retry: 2, // Retry failed requests 2 times
   });
 }

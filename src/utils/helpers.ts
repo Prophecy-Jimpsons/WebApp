@@ -1,4 +1,7 @@
-import { ConfirmedSignatureInfo } from "@solana/web3.js";
+import {
+  ConfirmedSignatureInfo,
+  ParsedTransactionWithMeta,
+} from "@solana/web3.js";
 import { TokenTransfer, TransactionMeta } from "@/types/blockchain";
 
 export interface Transaction extends ConfirmedSignatureInfo {
@@ -42,13 +45,11 @@ export const formatTimeAgo = (timestamp: number) => {
   return `${diffInDays} days ago`;
 };
 
-// TODO: Need to fix this, filter transactions is not working as expected
-export function getDaysSinceFirstPurchase(
-  transactions: Transaction[],
+export function getDaysSinceFirstPurchaseOld(
+  transactions: ParsedTransactionWithMeta[],
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _address: string,
 ): number {
-  console.log("transactions in helpers", transactions);
   const startDate = new Date("2025-01-03T00:00:00.000Z");
 
   // Sort and filter transactions after Jan 3, 2025
@@ -67,12 +68,7 @@ export function getDaysSinceFirstPurchase(
 
   // Find first JIMP purchase transaction after Jan 3
   const firstPurchase = relevantTransactions.find((tx) => {
-    console.log("Checking transaction:", {
-      date: new Date(tx.blockTime! * 1000).toISOString(),
-      signature: tx.signature,
-    });
-
-    if (tx.err) return false;
+    if (tx.meta?.err !== null) return false;
     return true; // For now, consider any successful transaction
   });
 
@@ -95,6 +91,74 @@ export function getDaysSinceFirstPurchase(
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   console.log(`Days held: ${diffDays}`);
+
+  return diffDays;
+}
+
+export function getDaysSinceFirstPurchase(
+  transactions: ParsedTransactionWithMeta[],
+  address: string,
+): number {
+  const startDate = new Date("2025-01-03T00:00:00.000Z");
+
+  // Filter transactions after Jan 3, 2025, and ensure they are successful
+  const relevantTransactions = transactions
+    .filter((tx) => {
+      if (!tx.blockTime) return false; // Skip transactions without a blockTime
+      const txDate = new Date(tx.blockTime * 1000);
+      return txDate >= startDate && tx.meta?.err === null; // Only successful transactions after Jan 3
+    })
+    .sort((a, b) => (a.blockTime || 0) - (b.blockTime || 0)); // Sort by blockTime (ascending)
+
+  // Track the token balance over time
+  let tokenBalance = 0;
+  let firstPurchaseDate: Date | null = null;
+  let zeroBalanceDate: Date | null = null;
+
+  for (const tx of relevantTransactions) {
+    const txDate = new Date(tx.blockTime! * 1000);
+
+    // Check if the transaction involves the SPL token
+    const tokenBalanceChange = tx.meta?.postTokenBalances?.find(
+      (balance) => balance.owner === address,
+    )?.uiTokenAmount.uiAmount;
+
+    if (tokenBalanceChange !== undefined) {
+      tokenBalance = tokenBalanceChange ?? 0;
+
+      // If the token balance becomes zero, record the date
+      if (tokenBalance === 0 && !zeroBalanceDate) {
+        zeroBalanceDate = txDate;
+      }
+
+      // If the token balance increases from zero, reset the zeroBalanceDate
+      if (tokenBalance > 0 && zeroBalanceDate) {
+        zeroBalanceDate = null;
+      }
+
+      // Record the first purchase date if it hasn't been set yet
+      if (tokenBalance > 0 && !firstPurchaseDate) {
+        firstPurchaseDate = txDate;
+      }
+    }
+  }
+
+  // If the token balance is zero, use the zeroBalanceDate as the start date
+  const startDateForCalculation =
+    tokenBalance === 0 ? zeroBalanceDate : firstPurchaseDate;
+
+  if (!startDateForCalculation) {
+    // console.warn("No valid purchase or zero balance found after Jan 3, 2025");
+    return 0;
+  }
+
+  const today = new Date(); // Current date
+  today.setHours(0, 0, 0, 0); // Normalize to midnight for accurate day calculation
+
+  const diffTime = Math.abs(
+    today.getTime() - startDateForCalculation.getTime(),
+  );
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   return diffDays;
 }
