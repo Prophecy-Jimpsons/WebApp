@@ -13,6 +13,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@metaplex-foundation/js": "^0.20.1",
     "@solana/spl-token": "^0.4.9",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",
@@ -22,6 +23,10 @@
     "@tabler/icons-react": "^3.26.0",
     "@tanstack/react-query": "^4.36.1",
     "@tanstack/react-query-devtools": "4",
+    "alchemy-sdk": "^3.5.1",
+    "axios": "^1.7.9",
+    "firebase": "^11.2.0",
+    "firebase-tools": "^13.29.1",
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

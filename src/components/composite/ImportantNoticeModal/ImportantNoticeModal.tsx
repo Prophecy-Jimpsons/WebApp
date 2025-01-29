@@ -42,7 +42,7 @@ const ImportantNoticeModal: FC = () => {
               <p>
                 <span>Telegram:</span>
                 <a
-                  href="https://t.me/+GpIAuMKh_6xkZjgx"
+                  href="https://t.me/Jimpsons"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.link}

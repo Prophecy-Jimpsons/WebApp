@@ -68,7 +68,7 @@
   font-size: var(--space-3);
   color: var(--color-grey);
   max-width: 100%;
-  margin: 0 auto var(--space-6);
+  margin: 4rem auto;
   line-height: 1.6;
   padding: 0 var(--space-2);
 }
@@ -408,10 +408,10 @@
     height: var(--space-16);
   }
 
-  .icon2 > img {
+  /* .icon2 > img {
     width: var(--space-12);
     height: var(--space-12);
-  }
+  } */
 
   .icon3 > img {
     width: var(--space-12);

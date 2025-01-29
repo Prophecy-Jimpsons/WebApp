@@ -2,7 +2,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { fileURLToPath } from "url";
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { nodePolyfills } from "vite-plugin-node-polyfills";
+import { env } from "process";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,10 +16,20 @@ export default defineConfig({
       globals: {
         Buffer: true,
         global: true,
-        process: true
-      }
-    })
+        process: true,
+      },
+    }),
   ],
+  define: {
+    "process.env.VITE_FIREBASE_PROJECT_ID": JSON.stringify(
+      env.VITE_FIREBASE_PROJECT_ID,
+    ),
+    "process.env.VITE_FIREBASE_API_KEY": JSON.stringify(
+      env.VITE_FIREBASE_API_KEY,
+    ),
+    "process.env.VITE_HELIUS_API": JSON.stringify(env.VITE_HELIUS_API),
+    "process.browser": true,
+  },
   css: {
     postcss: "./postcss.config.js",
   },

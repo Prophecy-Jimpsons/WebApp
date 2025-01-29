@@ -1,0 +1,75 @@
+.aiStatusContent {
+  color: var(--color-light-white);
+  text-align: center;
+  padding: var(--space-4);
+}
+
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.statusImage {
+  width: var(--space-16);
+  height: var(--space-16);
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    width: var(--space-10);
+    height: var(--space-10);
+  }
+}
+
+.title {
+  color: var(--color-primary);
+  font-size: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+.errorCode {
+  color: var(--color-secondary);
+  font-weight: bold;
+  margin-bottom: var(--space-4);
+}
+
+.description {
+  margin-bottom: var(--space-2);
+}
+
+.activityList {
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: var(--space-4);
+}
+
+.activityList li {
+  margin-bottom: var(--space-2);
+}
+
+.reassurance {
+  font-weight: bold;
+  margin-bottom: var(--space-4);
+}
+
+.supportSection {
+  background-color: var(--color-darker-blue);
+  border-radius: var(--space-2);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.supportSection h4 {
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+}
+
+.reminder {
+  font-style: italic;
+  margin-bottom: var(--space-4);
+}
+
+.joke {
+  color: var(--color-grey);
+  font-size: 0.9em;
+}

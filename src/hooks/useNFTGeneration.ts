@@ -10,6 +10,7 @@ export interface AIGenerationResponse {
   status: string;
   ipfs: IPFSResponse;
   prompt: string;
+  "Image hash": string;
 }
 
 export const useNFTGeneration = () => {
@@ -25,11 +26,7 @@ export const useNFTGeneration = () => {
     onError: (error: Error) => {
       console.error("NFT generation failed:", error);
     },
-    // onSuccess: () => {
-    //   console.log("successfully generated NFT");
-    // },
-    retry: 3,
-    retryDelay: 1500,
+    retry: 1,
   });
   return {
     nftGenerate,

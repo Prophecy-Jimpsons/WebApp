@@ -19,22 +19,22 @@ import styles from "./Features.module.css";
 const Features = () => {
   const steps = [
     {
-      text: "Multi-chain prediction minting",
+      text: "Predict future events with details",
       icon: <Target className={styles.stepIcon} />,
       color: styles.stepIconRose,
     },
     {
-      text: "AI-enhanced prediction validation",
+      text: "AI oracle validates event outcome",
       icon: <Brain className={styles.stepIcon} />,
       color: styles.stepIconEmerald,
     },
     {
-      text: "Convert predictions to premium NFTs",
+      text: "Get verified as FREE prophet NFT",
       icon: <Gem className={styles.stepIcon} />,
       color: styles.stepIconViolet,
     },
     {
-      text: "AI generates unique artwork",
+      text: "Trade your successful prophecies",
       icon: <Bot className={styles.stepIcon} />,
       color: styles.stepIconAmber,
     },
@@ -43,33 +43,38 @@ const Features = () => {
   const chains = [
     {
       name: "Solana",
+      description: "Speed Demon 🏃‍♂️",
       colorClass: styles.solana,
       logo: SOLANA,
       alt: "Solana Network Logo",
     },
     {
       name: "Polygon",
+      description: "Ethereum's Cool Kid 😎",
       colorClass: styles.polygon,
       logo: POLYGON,
       alt: "Polygon Network Logo",
     },
     {
       name: "StarkNet",
+      description: "Privacy Master 🕵️‍♂️",
       colorClass: styles.starknet,
       logo: STARKNET,
       alt: "StarkNet Network Logo",
     },
     {
       name: "Base",
+      description: "Layer 2 Legend 🎭",
       colorClass: styles.base,
       logo: BASE,
       alt: "Base Network Logo",
     },
     {
-      name: "More Chain Soon",
+      name: "More Chains Soon",
+      description: "Stay tuned! ⭐",
       colorClass: styles.comingSoon,
       logo: ADD,
-      alt: "More Chain Soon",
+      alt: "More Chains Soon",
     },
   ];
 
@@ -80,12 +85,12 @@ const Features = () => {
         <div className={styles.titleSection}>
           <h2 className={styles.mainTitle}>Predict & Create</h2>
           <h3 className={styles.subtitle}>
-            Where <span>Artificial Intelligence</span> meets blockchain
-            predictions
+            Where <span>Prophecies</span> Become <span>Reality</span>
           </h3>
           <p className={styles.description}>
-            Transform your market insights into unique NFTs, powered by advanced
-            AI for both prediction analysis and artistic creation.
+            Create FREE verified predictions on Solana with our AI oracle. Each
+            48-hour prophecy transforms into unique digital art. Start your
+            journey as a digital prophet!
           </p>
         </div>
 
@@ -95,7 +100,9 @@ const Features = () => {
           <div className={`${styles.featureCard} ${styles.processCard}`}>
             <div className={styles.processContent}>
               <h4 className={styles.processTitle}>
-                Seamless Process <Sparkles className={styles.sparkleIcon} />
+                <Sparkles className={styles.sparkleIcon} />
+                Seamless Process
+                <Sparkles className={styles.sparkleIcon} />
               </h4>
               <div className={styles.stepsList}>
                 {steps.map((step, index) => (
@@ -124,13 +131,12 @@ const Features = () => {
           <div className={`${styles.featureCard} ${styles.chainCard}`}>
             <h4 className={styles.chainTitle}>
               <Network className={styles.titleIcon} />
-              Multi-Chain Platform
+              Launching on Solana
               <ArrowUpRight className={styles.arrowIcon} />
             </h4>
             <p className={styles.chainDescription}>
-              Deploy predictions on your preferred blockchain with AI-optimized
-              efficiency. More networks coming soon as we expand our cross-chain
-              capabilities.
+              Starting our journey on Solana for lightning-fast predictions.
+              Other chains locked and loaded for future expansion. ⚡
             </p>
 
             <div className={styles.chainGrid}>
@@ -162,15 +168,13 @@ const Features = () => {
             <div className={styles.bottomFeatureContent}>
               <div className={styles.iconGroup}>
                 <BrainCircuit className={styles.featureMainIcon} />
+                <h4 className={styles.featureTitle}>AI Oracle Powered</h4>
                 <Target className={styles.featureSecondaryIcon} />
               </div>
-              <h4 className={styles.featureTitle}>
-                Artificial Intelligence Powered
-              </h4>
             </div>
             <p className={styles.featureDescription}>
-              AI-powered analysis combines with your market knowledge for more
-              accurate predictions.
+              Our neutral AI validates outcomes with no human intervention,
+              ensuring fair and unbiased verification.
             </p>
             {/* <div className={styles.abstractShape1} />
             <div className={styles.abstractShape2} /> */}
@@ -181,13 +185,13 @@ const Features = () => {
             <div className={styles.bottomFeatureContent}>
               <div className={styles.iconGroup}>
                 <Bot className={styles.featureMainIcon} />
+                <h4 className={styles.featureTitle}>Creative NFTs</h4>
                 <Sparkles className={styles.featureSecondaryIcon} />
               </div>
-              <h4 className={styles.featureTitle}>Creative NFTs</h4>
             </div>
             <p className={styles.featureDescription}>
-              Each prediction becomes a unique NFT with AI-generated artwork
-              that tells your story.
+              Successful predictions become verified NFTs with custom artwork.
+              Build your prophet status!
             </p>
             <div className={styles.abstractShape3} />
             <div className={styles.abstractShape4} />

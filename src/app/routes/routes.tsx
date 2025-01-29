@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { lazy, Suspense } from "react";
 import PATHS from "./paths";
 import { RouteConfig } from "./types";
@@ -19,9 +18,6 @@ const TermsOfService = lazy(
 const AccountDetails = lazy(
   () => import("@/pages/AccountDetails/AccountDetailsPage"),
 );
-const WorkInProgress = lazy(
-  () => import("@/pages/WorkInProgress/WorkInProgressPage"),
-);
 const HowToBuy = lazy(() => import("@/pages/HowToBuy/HowToBuyPage"));
 
 // Layout components should be eager loaded
@@ -29,6 +25,9 @@ import DashBoardLayout from "@/layouts/DashboardLayout/DashboardLayout";
 
 // NFT Generator page needs to change to private routes later
 import NFTGeneratorPage from "@/pages/NFTGenerator/NFTGeneratorPage";
+
+// NFT CollectionPage
+import NFTCollectionPage from "@/pages/NFTCollection/NFTCollectionPage";
 
 // Public Routes - No authentication needed
 export const publicRoutes: RouteConfig[] = [
@@ -49,14 +48,6 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <App />
-          </Suspense>
-        ),
-      },
-      {
-        path: PATHS.PUBLIC.MARKETPLACE,
-        element: (
-          <Suspense fallback={<LoadingSpinner />}>
-            <WorkInProgress />
           </Suspense>
         ),
       },
@@ -101,14 +92,6 @@ export const publicRoutes: RouteConfig[] = [
         ),
       },
       {
-        path: PATHS.PUBLIC.WORK_IN_PROGRESS,
-        element: (
-          <Suspense fallback={<LoadingSpinner />}>
-            <WorkInProgress />
-          </Suspense>
-        ),
-      },
-      {
         path: PATHS.PUBLIC.HOW_TO_BUY,
         element: (
           <Suspense fallback={<LoadingSpinner />}>
@@ -122,6 +105,14 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <NFTGeneratorPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.NFT_COLLECTION,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <NFTCollectionPage />
           </Suspense>
         ),
       },

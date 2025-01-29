@@ -3,9 +3,12 @@ import Button from "@/components/ui/Button";
 import styles from "./Hero.module.css";
 
 import SOLANA from "@/assets/icons/chains/Solana_Network_Logo.png";
-import BASE from "@/assets/icons/chains/Base_Network_Logo.svg";
-import POLYGON from "@/assets/icons/chains/Polygon_Network_Logo.png";
-import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
+import SOLANA2 from "@/assets/icons/chains/Solana_Network_Logo_2.png";
+import SOLANA3 from "@/assets/icons/chains/Solana_Network_Logo_3.png";
+import SOLANA4 from "@/assets/icons/chains/Solana_Network_Logo_4.png";
+// import BASE from "@/assets/icons/chains/Base_Network_Logo.svg";
+// import POLYGON from "@/assets/icons/chains/Polygon_Network_Logo.png";
+// import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
 
 const Hero: FC = () => {
   const [copied, setCopied] = useState(false);
@@ -37,13 +40,13 @@ const Hero: FC = () => {
             <img src={SOLANA} alt="Solana logo" />
           </div>
           <div className={`${styles.icon} ${styles.icon2}`}>
-            <img src={BASE} alt="Base logo" />
+            <img src={SOLANA2} alt="Base logo" />
           </div>
           <div className={`${styles.icon} ${styles.icon3}`}>
-            <img src={POLYGON} alt="Polygon logo" />
+            <img src={SOLANA3} alt="Polygon logo" />
           </div>
           <div className={`${styles.icon} ${styles.icon4}`}>
-            <img src={STARKNET} alt="Starknet logo" />
+            <img src={SOLANA4} alt="Starknet logo" />
           </div>
         </div>
 
@@ -54,14 +57,16 @@ const Hero: FC = () => {
           </h1>
 
           <h2 className={styles.subtitle}>
-            Next Generation of{" "}
-            <span className={styles.highlight}>Predictive NFTs</span>
+            Where Memes{" "}
+            <span className={styles.highlight}>Predict the Future</span>
           </h2>
 
           <p className={styles.description}>
-            Create and trade predictions as unique NFTs with{" "}
-            <span className={styles.highlight}>zero initial cost</span>. Powered
-            by AI with verification and multi-chain support for maximum value.
+            Create FREE predictions on{" "}
+            <span className={styles.highlight}>Solana</span>, powered by{" "}
+            <span className={styles.highlight}>Artificial Intelligence</span>.
+            Join our universe of prophets and turn your 48hr visions into
+            legendary NFTs.
           </p>
 
           <div className={styles.buttonGroup}>

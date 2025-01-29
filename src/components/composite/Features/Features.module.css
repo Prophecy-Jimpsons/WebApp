@@ -250,11 +250,63 @@
   background: rgba(255, 255, 255, 0.03);
   border-radius: 12px;
   transition: all 0.3s ease;
+  opacity: 0.5; /* Default blur state */
+}
+
+/* Solana special styles */
+/* .solana {
+  opacity: 1;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: rgba(139, 92, 246, 0.05);
 }
 
 .chainItem:hover {
   transform: translateY(-2px);
+  opacity: 1;
   background: rgba(252, 175, 5, 0.1);
+}
+
+.solana:hover {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+} */
+
+.chainItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  filter: blur(3px);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.solana {
+  filter: none;
+  opacity: 1;
+  pointer-events: auto;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.solana:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+}
+
+.chainName {
+  color: var(--color-white);
+  font-weight: 500;
+}
+
+.comingSoon {
+  filter: blur(4px);
+  opacity: 0.2;
 }
 
 .chainIconWrapper {
