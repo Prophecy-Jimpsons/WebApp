@@ -597,3 +597,31 @@
     height: var(--space-20);
   }
 }
+
+.tradingLogo {
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: 50%;
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+/* Update buyLink to better accommodate the logo */
+.buyLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: var(--space-3);
+  font-weight: 500;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--space-1);
+  transition: all 0.3s ease;
+}
+
+/* Optional: Add a subtle glow effect on hover */
+.buyLink:hover .tradingLogo {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
