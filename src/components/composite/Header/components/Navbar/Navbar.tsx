@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Star } from "lucide-react";
+import { Star, Gamepad2Icon } from "lucide-react";
 import { navLinks } from "./config";
 import styles from "./navbar.module.css";
 
@@ -18,8 +18,9 @@ const Navbar: FC = () => {
     const baseClass = styles.navLink;
     const activeClass = isActive(path) ? styles.activeLink : "";
     const betaClass = label === "AI Preview" ? styles.betaLink : "";
+    const betaGameClass = label === "Game" ? styles.betaLink : "";
 
-    return `${baseClass} ${activeClass} ${betaClass}`.trim();
+    return `${baseClass} ${activeClass} ${betaClass} ${betaGameClass}`.trim();
   };
 
   const renderLink = (link: (typeof navLinks)[number]) => {
@@ -34,6 +35,24 @@ const Navbar: FC = () => {
             {link.label}
           </Link>
           <span className={styles.betaBadge}>BETA</span>
+        </div>
+      );
+    }
+
+    if (link.label === "Game") {
+      return (
+        <div className={styles.betaWrapper} key={link.path}>
+          <Link
+            to={link.path}
+            className={getLinkClassName(link.path, link.label)}
+          >
+            <Gamepad2Icon
+              size={16}
+              className={styles.Gamepad2Icon}
+              strokeWidth={2.5}
+            />
+            {link.label}
+          </Link>
         </div>
       );
     }

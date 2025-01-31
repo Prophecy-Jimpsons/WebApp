@@ -1,0 +1,543 @@
+/* TicTacToe.module.css */
+.container {
+  width: min(95%, 500px);
+  margin: 8rem auto 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(
+    145deg,
+    var(--color-background),
+    var(--color-background-alt)
+  );
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.warning {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(252, 175, 5, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.gameBoard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(
+    145deg,
+    var(--color-background),
+    var(--color-background-alt)
+  );
+  padding: 1rem;
+  border-radius: 1.5rem;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.1),
+    inset 0 -2px 6px rgba(255, 255, 255, 0.1);
+}
+
+.cell {
+  aspect-ratio: 1;
+  border: 2.5px solid var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  background: var(--color-background);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 1rem;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.05),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  color: var(--color-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.cell:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 16px rgba(252, 175, 5, 0.15),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  background: rgba(252, 175, 5, 0.05);
+}
+
+.cell:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(252, 175, 5, 0.1);
+}
+
+.selected {
+  background: rgba(252, 175, 5, 0.15);
+  border-color: var(--color-primary);
+  box-shadow:
+    0 0 0 3px var(--color-primary),
+    0 6px 16px rgba(252, 175, 5, 0.2);
+  animation: pulseGlow 1.5s infinite;
+}
+
+.lastMove {
+  background: rgba(5, 104, 252, 0.1);
+  border-color: var(--color-secondary);
+  animation: bounceIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gameInfo {
+  width: 100%;
+  text-align: center;
+  background: var(--color-background);
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.05),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid rgba(252, 175, 5, 0.1);
+}
+
+.status {
+  width: 100%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 1.2rem;
+  border-radius: 1rem;
+  background: linear-gradient(
+    145deg,
+    var(--color-background),
+    var(--color-background-alt)
+  );
+  text-align: center;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.phaseIndicator {
+  font-size: 1.3rem;
+  color: var(--color-text-primary);
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(252, 175, 5, 0.05);
+  margin: 0;
+  font-weight: 500;
+}
+
+.piecesCount {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--color-secondary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.button {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 140px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(252, 175, 5, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  background: var(--color-secondary);
+  box-shadow: 0 6px 16px rgba(5, 104, 252, 0.2);
+}
+
+.button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(5, 104, 252, 0.15);
+}
+
+.button:disabled {
+  background: var(--color-grey);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.waitingMessage {
+  background: var(--color-white);
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  font-size: 1.3rem;
+  font-weight: 500;
+  text-align: center;
+  animation: pulse 2s infinite;
+  box-shadow: 0 4px 12px rgba(252, 175, 5, 0.15);
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px var(--color-primary),
+      0 6px 16px rgba(252, 175, 5, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 0 5px var(--color-primary),
+      0 8px 24px rgba(252, 175, 5, 0.3);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.8;
+  }
+}
+
+/* Dark mode enhancements */
+/* TicTacToe.module.css */
+/* ... (keep existing light theme styles) ... */
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  /* Add these base variables first */
+  :root {
+    --glass-bg: rgba(10, 5, 30, 0.3);
+    --glass-shine: rgba(255, 255, 255, 0.1);
+    --glass-shadow: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Enhanced container with 3D glassmorphism */
+  .container {
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(10, 5, 30, 0.2)
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 0 80px rgba(5, 104, 252, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+  }
+
+  /* Add subtle gradient overlay for depth */
+  .container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(5, 104, 252, 0.05) 100%
+    );
+    pointer-events: none;
+    border-radius: 24px;
+  }
+
+  /* Dark mode adjustments */
+  @media (prefers-color-scheme: dark) {
+    .container {
+      background: linear-gradient(
+        145deg,
+        rgba(31, 41, 55, 0.5),
+        rgba(17, 24, 39, 0.4)
+      );
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 0 80px rgba(5, 104, 252, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  /* Background styling */
+  .appBackground {
+    min-height: 100vh;
+    background: linear-gradient(
+      145deg,
+      var(--color-dark-blue),
+      var(--color-darker-blue)
+    );
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+  }
+
+  /* Add depth with multiple gradients */
+  .appBackground::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at 20% 20%,
+        rgba(5, 104, 252, 0.15) 0%,
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        rgba(252, 175, 5, 0.1) 0%,
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 50% 50%,
+        rgba(255, 255, 255, 0.05) 0%,
+        transparent 60%
+      );
+    pointer-events: none;
+  }
+
+  .gameBoard {
+    background: linear-gradient(145deg, #1f2937, #1a1a2e);
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.2),
+      inset 0 2px 6px rgba(255, 255, 255, 0.05);
+  }
+
+  .cell {
+    background: #2d3748;
+    /* border: 2.5px solid var(--color-primary); */
+    border: none;
+    color: var(--color-primary);
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.1),
+      inset 0 2px 4px rgba(255, 255, 255, 0.05);
+  }
+
+  .cell:hover {
+    background: #374151;
+    box-shadow:
+      0 6px 16px rgba(252, 175, 5, 0.15),
+      inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  }
+
+  .selected {
+    background: rgba(252, 175, 5, 0.2);
+    border-color: var(--color-primary);
+    box-shadow:
+      0 0 0 3px var(--color-primary),
+      0 6px 16px rgba(252, 175, 5, 0.3);
+  }
+
+  .lastMove {
+    background: rgba(5, 104, 252, 0.2);
+    border-color: var(--color-secondary);
+  }
+
+  .gameInfo {
+    background: #1f2937;
+    border: 1px solid rgba(252, 175, 5, 0.2);
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.1),
+      inset 0 2px 4px rgba(255, 255, 255, 0.05);
+  }
+
+  .status {
+    background: linear-gradient(145deg, #2d3748, #1f2937);
+    color: var(--color-white);
+    border: 2px solid var(--color-primary);
+  }
+
+  .phaseIndicator {
+    background: rgba(252, 175, 5, 0.1);
+    color: var(--color-white);
+  }
+
+  .piecesCount {
+    color: var(--color-white);
+  }
+
+  .waitingMessage {
+    background: #2d3748;
+    border: 2px solid var(--color-primary);
+    color: var(--color-white);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .button {
+    background: var(--color-primary);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-size: 1.4rem;
+  }
+  .button1 {
+    background: rgba(var(--color-primary), 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-size: 1.4rem;
+  }
+
+  .button:hover {
+    background: var(--color-secondary);
+    box-shadow: 0 6px 16px rgba(5, 104, 252, 0.3);
+  }
+  .button1 {
+    background: rgba(var(--color-primary), 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-size: 1.4rem;
+  }
+
+  .button:disabled {
+    background: #4a5568;
+    border-color: transparent;
+  }
+}
+
+/* Add these new hover effects for better visibility */
+.cell:hover {
+  border-color: var(--color-secondary);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+.cell:active {
+  transform: scale(0.95);
+}
+
+/* Enhanced animations */
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px var(--color-primary),
+      0 6px 16px rgba(252, 175, 5, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 5px var(--color-primary),
+      0 8px 24px rgba(252, 175, 5, 0.4);
+  }
+}
+
+/* Add styles for game pieces */
+.cell[data-piece="X"] {
+  color: var(--color-primary);
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.cell[data-piece="O"] {
+  color: var(--color-secondary);
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    margin: 1rem auto;
+    padding: 1rem;
+  }
+
+  .cell {
+    font-size: 1.5rem;
+    border-radius: 0.75rem;
+  }
+
+  .status {
+    font-size: 1.2rem;
+    padding: 1rem;
+  }
+
+  .button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    min-width: 120px;
+  }
+}
+
+/* Add these to your TicTacToe.module.css */
+.errorMessage {
+  width: 100%;
+  background: rgba(220, 38, 38, 0.1);
+  border: 2px solid rgb(220, 38, 38);
+  color: rgb(220, 38, 38);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  text-align: center;
+  margin: 1rem 0;
+  font-weight: 500;
+}
+
+.developmentNote {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 0.5rem;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .errorMessage {
+    background: rgba(220, 38, 38, 0.2);
+    color: rgb(248, 113, 113);
+  }
+
+  .developmentNote {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+  }
+}

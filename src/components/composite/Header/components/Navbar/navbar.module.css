@@ -91,6 +91,12 @@
   animation: starRotate 12s linear infinite;
 }
 
+.Gamepad2Icon {
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 4px rgba(252, 175, 5, 0.4));
+  /* animation: starRotate 12s linear infinite; */
+}
+
 @keyframes pulse {
   0% {
     opacity: 1;

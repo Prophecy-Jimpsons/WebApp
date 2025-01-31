@@ -24,6 +24,7 @@ const PATHS = {
 
     AI_PREVIEW: "/ai-preview",
     NFT_COLLECTION: "/nft-collection",
+    GAME: "/game",
   },
 
   // Protected routes (require wallet connection)
