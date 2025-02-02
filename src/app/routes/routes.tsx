@@ -29,6 +29,9 @@ import NFTGeneratorPage from "@/pages/NFTGenerator/NFTGeneratorPage";
 // NFT CollectionPage
 import NFTCollectionPage from "@/pages/NFTCollection/NFTCollectionPage";
 
+// AI Chat
+const AiChatPage = lazy(() => import("@/pages/AiChat/AiChatPage"));
+
 // Public Routes - No authentication needed
 export const publicRoutes: RouteConfig[] = [
   {
@@ -96,6 +99,14 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <HowToBuy />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.AI_CHAT,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <AiChatPage />
           </Suspense>
         ),
       },

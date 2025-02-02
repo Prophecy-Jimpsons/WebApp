@@ -1,0 +1,188 @@
+.chatContainer {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  height: 100%;
+  margin: auto;
+  padding: 0 var(--space-16);
+  position: relative;
+  flex-grow: 1;
+  background-color: var(--color-black-background);
+}
+
+.chatTop {
+  text-align: center;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: center;
+  line-height: 24px;
+  display: flex;
+}
+
+.chatTop img {
+  /* width: 100px; */
+  /* height: 100px; */
+}
+
+.chatTop h1 {
+  color: var(--color-primary);
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: auto;
+  font-size: var(--space-10);
+  font-weight: bolder;
+  display: flex;
+}
+.chatTop p {
+  color: var(--color-grey);
+  margin: var(--space-4) 0;
+  font-size: var(--space-4);
+}
+
+.chatBox {
+  flex-grow: 1;
+  width: 100%;
+  position: relative;
+  max-width: 800px;
+}
+
+.inputBox {
+  flex-grow: 1;
+  padding: var(--space-2);
+  font-size: var(--space-4);
+  border: none;
+  border-radius: var(--space-2);
+}
+
+.inputBox::placeholder {
+  color: var(--color-secondary);
+}
+
+.inputContainer {
+  --padding: 14px;
+  cursor: text;
+  box-sizing: border-box;
+  width: 100%;
+  font-size: var(--ds-font-size-l);
+  line-height: var(--ds-line-height-l);
+  transition:
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+  box-shadow: none;
+  background-color: transparent;
+  background-color: var(--dsr-bg);
+  border-radius: 24px;
+  flex-direction: column;
+  display: flex;
+  position: relative;
+}
+
+.inputContainer:focus-within {
+  box-shadow: 0 0 0 2px var(--color-secondary);
+}
+
+.inputBoxWrapper {
+  z-index: 1;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 10px;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 0 0 0.5px var(--color-dark-blue);
+  background-color: var(--color-thin-grey);
+  border-radius: 24px;
+}
+
+.inputBox {
+  width: 100%;
+  max-height: calc(12 * var(--space-6));
+  margin: 0 var(--space-1);
+  position: relative;
+}
+
+.inputField {
+  font-size: inherit;
+  line-height: inherit;
+  word-break: break-word;
+  white-space: pre-wrap;
+  border: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: auto;
+  resize: none;
+  color: var(--color-grey);
+  caret-color: var(--color-grey);
+  background-color: transparent;
+  position: absolute;
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+.inputArea {
+  font-size: inherit;
+  line-height: inherit;
+  word-break: break-word;
+  white-space: pre-wrap;
+  border: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: auto;
+  visibility: hidden;
+  pointer-events: none;
+  min-height: var(--space-12);
+}
+
+.sendButtonWrapper {
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+  display: flex;
+}
+
+.sendButton {
+  background-color: var(--color-secondary);
+  border-radius: var(--space-12);
+  padding: var(--space-2);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: slideIn 0.5s ease-out;
+  border: none;
+}
+
+.sendButton:disabled {
+  background-color: var(--color-grey);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
