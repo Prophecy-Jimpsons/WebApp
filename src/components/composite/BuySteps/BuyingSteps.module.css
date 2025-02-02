@@ -364,19 +364,18 @@
   gap: var(--space-4);
   position: relative;
   text-align: center;
-  width: 90%; /* Default for smaller screens */
-  padding: var(--space-6); /* Default for smaller screens */
+  padding: var(--space-2);
 }
 
 .completionIcon {
-  width: var(--space-12); /* Default for smaller screens */
-  height: var(--space-12); /* Default for smaller screens */
+  width: var(--space-12);
+  height: var(--space-12);
   color: var(--color-primary);
   animation: pulse 2s infinite;
 }
 
 .completionContent h3 {
-  font-size: var(--space-6); /* Default for smaller screens */
+  font-size: var(--space-6);
   margin: 0;
   font-weight: bold;
 }
@@ -384,31 +383,29 @@
 .completionContent p {
   margin: 0;
   color: var(--color-grey);
-  font-size: var(--space-4); /* Default for smaller screens */
+  font-size: var(--space-4);
 }
 
-/* Apply styles for screens larger than 768px */
 @media screen and (min-width: 768px) {
   .completionContent {
-    width: auto; /* Reset width for larger screens */
-    padding: 0; /* Reset padding for larger screens */
+    width: auto;
+    padding: 0;
   }
 
   .completionIcon {
-    width: var(--space-16); /* Larger size for larger screens */
-    height: var(--space-16); /* Larger size for larger screens */
+    width: var(--space-16);
+    height: var(--space-16);
   }
 
   .completionContent h3 {
-    font-size: var(--space-8); /* Larger font size for larger screens */
+    font-size: var(--space-8);
   }
 
   .completionContent p {
-    font-size: var(--space-4); /* Keep the same or adjust as needed */
+    font-size: var(--space-4);
   }
 }
 
-/* Update animation for viewport-relative positioning */
 @keyframes scaleIn {
   from {
     transform: scale(0.8);
