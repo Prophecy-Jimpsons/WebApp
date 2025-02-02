@@ -39,7 +39,7 @@ export function OverviewCard({
               className={styles.copyButton}
               onClick={async () => await copyToClipboard(token, "token")}
             >
-              <span className={styles.copyIcon}>
+              <span>
                 {copiedMap["token"] ? <Check size={16} /> : <Copy size={16} />}
               </span>
             </button>
