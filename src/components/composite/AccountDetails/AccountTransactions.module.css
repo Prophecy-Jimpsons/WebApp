@@ -1,0 +1,78 @@
+.transactionsSection {
+  border-radius: var(--space-4);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-size: var(--space-5);
+  color: var(--color-grey);
+  font-weight: 600;
+}
+
+.refreshButton {
+  padding: var(--space-2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--space-2);
+  color: var(--color-grey);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.refreshButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.showMoreContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-4);
+}
+
+.showMoreButton {
+  background: none;
+  border: 1px solid var(--color-thin-grey);
+  color: var(--color-grey);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--space-2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.showMoreButton:hover {
+  background-color: var(--color-thin-grey);
+  color: var(--color-white);
+}
+
+.loadingRow {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.loadingCell {
+  height: var(--space-4);
+  background: var(--color-dark-grey);
+  border-radius: 0.25rem;
+  flex: 1;
+}
+
+.loadingPulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

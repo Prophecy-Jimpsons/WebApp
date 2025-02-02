@@ -1,1 +1,1 @@
-export { default } from "./BuyStep";
+export { default } from "./BuyingSteps";

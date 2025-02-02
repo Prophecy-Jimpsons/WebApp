@@ -1,0 +1,92 @@
+.tierSection {
+  margin-bottom: var(--space-8);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--space-4);
+  width: 80%;
+  margin: 0 auto;
+}
+
+.tierHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+
+.tierHeader h3 {
+  font-size: var(--space-5);
+  color: var(--color-primary);
+  text-shadow: 0 0 20px rgba(252, 175, 5, 0.3);
+}
+
+.tierIcon {
+  color: var(--color-primary);
+}
+
+.tierDetails {
+  margin: var(--space-4) 0;
+}
+
+.tierDetails p {
+  color: var(--color-white);
+  margin-bottom: var(--space-2);
+  font-size: var(--space-4);
+}
+
+.tierProgress {
+  height: var(--space-2);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--space-1);
+  overflow: hidden;
+  margin-top: var(--space-4);
+}
+
+.progressBar {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--space-1);
+  transition: width 0.3s ease;
+}
+
+/* Loading styles */
+.loading {
+  animation: pulse 1.5s infinite;
+}
+
+.loadingProgressBar {
+  height: 100%;
+  background-color: var(--color-grey);
+  border-radius: 2px;
+  width: 100%;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .tierTitle {
+    font-size: var(--space-4);
+  }
+
+  .tierHeader h3 {
+    font-size: var(--space-4);
+  }
+
+  .tierDetails p {
+    font-size: var(--space-3);
+  }
+
+  .tierSection {
+    width: 100%;
+  }
+}
