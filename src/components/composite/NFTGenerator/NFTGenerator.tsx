@@ -4,6 +4,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import styles from "./NFTGenerator.module.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { useNFTGeneration } from "@/hooks/useNFTGeneration";
+import { useMintNFT } from "@/hooks/useMintNFT";
 import { db } from "@/config/firebase";
 import VerifyNFT from "../VerifyNFT/VerifyNFT";
 import { Link } from "react-router-dom";
@@ -56,6 +57,11 @@ const NFTGenerator = () => {
   const { generatedNFT, nftGenerate, isLoading, generationError } =
     useNFTGeneration();
 
+  // Minting State
+  const [isMetadataGenerated] = useState(false);
+  const { mintNFT, isLoading: isMinting } = useMintNFT();
+  const [isMintSuccess, setIsMintSuccess] = useState(false);
+
   useEffect(() => {
     if (generationError) {
       setIsModalOpen(true);
@@ -81,16 +87,43 @@ const NFTGenerator = () => {
 
   useEffect(() => {
     if (generatedNFT && publicKey) {
-      storeNFTData(generatedNFT["Image hash"], publicKey.toString());
-      generateMetadata(); // Call here
+      generateMetadata();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [generatedNFT, publicKey]);
 
-  const validateSymbol = (value: string): boolean => {
-    const symbolPattern = /^[a-z0-9]{1,10}$/;
-    return symbolPattern.test(value);
-  };
+  useEffect(() => {
+    const handleMinting = async () => {
+      if (metadata && !isMintSuccess && !isMinting) {
+        try {
+          const mintResult = await mintNFT({
+            name,
+            symbol: symbol.toUpperCase(),
+            uri: metadata.url,
+          });
+
+          if (mintResult.success) {
+            setIsMintSuccess(true);
+            // Update the stored NFT data with mint signature
+            await storeNFTData(
+              generatedNFT?.["Image hash"] || "",
+              publicKey?.toString() || "",
+            );
+          }
+        } catch (error) {
+          console.error("Minting error:", error);
+        }
+      }
+    };
+
+    handleMinting();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metadata]);
+
+  // const validateSymbol = (value: string): boolean => {
+  //   const symbolPattern = /^[A-Z0-9]{1,10}$/; // Now matches the uppercase pattern
+  //   return symbolPattern.test(value);
+  // };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -106,18 +139,23 @@ const NFTGenerator = () => {
   };
 
   const handleSymbolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const value = e.target.value.trim().toUpperCase();
     setSymbol(value);
-    const symbolPattern = /^[a-zA-Z0-9]{1,10}$/;
-    if (!value.trim()) {
+
+    const symbolPattern = /^[A-Z0-9]{1,10}$/;
+
+    if (!value) {
       setSymbolError("Ticker cannot be empty");
       setSymbolValid(false);
+      setInputError("Ticker cannot be empty"); // Also clear main error message
     } else if (!symbolPattern.test(value)) {
-      setSymbolError("Must be 1-10 letters/numbers, no spaces");
+      setSymbolError("Ticker must be 1-10 letters/numbers, no spaces");
       setSymbolValid(false);
+      setInputError("Ticker must be 1-10 letters/numbers, no spaces");
     } else {
-      setSymbolError("");
+      setSymbolError(""); // Clear field-specific error
       setSymbolValid(true);
+      setInputError(""); // Clear main error message
     }
     setTouched(true);
   };
@@ -141,15 +179,31 @@ const NFTGenerator = () => {
   };
 
   const validateInputs = (): string => {
-    if (!name.trim()) return "Prediction cannot be empty";
-    if (!symbol.trim()) return "Ticker cannot be empty";
-    if (!validateSymbol(symbol))
-      return "Ticker must be 1-10 lowercase letters/numbers, no spaces";
-    if (!description.trim()) return "Description cannot be empty";
-    if (description.length > 200)
+    if (!name.trim()) {
+      setInputError("Prediction cannot be empty");
+      return "Prediction cannot be empty";
+    }
+    if (!symbol.trim()) {
+      setInputError("Ticker cannot be empty");
+      return "Ticker cannot be empty";
+    }
+    const symbolPattern = /^[A-Z0-9]{1,10}$/;
+    if (!symbolPattern.test(symbol)) {
+      setInputError("Ticker must be 1-10 letters/numbers, no spaces");
+      return "Ticker must be 1-10 letters/numbers, no spaces";
+    }
+    if (!description.trim()) {
+      setInputError("Description cannot be empty");
+      return "Description cannot be empty";
+    }
+    if (description.length > 200) {
+      setInputError("Description must be less than 200 characters");
       return "Description must be less than 200 characters";
+    }
+    setInputError(""); // Clear error if all validations pass
     return "";
   };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!connected) return;
@@ -307,6 +361,7 @@ const NFTGenerator = () => {
   };
 
   const generateMetadata = async () => {
+    if (isMetadataGenerated) return;
     try {
       setIsGeneratingMetadata(true);
       const metadataPayload = {
@@ -335,6 +390,85 @@ const NFTGenerator = () => {
       setIsGeneratingMetadata(false);
     }
   };
+
+  // const renderNFTDetails = () => {
+  //   if (!generatedNFT) return null;
+
+  //   return (
+  //     <div className={styles.nftDetails}>
+  //       <div className={styles.detailsGrid}>
+  //         <div className={styles.detailItem}>
+  //           <h3>
+  //             <Sparkles className={styles.infoIcon} size={16} />
+  //             Prompt
+  //           </h3>
+  //           <p>{generatedNFT.prompt}</p>
+  //         </div>
+  //         <div className={styles.detailItem}>
+  //           <h3>
+  //             <Fingerprint className={styles.infoIcon} size={16} />
+  //             IPFS Hash
+  //           </h3>
+  //           <p
+  //             className={styles.hash}
+  //             onClick={() => window.open(generatedNFT.ipfs.url, "_blank")}
+  //           >
+  //             {generatedNFT.ipfs.cid}
+  //           </p>
+  //         </div>
+  //         {isGeneratingMetadata ? (
+  //           <div className={styles.detailItem}>
+  //             <h3>
+  //               <RefreshCw
+  //                 className={`${styles.spinIcon} ${styles.infoIcon}`}
+  //                 size={16}
+  //               />
+  //               Generating Metadata...
+  //             </h3>
+  //           </div>
+  //         ) : metadata ? (
+  //           <>
+  //             <div className={styles.detailItem}>
+  //               <h3>
+  //                 <Fingerprint className={styles.infoIcon} size={16} />
+  //                 Metadata URI
+  //               </h3>
+  //               <p
+  //                 className={styles.hash}
+  //                 onClick={() => window.open(metadata.url, "_blank")}
+  //               >
+  //                 {metadata.cid}
+  //               </p>
+  //             </div>
+  //             <div className={styles.detailItem}>
+  //               <h3>
+  //                 {isMinting ? (
+  //                   <>
+  //                     <RefreshCw
+  //                       className={`${styles.spinIcon} ${styles.infoIcon}`}
+  //                       size={16}
+  //                     />
+  //                     Minting NFT...
+  //                   </>
+  //                 ) : isMintSuccess ? (
+  //                   <>
+  //                     <CheckCircle className={styles.infoIcon} size={16} />
+  //                     NFT Minted Successfully
+  //                   </>
+  //                 ) : (
+  //                   <>
+  //                     <Sparkles className={styles.infoIcon} size={16} />
+  //                     Ready to Mint
+  //                   </>
+  //                 )}
+  //               </h3>
+  //             </div>
+  //           </>
+  //         ) : null}
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   return (
     <>
@@ -521,11 +655,43 @@ const NFTGenerator = () => {
                     </div>
                   )
                 )}
+                <div className={styles.detailItem}>
+                  <h3>
+                    {isMinting ? (
+                      <>
+                        <RefreshCw
+                          className={`${styles.spinIcon} ${styles.infoIcon}`}
+                          size={16}
+                        />
+                        Minting NFT...
+                      </>
+                    ) : isMintSuccess ? (
+                      <>
+                        <CheckCircle className={styles.infoIcon} size={16} />
+                        <p className="primary_color">NFT Minted Successfully</p>
+                        <div></div>
+                        <Link
+                          to="/nft-collection"
+                          className={styles.headerLink}
+                        >
+                          Check Your Collection
+                          <ArrowRight size={16} />
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className={styles.infoIcon} size={16} />
+                        Ready to Mint
+                      </>
+                    )}
+                  </h3>
+                </div>
               </div>
             </div>
           )}
         </div>
       </div>
+
       <div className={styles.container_verify}>
         <div className={styles.glassCard_verify}>
           <VerifyNFT />

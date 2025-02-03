@@ -8,11 +8,15 @@ import { env } from "process";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// https://vite.dev/config/
+// Helper function to make paths absolute
+const makeAbsolute = (relativePath: string) =>
+  path.resolve(__dirname, relativePath);
+
 export default defineConfig({
   plugins: [
     react(),
     nodePolyfills({
+      include: ["buffer", "crypto", "stream", "util"],
       globals: {
         Buffer: true,
         global: true,
@@ -31,14 +35,17 @@ export default defineConfig({
   css: {
     postcss: "./postcss.config.js",
   },
+
   server: {
     host: "0.0.0.0",
     port: 8080,
   },
+
   preview: {
     host: "0.0.0.0",
     port: 8080,
   },
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -53,6 +60,32 @@ export default defineConfig({
       "@layouts": path.resolve(__dirname, "./src/layouts"),
       "@lib": path.resolve(__dirname, "./src/lib"),
       "@config": path.resolve(__dirname, "./src/config"),
+
+      // RPC Websockets resolution
+      "rpc-websockets": makeAbsolute("node_modules/rpc-websockets"),
+      "rpc-websockets/dist/lib/client/websocket.browser": makeAbsolute(
+        "node_modules/rpc-websockets/dist/lib/client/websocket.browser.js",
+      ),
+      "rpc-websockets/dist/lib/client": makeAbsolute(
+        "node_modules/rpc-websockets/dist/lib/client.js",
+      ),
+    },
+  },
+
+  optimizeDeps: {
+    include: ["rpc-websockets"],
+    esbuildOptions: {
+      target: "esnext",
+      platform: "browser",
+      define: {
+        global: "globalThis",
+      },
+    },
+  },
+
+  build: {
+    rollupOptions: {
+      external: ["fs", "path", "net", "tls"],
     },
   },
 });

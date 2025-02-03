@@ -1,0 +1,37 @@
+.card {
+  background: rgba(252, 175, 5, 0.03);
+  border: 1px solid rgba(252, 175, 5, 0.1);
+  border-radius: var(--space-3);
+  padding: var(--space-8);
+  backdrop-filter: blur(var(--space-5));
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  box-shadow: 0 var(--space-1) var(--space-2) rgba(0, 0, 0, 0.1);
+}
+
+.cardTitle {
+  color: var(--color-grey);
+  margin-bottom: var(--space-4);
+}
+
+.cardContent {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: var(--space-2); /* Space for scrollbar */
+}
+
+/* Hide scrollbar but keep functionality */
+.cardContent::-webkit-scrollbar {
+  height: 4px;
+}
+
+.cardContent::-webkit-scrollbar-track {
+  background: var(--color-thin-grey);
+  border-radius: 2px;
+}
+
+.cardContent::-webkit-scrollbar-thumb {
+  background: var(--color-grey);
+  border-radius: 2px;
+}

@@ -1,0 +1,100 @@
+.infoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: min-content;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: var(--space-4);
+  min-width: max-content;
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: var(--color-grey);
+  font-size: var(--space-4);
+  white-space: nowrap;
+}
+
+.valueWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: max-content;
+}
+
+.value {
+  color: var(--color-white);
+  font-size: var(--space-4);
+}
+
+.addressLink {
+  color: var(--color-primary);
+  font-size: var(--space-4);
+  cursor: pointer;
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  padding: 0;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.copyButton:hover {
+  opacity: 1;
+}
+
+.tokenDot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+}
+
+.loadingText {
+  height: var(--space-4);
+  background-color: var(--color-thin-grey);
+  color: transparent;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Media query for mobile devices */
+@media screen and (max-width: 768px) {
+  .infoRow {
+    padding-right: var(--space-2);
+  }
+
+  .label {
+    font-size: var(--space-3);
+  }
+
+  .value,
+  .addressLink {
+    font-size: var(--space-3);
+  }
+}

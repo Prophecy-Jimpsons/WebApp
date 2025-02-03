@@ -6,6 +6,7 @@ import SOLANA from "@/assets/icons/chains/Solana_Network_Logo.png";
 import SOLANA2 from "@/assets/icons/chains/Solana_Network_Logo_2.png";
 import SOLANA3 from "@/assets/icons/chains/Solana_Network_Logo_3.png";
 import SOLANA4 from "@/assets/icons/chains/Solana_Network_Logo_4.png";
+import DexScreener from "@/assets/icons/chains/dex-screener-seeklogo.png";
 // import BASE from "@/assets/icons/chains/Base_Network_Logo.svg";
 // import POLYGON from "@/assets/icons/chains/Polygon_Network_Logo.png";
 // import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
@@ -136,12 +137,19 @@ const Hero: FC = () => {
               <span className={styles.tradingLabel}>Trading on</span>
               <div className={styles.tradingWrapper}>
                 <a
-                  href="https://pump.fun/coin/D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump"
+                  href="https://dexscreener.com/solana/5kzotp2ziwpgyjjqk1xpsnev7htrakkckgmpjnj48qs5"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.buyLink}
                 >
-                  pump.fun
+                  <img
+                    src={DexScreener}
+                    alt="dexscreener"
+                    className={styles.tradingLogo}
+                    width="24"
+                    height="24"
+                  />
+                  Dex Screener
                   <svg
                     className={styles.buyIcon}
                     width="24"
