@@ -8,6 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 
 const syndicaHostUrl = import.meta.env.VITE_MAINNET_SYNDICA_HOST_URL;
 
+console.log("is this host url" + syndicaHostUrl);
+
 const connection = new Connection(syndicaHostUrl, "confirmed");
 
 // Fetch the balance of a given solana address
