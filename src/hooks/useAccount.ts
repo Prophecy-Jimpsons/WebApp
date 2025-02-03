@@ -6,7 +6,12 @@ import {
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
 
-const syndicaHostUrl = import.meta.env.VITE_MAINNET_SYNDICA_HOST_URL;
+const syndicaApi = import.meta.env.VITE_SYNDICA_API!;
+
+// const syndicaHostUrl = import.meta.env.VITE_MAINNET_SYNDICA_HOST_URL!;
+const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/${syndicaApi}`;
+
+console.log("is this host urlundefined" + syndicaHostUrl);
 
 const connection = new Connection(syndicaHostUrl, "confirmed");
 
