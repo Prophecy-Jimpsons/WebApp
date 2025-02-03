@@ -20,15 +20,14 @@ export default defineConfig({
       },
     }),
   ],
-  define: {
-    "process.env.VITE_FIREBASE_PROJECT_ID": JSON.stringify(
-      env.VITE_FIREBASE_PROJECT_ID,
-    ),
-    "process.env.VITE_FIREBASE_API_KEY": JSON.stringify(
-      env.VITE_FIREBASE_API_KEY,
-    ),
+  define: Object.keys(env).reduce((acc, key) => {
+    if (key.startsWith('VITE_')) {
+      (acc as any)[`process.env.${key}`] = JSON.stringify(env[key]);
+    }
+    return acc;
+  }, {
     "process.browser": true,
-  },
+  }),  
   css: {
     postcss: "./postcss.config.js",
   },
