@@ -6,7 +6,8 @@ import {
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
 
-const syndicaKey = import.meta.env.VITE_SYNDICA_API!;
+// const syndicaKey = import.meta.env.VITE_SYNDICA_API!;
+const syndicaKey = window.env.SYNDICA_API;
 const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/${syndicaKey}`;
 
 // console.log("is this host url" + syndicaHostUrl);
