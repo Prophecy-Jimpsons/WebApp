@@ -1,6 +1,56 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styles from "./TicTacToe.module.css";
-import { GameState, TelegramWebApp } from "./types";
+
+// Type definitions
+interface GamePieces {
+  O: number;
+  X: number;
+}
+
+interface SelectedPiece {
+  row: number;
+  col: number;
+}
+
+interface GamePlayers {
+  [key: string]: string;
+}
+
+interface GameState {
+  board: string[][];
+  currentPlayer: string;
+  mySymbol: string | null;
+  phase: "placement" | "movement";
+  pieces: GamePieces;
+  selectedPiece: SelectedPiece | null;
+  lastMove: [number, number] | null;
+  gameEnded: boolean;
+  winner: string | null;
+  players: GamePlayers;
+  joinTimeout: number;
+  placementTimeout: number;
+  lastActivityTime: number;
+}
+
+interface TelegramUser {
+  id?: number;
+  username?: string;
+}
+
+interface TelegramChat {
+  id?: number;
+}
+
+interface TelegramWebAppInitData {
+  user?: TelegramUser;
+  chat?: TelegramChat;
+}
+
+interface TelegramWebApp {
+  initDataUnsafe: TelegramWebAppInitData;
+  ready: () => void;
+  expand: () => void;
+}
 
 declare global {
   interface Window {
@@ -33,8 +83,11 @@ export const TicTacToe: React.FC = () => {
 
   const [error, setError] = useState<string | null>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const makeApiCall = async (endpoint: string, data: any) => {
+  // API call function
+  const makeApiCall = async (
+    endpoint: string,
+    data: Record<string, unknown>,
+  ) => {
     try {
       const tg = window.Telegram?.WebApp;
       const payload = {
@@ -64,20 +117,11 @@ export const TicTacToe: React.FC = () => {
       return await response.json();
     } catch (error) {
       console.error(`API call error (${endpoint}):`, error);
-
-      // Add user-friendly error handling
-      if (error instanceof TypeError && error.message === "Failed to fetch") {
-        if (IS_DEVELOPMENT) {
-          console.warn(
-            "Development environment detected. Please note: This app requires deployment to https://mrarejimmyz.github.io for API access.",
-          );
-        }
-      }
-
       throw error;
     }
   };
 
+  // Game state polling
   const checkGameState = useCallback(async () => {
     try {
       const response = await makeApiCall("get_game_state", {});
@@ -86,13 +130,13 @@ export const TicTacToe: React.FC = () => {
       }
     } catch (error) {
       console.error("Error checking game state:", error);
-      // Don't spam the error message if polling
       if (!IS_DEVELOPMENT) {
         setError("Unable to connect to game server. Please try again later.");
       }
     }
   }, []);
 
+  // Initialize game
   useEffect(() => {
     const tg = window.Telegram.WebApp;
     tg.ready();
@@ -102,6 +146,7 @@ export const TicTacToe: React.FC = () => {
     return () => clearInterval(interval);
   }, [checkGameState]);
 
+  // Handle cell click
   const handleCellClick = async (row: number, col: number) => {
     if (!gameState.mySymbol || gameState.gameEnded) return;
     if (gameState.currentPlayer !== gameState.mySymbol) return;
@@ -113,18 +158,17 @@ export const TicTacToe: React.FC = () => {
     }
   };
 
+  // Handle piece placement
   const handlePlacement = async (row: number, col: number) => {
-    // Early return if no symbol is selected
     if (
       !gameState.mySymbol ||
       (gameState.mySymbol !== "X" && gameState.mySymbol !== "O")
     )
       return;
 
-    // Check if the cell is empty and if player hasn't placed all pieces
     if (
       gameState.board[row][col] !== "" ||
-      gameState.pieces[gameState.mySymbol as keyof typeof gameState.pieces] >= 4
+      gameState.pieces[gameState.mySymbol as keyof GamePieces] >= 4
     )
       return;
 
@@ -132,6 +176,7 @@ export const TicTacToe: React.FC = () => {
       const response = await makeApiCall("make_move", {
         row,
         col,
+        type: "placement",
         symbol: gameState.mySymbol,
       });
 
@@ -140,9 +185,11 @@ export const TicTacToe: React.FC = () => {
       }
     } catch (error) {
       console.error("Error making placement:", error);
+      setError("Failed to place piece. Please try again.");
     }
   };
 
+  // Handle piece movement
   const handleMovement = async (row: number, col: number) => {
     if (!gameState.selectedPiece) {
       // Selecting a piece
@@ -160,7 +207,6 @@ export const TicTacToe: React.FC = () => {
       row === gameState.selectedPiece.row &&
       col === gameState.selectedPiece.col
     ) {
-      // Deselect if clicking the same piece
       setGameState((prevState) => ({
         ...prevState,
         selectedPiece: null,
@@ -173,6 +219,7 @@ export const TicTacToe: React.FC = () => {
         const response = await makeApiCall("make_move", {
           row,
           col,
+          type: "movement",
           symbol: gameState.mySymbol,
           selectedPiece: gameState.selectedPiece,
         });
@@ -186,16 +233,18 @@ export const TicTacToe: React.FC = () => {
         }
       } catch (error) {
         console.error("Error making movement:", error);
+        setError("Failed to move piece. Please try again.");
       }
     }
   };
 
+  // Handle join game
   const handleJoin = async () => {
     if (gameState.mySymbol) return;
 
     try {
       const tg = window.Telegram.WebApp;
-      const username = tg.initDataUnsafe.user?.username || "Player";
+      const username = tg.initDataUnsafe?.user?.username || "Player";
 
       const response = await makeApiCall("join_game", { username });
 
@@ -205,12 +254,15 @@ export const TicTacToe: React.FC = () => {
           ...response.gameState,
           mySymbol: response.gameState.mySymbol,
         }));
+        setError(null);
       }
     } catch (error) {
       console.error("Error joining game:", error);
+      setError("Failed to join game. Please try again.");
     }
   };
 
+  // Handle game reset
   const handleReset = async () => {
     try {
       const response = await makeApiCall("reset_game", {});
@@ -230,12 +282,15 @@ export const TicTacToe: React.FC = () => {
           placementTimeout: 60000,
           lastActivityTime: Date.now(),
         });
+        setError(null);
       }
     } catch (error) {
       console.error("Error resetting game:", error);
+      setError("Failed to reset game. Please try again.");
     }
   };
 
+  // Get game status
   const getStatus = () => {
     if (gameState.gameEnded && gameState.winner) {
       return `${gameState.players[gameState.winner]} (${gameState.winner}) has won! 🎉`;
@@ -248,6 +303,7 @@ export const TicTacToe: React.FC = () => {
       : `Waiting for ${gameState.players[gameState.currentPlayer]}'s (${gameState.currentPlayer}) move...`;
   };
 
+  // Render cell
   const renderCell = (value: string, row: number, col: number) => {
     const cellClasses = [
       styles.cell,
@@ -267,18 +323,24 @@ export const TicTacToe: React.FC = () => {
         key={`${row}-${col}`}
         className={cellClasses}
         onClick={() => handleCellClick(row, col)}
+        data-piece={value}
       >
         {value}
       </div>
     );
   };
 
+  // Render component
   return (
     <>
       <div className={styles.container}>
         <div className={styles.gameInfo}>
           <div className={styles.status}>{getStatus()}</div>
           <div className={styles.phaseIndicator}>
+            {Object.entries(gameState.players)
+              .map(([symbol, name]) => `${symbol}: ${name}`)
+              .join(" vs ")}
+            <br />
             {gameState.phase === "placement"
               ? "Place your pieces"
               : "Move your pieces"}
@@ -290,14 +352,6 @@ export const TicTacToe: React.FC = () => {
           </div>
         </div>
 
-        {/* {Object.keys(gameState.players).length < 2 && (
-          <div className={styles.waitingMessage}>
-            Waiting for players to join...
-            {gameState.players[gameState.mySymbol || ""] && (
-              <span>You're {gameState.mySymbol}!</span>
-            )}
-          </div>
-        )} */}
         {error && (
           <div className={styles.errorMessage}>
             {error}
