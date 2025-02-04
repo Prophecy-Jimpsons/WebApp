@@ -38,12 +38,18 @@ const NFTCollection: React.FC = () => {
     Record<string, VerificationResult>
   >({});
 
+  const VITE_HELIUS_API = window.env.HELIUS_API;
+
+  if (!VITE_HELIUS_API) {
+    throw new Error("HELIUS_API environment variable is missing");
+  }
+
   const fetchNFTsFromNetwork = async (
     address: string,
     network: "mainnet" | "devnet",
   ) => {
     const response = await fetch(
-      `https://${network}.helius-rpc.com/?api-key=70eef812-8d6b-496f-bc30-1725d5acb800`,
+      `https://${network}.helius-rpc.com/?api-key=${VITE_HELIUS_API}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

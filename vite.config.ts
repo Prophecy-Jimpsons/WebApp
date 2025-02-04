@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { fileURLToPath } from "url";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
-import { env } from "process";
+import { runtimeEnv } from "vite-plugin-runtime";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,6 +15,7 @@ const makeAbsolute = (relativePath: string) =>
 export default defineConfig({
   plugins: [
     react(),
+    runtimeEnv({ name: "env", injectHtml: true, generateTypes: true }),
     nodePolyfills({
       include: ["buffer", "crypto", "stream", "util"],
       globals: {
@@ -24,14 +25,6 @@ export default defineConfig({
       },
     }),
   ],
-  define: Object.keys(env).reduce((acc, key) => {
-    if (key.startsWith('VITE_')) {
-      (acc as any)[`process.env.${key}`] = JSON.stringify(env[key]);
-    }
-    return acc;
-  }, {
-    "process.browser": true,
-  }),  
   css: {
     postcss: "./postcss.config.js",
   },
