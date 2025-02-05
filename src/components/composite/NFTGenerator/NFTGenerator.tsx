@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import AIStatusContent from "../AIStatusContent";
-import { SERVER_BASE_URL } from "@/config/constants";
+// import { SERVER_BASE_URL } from "@/config/constants";
 
 const NFTGenerator = () => {
   const { connected, publicKey } = useWallet();
@@ -372,13 +372,16 @@ const NFTGenerator = () => {
         ipfs_url: generatedNFT?.ipfs.url,
       };
 
-      const response = await fetch(`${SERVER_BASE_URL}/generate-metadata`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `https://173.34.178.13:8000/generate-metadata`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(metadataPayload),
         },
-        body: JSON.stringify(metadataPayload),
-      });
+      );
 
       const data = await response.json();
       if (data.status === "success") {
