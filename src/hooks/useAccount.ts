@@ -10,6 +10,10 @@ import { useQuery } from "@tanstack/react-query";
 const syndicaKey = import.meta.env.SYNDICA_API;
 const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/${syndicaKey}`;
 
+console.log("Syndica API Key:", import.meta.env.VITE_SYNDICA_API);
+console.log("Syndica Host URL:", syndicaHostUrl);
+
+
 // console.log("is this host url" + syndicaHostUrl);
 
 const connection = new Connection(syndicaHostUrl, "confirmed");
