@@ -49,7 +49,7 @@ const NFTCollection: React.FC = () => {
     network: "mainnet" | "devnet",
   ) => {
     const response = await fetch(
-      `https://${network}.helius-rpc.com/?api-key=${VITE_HELIUS_API}`,
+      `https://${network}.helius-rpc.com/?api-key=70eef812-8d6b-496f-bc30-1725d5acb800`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
