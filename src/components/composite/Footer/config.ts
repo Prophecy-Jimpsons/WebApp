@@ -8,6 +8,10 @@ import {
 
 export const footerLinks = [
   {
+    path: PATHS.PUBLIC.ROADMAP,
+    label: "Roadmap",
+  },
+  {
     path: PATHS.PUBLIC.PRIVACY_POLICY,
     label: "Privacy Policy",
   },

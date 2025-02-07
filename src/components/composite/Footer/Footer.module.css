@@ -91,11 +91,9 @@
   }
 
   .topFooter {
-    flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
-    text-align: left;
     gap: var(--space-4);
+    width: 100%;
     padding: 0 var(--space-3);
   }
 
@@ -114,8 +112,8 @@
   }
 
   .socialLinks img {
-    width: var(--space-7);
-    height: var(--space-7);
+    width: var(--space-6);
+    height: var(--space-6);
   }
 
   .bottomFooter {
@@ -136,6 +134,10 @@
 
   .topFooter {
     padding: 0 var(--space-4);
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: left;
     gap: var(--space-6);
   }
 
@@ -172,6 +174,7 @@
 @media screen and (min-width: 1280px) {
   .topFooter {
     padding: 0;
+    gap: var(--space-1) var(--space-8);
   }
 
   .footerColumnLogo img {

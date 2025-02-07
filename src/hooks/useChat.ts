@@ -45,7 +45,7 @@ const useChat = () => {
 
       return { previousMessages };
     },
-    onSuccess: (response, variables) => {
+    onSuccess: (response) => {
       // Add AI response to chat history
       queryClient.setQueryData<ChatMessage[]>(["chatHistory"], (old = []) => [
         ...old,
@@ -54,6 +54,7 @@ const useChat = () => {
     },
     onError: (err, newMessage, context) => {
       console.error("Mutation error:", err);
+      console.warn("New message:", newMessage);
       // Rollback to the previous state
       queryClient.setQueryData(["chatHistory"], context?.previousMessages);
     },
