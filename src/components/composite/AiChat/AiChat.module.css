@@ -190,14 +190,6 @@ aiMessage pre {
   }
 }
 
-.errorMessage {
-  color: var(--color-danger);
-  padding: var(--space-2);
-  margin: var(--space-2) 0;
-  text-align: center;
-  font-size: var(--space-4);
-}
-
 .inputContainer {
   cursor: text;
   width: 100%;

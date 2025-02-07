@@ -11,6 +11,8 @@ const useChat = () => {
   const queryClient = useQueryClient();
 
   const sendMessage = async (message: string) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30 * 1000); // 30 seconds timeout
     try {
       const response = await fetch(`${API_URL}`, {
         method: "POST",
@@ -20,12 +22,17 @@ const useChat = () => {
         body: JSON.stringify({
           query: message,
         }),
+        signal: controller.signal, // Attach the AbortController signal
       });
+
+      clearTimeout(timeoutId); // Clear the timeout if the request completes
+
       const data = await response.json();
       return data.response;
     } catch (error) {
       console.error("Request failed to send message:", error);
-      throw error;
+      clearTimeout(timeoutId); // Clear the timeout if the request fails
+      throw new Error("Failed to send message");
     }
   };
 
@@ -53,8 +60,7 @@ const useChat = () => {
       ]);
     },
     onError: (err, newMessage, context) => {
-      console.error("Mutation error:", err);
-      console.warn("New message:", newMessage);
+      console.error("Mutation error:", err, newMessage);
       // Rollback to the previous state
       queryClient.setQueryData(["chatHistory"], context?.previousMessages);
     },

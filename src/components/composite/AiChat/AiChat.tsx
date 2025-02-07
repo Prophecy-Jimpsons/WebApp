@@ -1,10 +1,12 @@
-import React, {  useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Prism, SyntaxHighlighterProps } from "react-syntax-highlighter";
 import { ArrowUp } from "lucide-react";
 import styles from "./AiChat.module.css";
 import useChat from "@/hooks/useChat";
+import Modal from "@/components/ui/Modal";
+import AIStatusContent from "../AIStatusContent";
 
 const SyntaxHighlighter = Prism as any as React.FC<SyntaxHighlighterProps>;
 
@@ -12,6 +14,7 @@ const AiChat = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { sendMessage, isLoading, error, chatHistory } = useChat();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -53,14 +56,13 @@ const AiChat = () => {
 
   // Handle error message
   useEffect(() => {
-    if (error) {
-      console.error("Chat error state:", error);
+    if (errorMessage || error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "An error occurred",
+        error instanceof Error ? error.message : "Failed to send message",
       );
+      setIsModalOpen(true);
     }
-  }, [error]);
-
+  }, [errorMessage, error]);
   const renderMessage = (content: string) => {
     return (
       <ReactMarkdown
@@ -159,7 +161,13 @@ const AiChat = () => {
             </div>
           )}
           {errorMessage && (
-            <div className={styles.errorMessage}>{errorMessage}</div>
+            <Modal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              title="🛠️ AI Under Maintenance: Recharging Its Witty Circuits!"
+            >
+              <AIStatusContent />
+            </Modal>
           )}
           <div ref={messagesEndRef} />
         </div>
