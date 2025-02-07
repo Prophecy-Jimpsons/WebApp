@@ -94,8 +94,8 @@ const AiChat = () => {
       <div
         className={`${styles.chatTop} ${chatHistory.length > 0 ? styles.chatTopWithHistory : ""}`}
       >
-        <h1>Hi, I'm AVAI.</h1>
-        <p>How can I help you with our project?</p>
+        <h1>Beep boop! I'm AVAI, your AI sidekick! 🤖✨</h1> 
+        <p>How can I dazzle you today, genius?</p>
       </div>
       <div className={styles.chatBox}>
         <div
