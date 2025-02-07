@@ -1,0 +1,328 @@
+.chatContainer {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: var(--container-lg);
+  height: 100%;
+  margin: auto;
+  padding: 0 var(--space-4);
+  position: relative;
+  flex-grow: 1;
+  background-color: var(--color-black-background);
+}
+
+.chatTop {
+  margin-top: var(--space-10);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: center;
+  line-height: var(--space-6);
+  /* padding: var(--space-4) 0; */
+}
+
+.chatTopWithHistory {
+  flex-grow: 0;
+}
+
+.chatTop img {
+  /* width: 100px; */
+  /* height: 100px; */
+}
+
+.chatTop h1 {
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: auto;
+  font-size: var(--space-8);
+  font-weight: bolder;
+}
+.chatTop p {
+  color: var(--color-grey);
+  margin: var(--space-2) 0 var(--space-4);
+  font-size: var(--space-5);
+}
+
+.chatBox {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+  max-width: var(--container-lg);
+  padding: var(--space-2);
+}
+
+.messagesContainer {
+  overflow-y: auto;
+  margin-bottom: var(--space-4);
+  font-size: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.messagesContainerWithHistory {
+  flex-grow: 1;
+}
+
+.userMessageContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 var(--space-4);
+  max-width: 100%;
+}
+
+.userMessage {
+  background-color: var(--color-thin-grey);
+  color: var(--color-white);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--space-4);
+  word-wrap: break-word;
+}
+
+.aiMessageContainer {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.aiMessageWrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  width: fit-content;
+}
+
+.aiLogoContainer {
+  flex-shrink: 0;
+  width: var(--space-8);
+  height: var(--space-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aiLogo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.aiMessage {
+  color: var(--color-white);
+  padding: var(--space-2);
+  width: fit-content;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  max-width: calc(100% - var(--space-16)); /* Account for logo width + gap */
+}
+
+.aiMessage code {
+  background: rgba(0, 0, 0, 0.1);
+  /* padding: 0.2em 0.4em; */
+  padding: calc((--space-1) / 2) var(--space-1);
+  border-radius: var(--space-1);
+  font-size: var(--space-2);
+  font-family: monospace;
+}
+
+aiMessage pre {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 1em;
+  border-radius: var(--space-1);
+  overflow-x: auto;
+}
+
+.aiMessage ul,
+.aiMessage ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+/* Add this to your existing CSS */
+.aiMessageLoading {
+  color: var(--color-grey);
+  padding: var(--space-2);
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.loadingDots {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.loadingDots span {
+  width: var(--space-1);
+  height: var(--space-1);
+  border-radius: 50%;
+  background-color: var(--color-grey);
+  animation: loadingDots 1.4s infinite;
+}
+
+.loadingDots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loadingDots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes loadingDots {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.inputContainer {
+  cursor: text;
+  width: 100%;
+  border-radius: var(--space-6);
+  flex-direction: column;
+  display: flex;
+  position: relative;
+}
+
+.inputContainer:focus-within {
+  box-shadow: 0 0 0 2px var(--color-secondary);
+}
+
+.inputBoxWrapper {
+  z-index: 1;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: var(--space-3);
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 0 0 0.5px var(--color-dark-blue);
+  background-color: var(--color-thin-grey);
+  border-radius: var(--space-6);
+}
+
+.inputBox {
+  width: 100%;
+  /* max-height: calc(8 * var(--space-6)); */
+  /* margin: 0 var(--space-1); */
+  position: relative;
+}
+
+.inputField {
+  word-break: break-word;
+  white-space: pre-wrap;
+  border: none;
+  width: 100%;
+  overflow: auto;
+  resize: none;
+  color: var(--color-white);
+  caret-color: var(--color-white);
+  background-color: transparent;
+  position: absolute;
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+.inputArea {
+  overflow: auto;
+  visibility: hidden;
+  pointer-events: none;
+  /* min-height: var(--space-16); */
+  min-height: var(--space-12);
+}
+
+.sendButtonWrapper {
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+  display: flex;
+}
+
+.sendButton {
+  background-color: var(--color-secondary);
+  border-radius: var(--space-12);
+  padding: var(--space-1);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.sendButtonIcon {
+  color: var(--color-white);
+  height: var(--space-6);
+  width: var(--space-6);
+}
+
+.sendButton:disabled {
+  background-color: var(--color-grey);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .chatContainer {
+    padding: 0 var(--space-4);
+  }
+
+  .chatTop h1 {
+    font-size: var(--space-6);
+  }
+
+  .chatTop p {
+    font-size: var(--space-3);
+  }
+
+  .aiLogoContainer {
+    width: var(--space-6);
+    height: var(--space-6);
+  }
+
+  .userMessage,
+  .aiMessageWrapper {
+    max-width: 100%;
+  }
+
+  .inputContainer {
+    font-size: var(--space-3);
+    border-radius: var(--space-4);
+  }
+
+  .inputBoxWrapper {
+    padding: var(--space-2);
+    border-radius: var(--space-4);
+  }
+
+  .inputBox {
+    max-height: calc(6 * var(--space-6));
+  }
+
+  .inputArea {
+    min-height: var(--space-8);
+  }
+
+  .sendButton {
+    padding: var(--space-1);
+  }
+
+  .sendButtonIcon {
+    height: var(--space-4);
+    width: var(--space-4);
+  }
+}
