@@ -1,71 +1,73 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 
-// Mock AI responses for simulation
-const mockResponses = [
-  "Hello! How can I assist you today?",
-  "Sure, I can help with that. Could you provide more details?",
-  "That sounds interesting! Let me look into it.",
-  "I've found some information for you. Here it is!",
-  "Is there anything else I can help you with?",
-];
+const API_URL = "https://173.34.178.13:8001/query";
 
-type OldData = {
+type ChatMessage = {
   role: string;
   content: string;
 };
 
 const useChat = () => {
   const queryClient = useQueryClient();
-  const [responseIndex, setResponseIndex] = useState(0); // Track which mock response to use
 
-  const sendMessage = async (message) => {
-    // Simulate an API call to your AI model
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const response = mockResponses[responseIndex];
-        setResponseIndex((prevIndex) => (prevIndex + 1) % mockResponses.length); // Cycle through responses
-        resolve(response);
-      }, 2000); // Simulate a 2-second delay for the AI response
-    });
+  const sendMessage = async (message: string) => {
+    try {
+      const response = await fetch(`${API_URL}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: message,
+        }),
+      });
+      const data = await response.json();
+      return data.response;
+    } catch (error) {
+      console.error("Request failed to send message:", error);
+      throw error;
+    }
   };
 
   const mutation = useMutation({
     mutationFn: sendMessage,
     onMutate: async (newMessage) => {
-      // Optimistically update the chat history
-      await queryClient.cancelQueries(["chatHistory"]);
-      const previousChatHistory = queryClient.getQueryData(["chatHistory"]);
-      queryClient.setQueryData(
-        ["chatHistory"],
-        (oldData: OldData[] | undefined) => [
-          ...(oldData || []),
-          { role: "user", content: newMessage },
-        ],
-      );
-      return { previousChatHistory };
+      await queryClient.cancelQueries({ queryKey: ["chatHistory"] });
+      const previousMessages = queryClient.getQueryData<ChatMessage[]>([
+        "chatHistory",
+      ]);
+
+      // Add user message to chat history
+      queryClient.setQueryData<ChatMessage[]>(["chatHistory"], (old = []) => [
+        ...old,
+        { role: "user", content: newMessage },
+      ]);
+
+      return { previousMessages };
     },
-    onSuccess: (data) => {
-      // Add the AI's response to the chat history
-      queryClient.setQueryData(
-        ["chatHistory"],
-        (oldData: OldData[] | undefined) => [
-          ...(oldData || []),
-          { role: "ai", content: data as string },
-        ],
-      );
+    onSuccess: (response, variables) => {
+      // Add AI response to chat history
+      queryClient.setQueryData<ChatMessage[]>(["chatHistory"], (old = []) => [
+        ...old,
+        { role: "ai", content: response },
+      ]);
     },
     onError: (err, newMessage, context) => {
-      // Rollback on error
-      queryClient.setQueryData(["chatHistory"], context?.previousChatHistory);
+      console.error("Mutation error:", err);
+      // Rollback to the previous state
+      queryClient.setQueryData(["chatHistory"], context?.previousMessages);
+    },
+    onSettled: () => {
+      // Always refetch after error or success
+      queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
     },
   });
 
   return {
-    sendMessage: mutation.mutateAsync,
+    sendMessage: mutation.mutate,
     isLoading: mutation.isLoading,
     error: mutation.error,
-    chatHistory: queryClient.getQueryData(["chatHistory"]) || [],
+    chatHistory: queryClient.getQueryData<ChatMessage[]>(["chatHistory"]) || [],
   };
 };
 
