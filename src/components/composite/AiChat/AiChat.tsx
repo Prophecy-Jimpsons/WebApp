@@ -8,6 +8,7 @@ import useChat from "@/hooks/useChat";
 import Modal from "@/components/ui/Modal";
 import AIStatusContent from "../AIStatusContent";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SyntaxHighlighter = Prism as any as React.FC<SyntaxHighlighterProps>;
 
 const AiChat = () => {
@@ -68,11 +69,13 @@ const AiChat = () => {
       <ReactMarkdown
         children={content}
         components={{
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           code({ node, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
             return match ? (
               <SyntaxHighlighter
                 children={String(children).replace(/\n$/, "")}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 style={{ ...dark, overflowX: "scroll" } as any}
                 language={match[1]}
                 PreTag="div"
@@ -94,7 +97,7 @@ const AiChat = () => {
       <div
         className={`${styles.chatTop} ${chatHistory.length > 0 ? styles.chatTopWithHistory : ""}`}
       >
-        <h1>Beep boop! I'm AVAI, your AI sidekick! 🤖✨</h1> 
+        <h1>Beep boop! I'm AVAI, your AI sidekick! 🤖✨</h1>
         <p>How can I dazzle you today, genius?</p>
       </div>
       <div className={styles.chatBox}>
