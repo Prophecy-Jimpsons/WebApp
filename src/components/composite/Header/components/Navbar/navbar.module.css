@@ -91,6 +91,11 @@
   animation: starRotate 12s linear infinite;
 }
 
+.chat {
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 4px rgba(252, 175, 5, 0.4));
+}
+
 @keyframes pulse {
   0% {
     opacity: 1;

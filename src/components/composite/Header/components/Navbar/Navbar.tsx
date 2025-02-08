@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Star } from "lucide-react";
+import { Star, BotMessageSquare } from "lucide-react";
 import { navLinks } from "./config";
 import styles from "./navbar.module.css";
 
@@ -17,23 +17,38 @@ const Navbar: FC = () => {
   const getLinkClassName = (path: string, label: string) => {
     const baseClass = styles.navLink;
     const activeClass = isActive(path) ? styles.activeLink : "";
-    const betaClass = label === "AI Preview" ? styles.betaLink : "";
+    const specialClass =
+      label === "AI Preview" || label === "AVAI Chat" ? styles.betaLink : "";
 
-    return `${baseClass} ${activeClass} ${betaClass}`.trim();
+    return `${baseClass} ${activeClass} ${specialClass}`.trim();
   };
 
   const renderLink = (link: (typeof navLinks)[number]) => {
-    if (link.label === "AI Preview") {
+    const isSpecialLink =
+      link.label === "AI Preview" || link.label === "AVAI Chat";
+
+    if (isSpecialLink) {
       return (
         <div className={styles.betaWrapper} key={link.path}>
           <Link
             to={link.path}
             className={getLinkClassName(link.path, link.label)}
           >
-            <Star size={16} className={styles.star} strokeWidth={2.5} />
+            {link.label === "AVAI Chat" && (
+              <BotMessageSquare
+                size={16}
+                className={styles.chat}
+                strokeWidth={2.5}
+              />
+            )}
+            {link.label === "AI Preview" && (
+              <Star size={16} className={styles.star} strokeWidth={2.5} />
+            )}
             {link.label}
           </Link>
-          <span className={styles.betaBadge}>BETA</span>
+          {link.label === "AI Preview" && (
+            <span className={styles.betaBadge}>BETA</span>
+          )}
         </div>
       );
     }
