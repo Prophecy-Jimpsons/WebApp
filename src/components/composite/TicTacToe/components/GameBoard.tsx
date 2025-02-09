@@ -1,164 +1,122 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Pusher from "pusher-js";
 import styles from "./GameBoard.module.css";
 import GameCell from "./GameCell";
 
 interface GameBoardProps {
   username: string;
+  gameId: string;
+  playerId: string;
   onBack: () => void;
 }
 
-const MAX_PIECES = 4;
+const API_URL = "https://wanemregmi.pythonanywhere.com";
 
-const GameBoard: React.FC<GameBoardProps> = ({ username, onBack }) => {
+const GameBoard: React.FC<GameBoardProps> = ({
+  username,
+  gameId,
+  playerId,
+  onBack,
+}) => {
   const [board, setBoard] = useState<string[][]>(
     Array(4)
       .fill("")
       .map(() => Array(4).fill("")),
   );
-  const [currentPlayer, setCurrentPlayer] = useState<"X" | "O">("X");
-  const [phase, setPhase] = useState<"placement" | "movement">("placement");
-  const [pieces, setPieces] = useState<{ X: number; O: number }>({
-    X: 0,
-    O: 0,
-  });
-  const [selectedPiece, setSelectedPiece] = useState<{
-    row: number;
-    col: number;
-  } | null>(null);
+  const [currentPlayer, setCurrentPlayer] = useState<number>(1);
   const [winner, setWinner] = useState<string | null>(null);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [hint, setHint] = useState<string | null>(null);
+  const [isWaiting, setIsWaiting] = useState(true); // ✅ Initially waiting for an opponent
 
-  // 🎯 Reset Game
-  const resetGame = () => {
-    setBoard(
-      Array(4)
-        .fill("")
-        .map(() => Array(4).fill("")),
-    );
-    setCurrentPlayer("X");
-    setPhase("placement");
-    setPieces({ X: 0, O: 0 });
-    setSelectedPiece(null);
-    setWinner(null);
-    setIsGameOver(false);
-    setHint(null);
-  };
+  useEffect(() => {
+    if (!gameId) return;
 
-  // 🎯 Handle Cell Clicks
-  const handleCellClick = (row: number, col: number) => {
-    if (winner || isGameOver) return; // Stop clicks after game ends
+    console.log(`📡 Subscribing to Pusher channel: game-${gameId}`);
 
-    if (phase === "placement") {
-      if (board[row][col] === "" && pieces[currentPlayer] < MAX_PIECES) {
-        placePiece(row, col);
-      }
-    } else if (phase === "movement") {
-      if (!selectedPiece && board[row][col] === currentPlayer) {
-        setSelectedPiece({ row, col });
-      } else if (selectedPiece?.row === row && selectedPiece?.col === col) {
-        setSelectedPiece(null);
-      } else if (selectedPiece && board[row][col] === "") {
-        movePiece(row, col);
-      }
-    }
-  };
+    const fetchGameState = async () => {
+      console.log(`🔄 Fetching game state for Game ID: ${gameId}`);
+      try {
+        const response = await axios.get(`${API_URL}/get_game_state`, {
+          params: { game_id: gameId },
+        });
 
-  // ✅ Place a Piece
-  const placePiece = (row: number, col: number) => {
-    if (pieces[currentPlayer] >= MAX_PIECES) {
-      setHint(`🚀 Move a piece! You've placed all 4.`);
-      return;
-    }
+        const { board, current_player, is_game_over, winner, players } =
+          response.data;
+        setBoard(board);
+        setCurrentPlayer(current_player);
+        setIsGameOver(is_game_over);
+        setWinner(winner || null);
 
-    const newBoard = board.map((r) => [...r]);
-    newBoard[row][col] = currentPlayer;
-    setBoard(newBoard);
-
-    setPieces((prev) => ({
-      ...prev,
-      [currentPlayer]: prev[currentPlayer] + 1,
-    }));
-
-    if (
-      pieces[currentPlayer] + 1 >= MAX_PIECES &&
-      pieces[getOpponent()] >= MAX_PIECES
-    ) {
-      setPhase("movement");
-      setHint(`🔄 Move an existing piece to an empty spot.`);
-    } else {
-      setHint(null);
-    }
-
-    checkWinner();
-    switchTurn();
-  };
-
-  // ✅ Move a Piece
-  const movePiece = (row: number, col: number) => {
-    if (board[row][col] !== "" || !selectedPiece) return;
-
-    const newBoard = board.map((r) => [...r]);
-    newBoard[selectedPiece.row][selectedPiece.col] = "";
-    newBoard[row][col] = currentPlayer;
-    setBoard(newBoard);
-    setSelectedPiece(null);
-
-    checkWinner();
-    switchTurn();
-  };
-
-  // 🔄 Switch Turns
-  const switchTurn = () => {
-    setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
-  };
-
-  // 🆚 Get Opponent Symbol
-  const getOpponent = () => (currentPlayer === "X" ? "O" : "X");
-
-  // ✅ **Check Winner** (Includes 2x2 Square Wins)
-  const checkWinner = () => {
-    const winPatterns = [
-      ...board, // Rows
-      ...board[0].map((_, col) => board.map((row) => row[col])), // Columns
-      board.map((row, i) => row[i]), // Main diagonal
-      board.map((row, i) => row[3 - i]), // Anti-diagonal
-    ];
-
-    if (winPatterns.some((line) => line.every((cell) => cell === "X"))) {
-      setWinner("X");
-      setIsGameOver(true);
-      setHint(null); // ❌ Remove hint when the game ends
-      return;
-    }
-    if (winPatterns.some((line) => line.every((cell) => cell === "O"))) {
-      setWinner("O");
-      setIsGameOver(true);
-      setHint(null); // ❌ Remove hint when the game ends
-      return;
-    }
-
-    // ✅ Check for 2x2 Square Wins
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
-        if (
-          board[i][j] !== "" &&
-          board[i][j] === board[i][j + 1] &&
-          board[i][j] === board[i + 1][j] &&
-          board[i][j] === board[i + 1][j + 1]
-        ) {
-          setWinner(board[i][j]);
-          setIsGameOver(true);
-          setHint(null); // ❌ Remove hint when the game ends
-          return;
+        // ✅ Check if second player has joined
+        if (players.length >= 2) {
+          setIsWaiting(false);
         }
+      } catch (error) {
+        console.error(
+          `❌ Error fetching game state for game ${gameId}:`,
+          error,
+        );
       }
+    };
+
+    fetchGameState();
+
+    // ✅ Connect to Pusher for real-time updates
+    const pusher = new Pusher("9cf0b43853e0406ff8ba", { cluster: "us2" });
+    const channel = pusher.subscribe(`game-${gameId}`);
+
+    // 🎯 Listen for moves
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    channel.bind("move-made", (data: any) => {
+      console.log("📢 Move received from Pusher:", data);
+      setBoard(data.board);
+      setCurrentPlayer(data.current_player);
+      setWinner(data.winner || null);
+      setIsGameOver(data.is_game_over);
+    });
+
+    // 🎯 Listen for a new player joining
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    channel.bind("player-joined", (data: any) => {
+      console.log("👥 Opponent joined:", data);
+      setIsWaiting(false);
+    });
+
+    return () => {
+      console.log(`❌ Unsubscribing from Pusher channel: game-${gameId}`);
+      pusher.unsubscribe(`private-game-${gameId}`);
+      pusher.disconnect();
+    };
+  }, [gameId]);
+
+  // ✅ Handle cell click event (via Pusher, NOT API)
+  const handleCellClick = async (row: number, col: number) => {
+    if (winner || isGameOver || currentPlayer !== parseInt(playerId)) return;
+
+    console.log(`📤 Sending move: [${row}, ${col}] via API...`);
+
+    try {
+      // ✅ Send move to backend (NOT Pusher)
+      const response = await axios.post(`${API_URL}/make_move`, {
+        game_id: gameId,
+        player_id: playerId,
+        move_type: "place",
+        move: [row, col],
+      });
+
+      if (response.data.status === "success") {
+        console.log("✅ Move successful! Waiting for update from Pusher...");
+      } else {
+        console.warn("⚠️ Invalid move:", response.data.error);
+      }
+    } catch (error) {
+      console.error("❌ Error making move:", error);
     }
   };
 
   return (
     <>
-      {/* Back Button */}
       <button className={styles.backButton} onClick={onBack}>
         ← Back
       </button>
@@ -166,20 +124,22 @@ const GameBoard: React.FC<GameBoardProps> = ({ username, onBack }) => {
       <div className={styles.boardContainer}>
         <h2 className={styles.greeting}>Hello, {username}!</h2>
 
-        {!isGameOver && (
+        {isWaiting ? (
+          <p className={styles.waitingText}>⏳ Waiting for opponent...</p>
+        ) : (
           <p
             className={styles.turnIndicator}
             style={{
               color:
-                currentPlayer === "X"
+                currentPlayer === parseInt(playerId)
                   ? "var(--color-primary)"
                   : "var(--color-secondary)",
             }}
           >
             🎮{" "}
-            {currentPlayer === "X"
+            {currentPlayer === parseInt(playerId)
               ? `${username} (X) Turn`
-              : "Opponent (O) Turn"}
+              : `Opponent (O) Turn`}
           </p>
         )}
 
@@ -190,9 +150,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ username, onBack }) => {
                 key={`${rIdx}-${cIdx}`}
                 value={cell}
                 onClick={() => handleCellClick(rIdx, cIdx)}
-                isSelected={
-                  selectedPiece?.row === rIdx && selectedPiece?.col === cIdx
-                }
+                isSelected={false}
               />
             )),
           )}
@@ -201,15 +159,6 @@ const GameBoard: React.FC<GameBoardProps> = ({ username, onBack }) => {
         {isGameOver && (
           <p className={styles.winnerText}>🎉 {winner} Wins! 🎉</p>
         )}
-
-        {/* ✅ Hint is only shown if the game is NOT over */}
-        {hint && !isGameOver && <p className={styles.hintMessage}>{hint}</p>}
-
-        <div className={styles.buttonContainer}>
-          <button className={styles.newGameButton} onClick={resetGame}>
-            New Game
-          </button>
-        </div>
       </div>
     </>
   );
