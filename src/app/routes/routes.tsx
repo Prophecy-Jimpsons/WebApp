@@ -32,6 +32,9 @@ import NFTCollectionPage from "@/pages/NFTCollection/NFTCollectionPage";
 // AI Chat
 const AiChatPage = lazy(() => import("@/pages/AiChat/AiChatPage"));
 
+// Telegram Game Page
+import Game from "@/pages/Game/GamePage";
+
 // Public Routes - No authentication needed
 export const publicRoutes: RouteConfig[] = [
   {
@@ -124,6 +127,14 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <NFTCollectionPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.GAME,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <Game />
           </Suspense>
         ),
       },

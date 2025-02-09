@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Star, BotMessageSquare } from "lucide-react";
+import { Star, BotMessageSquare, Gamepad2Icon } from "lucide-react";
 import { navLinks } from "./config";
 import styles from "./navbar.module.css";
 
@@ -18,14 +18,18 @@ const Navbar: FC = () => {
     const baseClass = styles.navLink;
     const activeClass = isActive(path) ? styles.activeLink : "";
     const specialClass =
-      label === "AI Preview" || label === "AVAI Chat" ? styles.betaLink : "";
+      label === "AI Preview" || label === "AVAI Chat" || label === "Game"
+        ? styles.betaLink
+        : "";
 
     return `${baseClass} ${activeClass} ${specialClass}`.trim();
   };
 
   const renderLink = (link: (typeof navLinks)[number]) => {
     const isSpecialLink =
-      link.label === "AI Preview" || link.label === "AVAI Chat";
+      link.label === "AI Preview" ||
+      link.label === "AVAI Chat" ||
+      link.label === "Game";
 
     if (isSpecialLink) {
       return (
@@ -34,6 +38,13 @@ const Navbar: FC = () => {
             to={link.path}
             className={getLinkClassName(link.path, link.label)}
           >
+            {link.label === "Game" && (
+              <Gamepad2Icon
+                size={16}
+                className={styles.game}
+                strokeWidth={2.5}
+              />
+            )}
             {link.label === "AVAI Chat" && (
               <BotMessageSquare
                 size={16}
