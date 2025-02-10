@@ -30,6 +30,7 @@ interface GameState {
   players_count: number;
   playing_with_ai: boolean;
   status: string;
+  winner?: number | null;
 }
 
 const API_URL = "https://wanemregmi.pythonanywhere.com";
@@ -42,9 +43,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   onBack,
 }) => {
   const [gameState, setGameState] = useState<GameState | null>(null);
-  const [selectedCell, setSelectedCell] = useState<[number, number] | null>(
-    null,
-  );
+  const [selectedCell, setSelectedCell] = useState<[number, number] | null>(null);
 
   const fetchGameState = useCallback(async () => {
     console.log(`🔄 Fetching game state for Game ID: ${gameId}`);
@@ -54,7 +53,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
       console.log("✅ Raw Game State from API:", data);
 
-      // Convert backend response to match frontend expectations
       const formattedGameState: GameState = {
         board_state: {
           board: data.board.board,
@@ -71,7 +69,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
         ),
         players_count: Object.keys(data.players).length,
         playing_with_ai: false,
-        status: "ongoing",
+        status: data.status || "ongoing",
+        winner: data.winner || null,
       };
 
       setGameState(formattedGameState);
@@ -89,7 +88,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
     const channel = pusher.subscribe(`game-${gameId}`);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     channel.bind("move-made", (data: any) => {
       if (!data || !data.board || !data.board.board) {
         console.warn("⚠️ Received invalid game state from Pusher:", data);
@@ -98,7 +96,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
       console.log("📢 Move received from Pusher:", data);
 
-      // ✅ Normalize Pusher response to match API response
       const formattedState: GameState = {
         board_state: {
           board: data.board.board,
@@ -107,13 +104,17 @@ const GameBoard: React.FC<GameBoardProps> = ({
           pieces_placed: data.board.pieces_placed || {},
         },
         current_player: data.current_player,
-        players: gameState?.players || {}, // Use existing players from API
+        players: gameState?.players || {},
         players_count: Object.keys(gameState?.players || {}).length,
         playing_with_ai: false,
-        status: "ongoing",
+        status: data.is_game_over ? "finished" : "ongoing",
+        winner: data.winner
       };
 
       setGameState(formattedState);
+      if (formattedState.status === "finished") {
+        setSelectedCell(null); // Clear selection when game ends
+      }
     });
 
     return () => {
@@ -124,12 +125,12 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
-      console.log(`📌 Clicked cell [${row}, ${col}]`); // ✅ Check if click is detected
+      console.log(`📌 Clicked cell [${row}, ${col}]`);
 
       if (
         !gameState ||
         gameState.status === "finished" ||
-        gameState.current_player !== parseInt(playerId) // ✅ Check if it's my turn
+        gameState.current_player !== parseInt(playerId)
       ) {
         console.warn("⛔ Move not allowed: Either game over or not your turn.");
         return;
@@ -150,7 +151,10 @@ const GameBoard: React.FC<GameBoardProps> = ({
           sendMove("move", [selectedCell[0], selectedCell[1], row, col]);
           setSelectedCell(null);
         } else {
-          setSelectedCell([row, col]);
+          // Only select cell if it contains the player's piece
+          if (gameState.board_state.board[row][col] === parseInt(playerId)) {
+            setSelectedCell([row, col]);
+          }
         }
       }
     },
@@ -243,7 +247,12 @@ const GameBoard: React.FC<GameBoardProps> = ({
         {renderBoard}
 
         {gameState.status === "finished" && (
-          <p className={styles.winnerText}>🎉 Game Over! 🎉</p>
+          <p className={styles.winnerText}>
+            🎉 Game Over! {gameState.winner ? 
+              `${gameState.winner === parseInt(playerId) ? "You Won!" : "Opponent Won!"}` : 
+              "It's a Draw!"
+            } 🎉
+          </p>
         )}
       </div>
     </>

@@ -12,10 +12,11 @@ const TicTacToe: React.FC = () => {
   const [screen, setScreen] = useState<"landing" | "gameMode" | "gameBoard">(
     "landing",
   );
-  const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
-  const [username, setUsername] = useState(
-    localStorage.getItem("username") || "Anonymous",
-  );
+  // Comment out unused state
+  // const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
+  // const [username, setUsername] = useState(
+  //   localStorage.getItem("username") || "Anonymous",
+  // );
   const [gameId, setGameId] = useState<string | null>("1"); // Always game_id = 1
   const [playerId, setPlayerId] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -50,11 +51,36 @@ const TicTacToe: React.FC = () => {
       });
   }, []);
 
-  // ✅ Called when "Continue" is clicked after entering username
-  const handleUsernameSubmit = async (name: string) => {
-    setUsername(name);
-    setShowUsernamePrompt(false);
+  // Comment out unused function
+  // // ✅ Called when "Continue" is clicked after entering username
+  // const handleUsernameSubmit = async (name: string) => {
+  //   setUsername(name);
+  //   setShowUsernamePrompt(false);
 
+  //   try {
+  //     console.log("🔄 Checking if game already exists before creating...");
+
+  //     const response = await axios.get(`${API_URL}/active_games`);
+  //     console.log("✅ Active Games Response:", response.data);
+
+  //     const gameData = response.data.active_games["1"]; // Always game_id = 1
+
+  //     if (!gameData) {
+  //       console.log("❌ No active game. Creating game first...");
+  //       await createGame(name);
+  //     } else if (gameData.players_count === 1) {
+  //       console.log("🙋 One player is in-game. Joining as Player 2...");
+  //       await joinGame(name);
+  //     } else {
+  //       console.error("🚨 Game is already full. Spectate instead.");
+  //     }
+  //   } catch (error) {
+  //     console.error("❌ Error checking game existence:", error);
+  //   }
+  // };
+
+  // New function to handle game start
+  const handleStartGame = async () => {
     try {
       console.log("🔄 Checking if game already exists before creating...");
 
@@ -65,10 +91,10 @@ const TicTacToe: React.FC = () => {
 
       if (!gameData) {
         console.log("❌ No active game. Creating game first...");
-        await createGame(name);
+        await createGame();
       } else if (gameData.players_count === 1) {
         console.log("🙋 One player is in-game. Joining as Player 2...");
-        await joinGame(name);
+        await joinGame("2");
       } else {
         console.error("🚨 Game is already full. Spectate instead.");
       }
@@ -77,27 +103,27 @@ const TicTacToe: React.FC = () => {
     }
   };
 
-  // ✅ Create a new game if no game exists
-  const createGame = async (name: string) => {
+  // Modified createGame function
+  const createGame = async () => {
     try {
       console.log("🟢 Creating a new game...");
       const response = await axios.post(`${API_URL}/create_game`);
       console.log("✅ Game created:", response.data);
 
       setGameId("1");
-      await joinGame(name); // Automatically join after creation
+      await joinGame("1"); // Automatically join as Player 1 after creation
     } catch (error) {
       console.error("❌ Error creating game:", error);
     }
   };
 
-  // ✅ Join the game
-  const joinGame = async (name: string) => {
+  // Modified joinGame function
+  const joinGame = async (playerName: string) => {
     try {
-      console.log(`🟢 Joining game 1 as ${name}...`);
+      console.log(`🟢 Joining game 1 as ${playerName}...`);
       const response = await axios.post(`${API_URL}/join_game`, {
         game_id: "1",
-        player_id: name,
+        player_id: playerName,
         player_type: "human",
       });
 
@@ -122,18 +148,19 @@ const TicTacToe: React.FC = () => {
         {screen === "gameMode" && (
           <GameMode
             onBack={() => setScreen("landing")}
-            onStart={() => setShowUsernamePrompt(true)}
+            onStart={handleStartGame} // Changed to use new handleStartGame function
           />
         )}
-        {showUsernamePrompt && (
+        {/* Comment out unused component */}
+        {/* {showUsernamePrompt && (
           <UsernamePrompt
             onSubmit={handleUsernameSubmit}
             onClose={() => setShowUsernamePrompt(false)}
           />
-        )}
+        )} */}
         {screen === "gameBoard" && gameId && playerId && (
           <GameBoard
-            username={username}
+            username={playerId} // Changed to use playerId as username
             gameId={gameId}
             playerId={playerId}
             onBack={() => setScreen("gameMode")}
