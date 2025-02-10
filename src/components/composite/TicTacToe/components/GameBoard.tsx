@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
 import Pusher from "pusher-js";
 import styles from "./GameBoard.module.css";
@@ -11,7 +11,29 @@ interface GameBoardProps {
   onBack: () => void;
 }
 
+interface Player {
+  id: string;
+  symbol: number;
+}
+
+interface BoardState {
+  board: number[][];
+  last_move: null | [number, number];
+  phase: "placement" | "movement";
+  pieces_placed: Record<string, number>;
+}
+
+interface GameState {
+  board_state: BoardState;
+  current_player: number;
+  players: Record<string, Player>;
+  players_count: number;
+  playing_with_ai: boolean;
+  status: string;
+}
+
 const API_URL = "https://wanemregmi.pythonanywhere.com";
+const pusher = new Pusher("9cf0b43853e0406ff8ba", { cluster: "us2" });
 
 const GameBoard: React.FC<GameBoardProps> = ({
   username,
@@ -19,101 +41,154 @@ const GameBoard: React.FC<GameBoardProps> = ({
   playerId,
   onBack,
 }) => {
-  const [board, setBoard] = useState<string[][]>(
-    Array(4)
-      .fill("")
-      .map(() => Array(4).fill("")),
+  const [gameState, setGameState] = useState<GameState | null>(null);
+  const [selectedCell, setSelectedCell] = useState<[number, number] | null>(
+    null,
   );
-  const [currentPlayer, setCurrentPlayer] = useState<number>(1);
-  const [winner, setWinner] = useState<string | null>(null);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [isWaiting, setIsWaiting] = useState(true); // ✅ Initially waiting for an opponent
+
+  const fetchGameState = useCallback(async () => {
+    console.log(`🔄 Fetching game state for Game ID: ${gameId}`);
+    try {
+      const response = await axios.get(`${API_URL}/game_info/${gameId}`);
+      const data = response.data;
+
+      console.log("✅ Raw Game State from API:", data);
+
+      // Convert backend response to match frontend expectations
+      const formattedGameState: GameState = {
+        board_state: {
+          board: data.board.board,
+          last_move: data.board.last_move || null,
+          phase: data.board.phase || "placement",
+          pieces_placed: data.board.pieces_placed || {},
+        },
+        current_player: data.current_player,
+        players: Object.fromEntries(
+          Object.entries(data.players).map(
+            ([id, player]: [string, { symbol: number }]) => [
+              id,
+              { id, symbol: player.symbol },
+            ],
+          ),
+        ), // ✅ Convert properly
+        players_count: Object.keys(data.players).length,
+        playing_with_ai: false,
+        status: "ongoing",
+      };
+
+      setGameState(formattedGameState);
+    } catch (error) {
+      console.error(`❌ Error fetching game state for game ${gameId}:`, error);
+    }
+  }, [gameId]);
 
   useEffect(() => {
     if (!gameId) return;
 
     console.log(`📡 Subscribing to Pusher channel: game-${gameId}`);
 
-    const fetchGameState = async () => {
-      console.log(`🔄 Fetching game state for Game ID: ${gameId}`);
-      try {
-        const response = await axios.get(`${API_URL}/get_game_state`, {
-          params: { game_id: gameId },
-        });
-
-        const { board, current_player, is_game_over, winner, players } =
-          response.data;
-        setBoard(board);
-        setCurrentPlayer(current_player);
-        setIsGameOver(is_game_over);
-        setWinner(winner || null);
-
-        // ✅ Check if second player has joined
-        if (players.length >= 2) {
-          setIsWaiting(false);
-        }
-      } catch (error) {
-        console.error(
-          `❌ Error fetching game state for game ${gameId}:`,
-          error,
-        );
-      }
-    };
-
     fetchGameState();
 
-    // ✅ Connect to Pusher for real-time updates
-    const pusher = new Pusher("9cf0b43853e0406ff8ba", { cluster: "us2" });
     const channel = pusher.subscribe(`game-${gameId}`);
 
-    // 🎯 Listen for moves
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    channel.bind("move-made", (data: any) => {
+    channel.bind("move-made", (data: GameState) => {
+      if (!data || !data.board_state) {
+        console.warn("⚠️ Received invalid game state from Pusher:", data);
+        return;
+      }
       console.log("📢 Move received from Pusher:", data);
-      setBoard(data.board);
-      setCurrentPlayer(data.current_player);
-      setWinner(data.winner || null);
-      setIsGameOver(data.is_game_over);
+      setGameState(data);
+      setSelectedCell(null);
     });
 
-    // 🎯 Listen for a new player joining
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    channel.bind("player-joined", (data: any) => {
-      console.log("👥 Opponent joined:", data);
-      setIsWaiting(false);
+    channel.bind("player-joined", () => {
+      console.log("👥 Opponent joined");
+      fetchGameState();
     });
 
     return () => {
       console.log(`❌ Unsubscribing from Pusher channel: game-${gameId}`);
-      pusher.unsubscribe(`private-game-${gameId}`);
-      pusher.disconnect();
+      pusher.unsubscribe(`game-${gameId}`);
     };
-  }, [gameId]);
+  }, [gameId, fetchGameState]);
 
-  // ✅ Handle cell click event (via Pusher, NOT API)
-  const handleCellClick = async (row: number, col: number) => {
-    if (winner || isGameOver || currentPlayer !== parseInt(playerId)) return;
+  const handleCellClick = useCallback(
+    (row: number, col: number) => {
+      if (
+        !gameState ||
+        gameState.status === "finished" ||
+        gameState.current_player !== parseInt(playerId)
+      )
+        return;
 
-    console.log(`📤 Sending move: [${row}, ${col}] via API...`);
-
-    try {
-      // ✅ Send move to backend (NOT Pusher)
-      const response = await axios.post(`${API_URL}/make_move`, {
-        game_id: gameId,
-        player_id: playerId,
-        move_type: "place",
-        move: [row, col],
-      });
-
-      if (response.data.status === "success") {
-        console.log("✅ Move successful! Waiting for update from Pusher...");
-      } else {
-        console.warn("⚠️ Invalid move:", response.data.error);
+      if (gameState.board_state.phase === "placement") {
+        console.log(`📤 Sending placement move: [${row}, ${col}] via API...`);
+        sendMove("place", [row, col]);
+      } else if (gameState.board_state.phase === "movement") {
+        if (selectedCell) {
+          console.log(
+            `📤 Sending movement move: ${selectedCell} to [${row}, ${col}] via API...`,
+          );
+          sendMove("move", [selectedCell[0], selectedCell[1], row, col]);
+          setSelectedCell(null);
+        } else {
+          setSelectedCell([row, col]);
+        }
       }
-    } catch (error) {
-      console.error("❌ Error making move:", error);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [gameState, playerId, selectedCell],
+  );
+
+  const sendMove = useCallback(
+    (moveType: "place" | "move", move: number[]) => {
+      try {
+        const channel = pusher.subscribe(`game-${gameId}`);
+
+        // 🔥 Send event via Pusher
+        channel.trigger("client-make-move", {
+          game_id: gameId,
+          player_id: playerId,
+          move_type: moveType,
+          move: move,
+        });
+
+        console.log(`✅ ${moveType} move sent via Pusher!`);
+      } catch (error) {
+        console.error("❌ Error sending move:", error);
+      }
+    },
+    [gameId, playerId],
+  );
+
+  const renderBoard = useMemo(() => {
+    if (!gameState || !gameState.board_state || !gameState.board_state.board) {
+      return <div className={styles.loading}>Loading board...</div>;
     }
-  };
+
+    return (
+      <div className={styles.board}>
+        {gameState.board_state.board.map((row, rIdx) =>
+          row.map((cell, cIdx) => (
+            <GameCell
+              key={`${rIdx}-${cIdx}`}
+              value={cell === 0 ? "" : cell === 1 ? "X" : "O"}
+              onClick={() => handleCellClick(rIdx, cIdx)}
+              isSelected={Boolean(
+                selectedCell &&
+                  selectedCell[0] === rIdx &&
+                  selectedCell[1] === cIdx,
+              )}
+            />
+          )),
+        )}
+      </div>
+    );
+  }, [gameState, handleCellClick, selectedCell]);
+
+  if (!gameState) {
+    return <div className={styles.loading}>Loading game...</div>;
+  }
 
   return (
     <>
@@ -124,40 +199,26 @@ const GameBoard: React.FC<GameBoardProps> = ({
       <div className={styles.boardContainer}>
         <h2 className={styles.greeting}>Hello, {username}!</h2>
 
-        {isWaiting ? (
+        {gameState.players_count < 2 ? (
           <p className={styles.waitingText}>⏳ Waiting for opponent...</p>
         ) : (
-          <p
-            className={styles.turnIndicator}
-            style={{
-              color:
-                currentPlayer === parseInt(playerId)
-                  ? "var(--color-primary)"
-                  : "var(--color-secondary)",
-            }}
-          >
-            🎮{" "}
-            {currentPlayer === parseInt(playerId)
-              ? `${username} (X) Turn`
-              : `Opponent (O) Turn`}
-          </p>
+          <>
+            <p className={styles.phaseIndicator}>
+              Current Phase: {gameState.board_state.phase}
+            </p>
+            <p className={styles.turnIndicator}>
+              🎮{" "}
+              {gameState.current_player === parseInt(playerId)
+                ? `${username} (${gameState.current_player === 1 ? "X" : "O"}) Turn`
+                : `Opponent (${gameState.current_player === 1 ? "X" : "O"}) Turn`}
+            </p>
+          </>
         )}
 
-        <div className={styles.board}>
-          {board.map((row, rIdx) =>
-            row.map((cell, cIdx) => (
-              <GameCell
-                key={`${rIdx}-${cIdx}`}
-                value={cell}
-                onClick={() => handleCellClick(rIdx, cIdx)}
-                isSelected={false}
-              />
-            )),
-          )}
-        </div>
+        {renderBoard}
 
-        {isGameOver && (
-          <p className={styles.winnerText}>🎉 {winner} Wins! 🎉</p>
+        {gameState.status === "finished" && (
+          <p className={styles.winnerText}>🎉 Game Over! 🎉</p>
         )}
       </div>
     </>
