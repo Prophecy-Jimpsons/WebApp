@@ -64,13 +64,11 @@ const GameBoard: React.FC<GameBoardProps> = ({
         },
         current_player: data.current_player,
         players: Object.fromEntries(
-          Object.entries(data.players).map(
-            ([id, player]: [string, { symbol: number }]) => [
-              id,
-              { id, symbol: player.symbol },
-            ],
-          ),
-        ), // ✅ Convert properly
+          Object.entries(data.players).map(([id, player]) => {
+            const typedPlayer = player as { symbol: number }; // ✅ Fix type issue
+            return [id, { id, symbol: typedPlayer.symbol }];
+          }),
+        ),
         players_count: Object.keys(data.players).length,
         playing_with_ai: false,
         status: "ongoing",
@@ -122,7 +120,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         return;
 
       if (gameState.board_state.phase === "placement") {
-        console.log(`📤 Sending placement move: [${row}, ${col}] via API...`);
+        console.log(`📤 Sending placement move: [${row}, ${col}]x .`);
         sendMove("place", [row, col]);
       } else if (gameState.board_state.phase === "movement") {
         if (selectedCell) {
@@ -141,19 +139,29 @@ const GameBoard: React.FC<GameBoardProps> = ({
   );
 
   const sendMove = useCallback(
-    (moveType: "place" | "move", move: number[]) => {
+    async (moveType: "place" | "move", move: number[]) => {
       try {
-        const channel = pusher.subscribe(`game-${gameId}`);
-
-        // 🔥 Send event via Pusher
-        channel.trigger("client-make-move", {
+        console.log(`📤 Sending move to API:`, {
           game_id: gameId,
           player_id: playerId,
           move_type: moveType,
           move: move,
         });
 
-        console.log(`✅ ${moveType} move sent via Pusher!`);
+        const response = await axios.post(`${API_URL}/make_move`, {
+          game_id: gameId,
+          player_id: playerId,
+          move_type: moveType,
+          move: move,
+        });
+
+        console.log(`✅ Move response:`, response.data);
+
+        if (response.data.status === "success") {
+          console.log(`✅ ${moveType} move sent successfully!`);
+        } else {
+          console.warn("⚠️ Invalid move:", response.data.error);
+        }
       } catch (error) {
         console.error("❌ Error sending move:", error);
       }
