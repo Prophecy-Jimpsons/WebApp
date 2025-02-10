@@ -64,9 +64,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
         },
         current_player: data.current_player,
         players: Object.fromEntries(
-          Object.entries(data.players).map(([id, player]) => {
-            const typedPlayer = player as { symbol: number }; // ✅ Fix type issue
-            return [id, { id, symbol: typedPlayer.symbol }];
+          Object.entries(data.players).map(([player_id, player]) => {
+            const typedPlayer = player as { username: string; symbol: number };
+            return [player_id, { id: player_id, symbol: typedPlayer.symbol }];
           }),
         ),
         players_count: Object.keys(data.players).length,
@@ -89,19 +89,31 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
     const channel = pusher.subscribe(`game-${gameId}`);
 
-    channel.bind("move-made", (data: GameState) => {
-      if (!data || !data.board_state) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    channel.bind("move-made", (data: any) => {
+      if (!data || !data.board || !data.board.board) {
         console.warn("⚠️ Received invalid game state from Pusher:", data);
         return;
       }
-      console.log("📢 Move received from Pusher:", data);
-      setGameState(data);
-      setSelectedCell(null);
-    });
 
-    channel.bind("player-joined", () => {
-      console.log("👥 Opponent joined");
-      fetchGameState();
+      console.log("📢 Move received from Pusher:", data);
+
+      // ✅ Normalize Pusher response to match API response
+      const formattedState: GameState = {
+        board_state: {
+          board: data.board.board,
+          last_move: data.board.last_move || null,
+          phase: data.board.phase || "placement",
+          pieces_placed: data.board.pieces_placed || {},
+        },
+        current_player: data.current_player,
+        players: gameState?.players || {}, // Use existing players from API
+        players_count: Object.keys(gameState?.players || {}).length,
+        playing_with_ai: false,
+        status: "ongoing",
+      };
+
+      setGameState(formattedState);
     });
 
     return () => {
@@ -112,20 +124,28 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
+      console.log(`📌 Clicked cell [${row}, ${col}]`); // ✅ Check if click is detected
+
       if (
         !gameState ||
         gameState.status === "finished" ||
-        gameState.current_player !== parseInt(playerId)
-      )
+        gameState.current_player !== parseInt(playerId) // ✅ Check if it's my turn
+      ) {
+        console.warn("⛔ Move not allowed: Either game over or not your turn.");
         return;
+      }
+
+      console.log("✅ Valid move. Processing...");
 
       if (gameState.board_state.phase === "placement") {
-        console.log(`📤 Sending placement move: [${row}, ${col}]x .`);
+        console.log(
+          `📤 Sending placement move: [${row}, ${col}] as Player ${playerId}.`,
+        );
         sendMove("place", [row, col]);
       } else if (gameState.board_state.phase === "movement") {
         if (selectedCell) {
           console.log(
-            `📤 Sending movement move: ${selectedCell} to [${row}, ${col}] via API...`,
+            `📤 Sending movement move: ${selectedCell} to [${row}, ${col}] as Player ${playerId}.`,
           );
           sendMove("move", [selectedCell[0], selectedCell[1], row, col]);
           setSelectedCell(null);
@@ -134,20 +154,19 @@ const GameBoard: React.FC<GameBoardProps> = ({
         }
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [gameState, playerId, selectedCell],
   );
 
   const sendMove = useCallback(
     async (moveType: "place" | "move", move: number[]) => {
-      try {
-        console.log(`📤 Sending move to API:`, {
-          game_id: gameId,
-          player_id: playerId,
-          move_type: moveType,
-          move: move,
-        });
+      console.log(`🚀 Attempting to send move:`, {
+        game_id: gameId,
+        player_id: playerId,
+        move_type: moveType,
+        move: move,
+      });
 
+      try {
         const response = await axios.post(`${API_URL}/make_move`, {
           game_id: gameId,
           player_id: playerId,
@@ -155,12 +174,10 @@ const GameBoard: React.FC<GameBoardProps> = ({
           move: move,
         });
 
-        console.log(`✅ Move response:`, response.data);
+        console.log(`✅ Move successfully sent. Response:`, response.data);
 
-        if (response.data.status === "success") {
-          console.log(`✅ ${moveType} move sent successfully!`);
-        } else {
-          console.warn("⚠️ Invalid move:", response.data.error);
+        if (response.data.status !== "success") {
+          console.warn("⚠️ Move rejected:", response.data.error);
         }
       } catch (error) {
         console.error("❌ Error sending move:", error);
@@ -217,8 +234,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
             <p className={styles.turnIndicator}>
               🎮{" "}
               {gameState.current_player === parseInt(playerId)
-                ? `${username} (${gameState.current_player === 1 ? "X" : "O"}) Turn`
-                : `Opponent (${gameState.current_player === 1 ? "X" : "O"}) Turn`}
+                ? `Your Turn (${gameState.current_player === 1 ? "X" : "O"})`
+                : `Opponent's Turn (${gameState.current_player === 1 ? "X" : "O"})`}
             </p>
           </>
         )}
