@@ -52,11 +52,11 @@ const TicTacToe: React.FC = () => {
       const gameData = response.data.active_games["1"];
 
       if (!gameData) {
-        // Create new game
+        // Create new game - will be player 1
         console.log("❌ No active game. Creating new game...");
         await createGame(mode);
       } else if (gameData.players_count === 1 && mode === "online") {
-        // Only join existing games in online mode
+        // Join existing game as player 2
         console.log("🙋 Joining existing game as Player 2...");
         await joinGame("2", "human");
       } else {
@@ -81,13 +81,13 @@ const createGame = async (mode: string) => {
     if (response.data.status === "success" || response.data.game_id) {
       setGameId("1");
       if (mode === "ai") {
-        // For AI mode, backend creates both players automatically
-        // We just need to set human player as player 1
+        // For AI mode, backend handles both players
         setPlayerId("1");
         setScreen("board");
       } else {
-        // For online mode, join as player 1
-        await joinGame("1", "human");
+        // For online mode, creator is always player 1
+        setPlayerId("1");
+        setScreen("board");
       }
     }
   } catch (error) {
