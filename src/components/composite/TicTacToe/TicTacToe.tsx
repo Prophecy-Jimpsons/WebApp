@@ -2,137 +2,118 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import GameLanding from "./components/GameLanding";
 import GameMode from "./components/GameMode";
-import UsernamePrompt from "./components/UsernamePrompt";
 import GameBoard from "./components/GameBoard";
 import styles from "./TicTacToe.module.css";
 
 const API_URL = "https://wanemregmi.pythonanywhere.com";
 
 const TicTacToe: React.FC = () => {
-  const [screen, setScreen] = useState<"landing" | "gameMode" | "gameBoard">(
-    "landing",
-  );
-  // Comment out unused state
-  // const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
-  // const [username, setUsername] = useState(
-  //   localStorage.getItem("username") || "Anonymous",
-  // );
-  const [gameId, setGameId] = useState<string | null>("1"); // Always game_id = 1
+  const [screen, setScreen] = useState<"landing" | "mode" | "board">("landing");
+  const [gameId, setGameId] = useState<string | null>("1");
   const [playerId, setPlayerId] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [canJoinGame, setCanJoinGame] = useState(false);
+  const [gameMode, setGameMode] = useState<"online" | "ai" | "predict" | null>(null);
+  const [_canJoinGame, setCanJoinGame] = useState(false);
 
-  // ✅ Check active game on mount (but do NOT create a game)
   useEffect(() => {
-    console.log("🔄 Checking if game exists...");
-    axios
-      .get(`${API_URL}/active_games`)
-      .then((response) => {
-        console.log("✅ Active Games Response:", response.data);
-
-        const gameData = response.data.active_games["1"]; // Always game_id = 1
-        if (!gameData) {
-          console.log("❌ No active game. Ready to create.");
-          setCanJoinGame(true);
-          return;
-        }
-
-        if (gameData.players_count === 1) {
-          console.log("🙋 One player in game. Another player can join.");
-          setCanJoinGame(true);
-        } else {
-          console.log("👀 Game is full. Spectate mode only.");
-          setCanJoinGame(false);
-        }
-      })
-      .catch((error) => {
-        console.error("⚠️ Error checking active games:", error);
-        setCanJoinGame(true); // Default: Allow game creation
-      });
+    checkGameStatus();
   }, []);
 
-  // Comment out unused function
-  // // ✅ Called when "Continue" is clicked after entering username
-  // const handleUsernameSubmit = async (name: string) => {
-  //   setUsername(name);
-  //   setShowUsernamePrompt(false);
-
-  //   try {
-  //     console.log("🔄 Checking if game already exists before creating...");
-
-  //     const response = await axios.get(`${API_URL}/active_games`);
-  //     console.log("✅ Active Games Response:", response.data);
-
-  //     const gameData = response.data.active_games["1"]; // Always game_id = 1
-
-  //     if (!gameData) {
-  //       console.log("❌ No active game. Creating game first...");
-  //       await createGame(name);
-  //     } else if (gameData.players_count === 1) {
-  //       console.log("🙋 One player is in-game. Joining as Player 2...");
-  //       await joinGame(name);
-  //     } else {
-  //       console.error("🚨 Game is already full. Spectate instead.");
-  //     }
-  //   } catch (error) {
-  //     console.error("❌ Error checking game existence:", error);
-  //   }
-  // };
-
-  // New function to handle game start
-  const handleStartGame = async () => {
+  const checkGameStatus = async () => {
     try {
-      console.log("🔄 Checking if game already exists before creating...");
-
+      console.log("🔄 Checking if game exists...");
       const response = await axios.get(`${API_URL}/active_games`);
       console.log("✅ Active Games Response:", response.data);
-
-      const gameData = response.data.active_games["1"]; // Always game_id = 1
-
+      const gameData = response.data.active_games["1"];
+      
       if (!gameData) {
-        console.log("❌ No active game. Creating game first...");
-        await createGame();
-      } else if (gameData.players_count === 1) {
-        console.log("🙋 One player is in-game. Joining as Player 2...");
-        await joinGame("2");
+        console.log("❌ No active game. Ready to create.");
+        setCanJoinGame(true);
+        return;
+      }
+
+      if (gameData.players_count === 1) {
+        console.log("🙋 One player in game. Another player can join.");
+        setCanJoinGame(true);
       } else {
-        console.error("🚨 Game is already full. Spectate instead.");
+        console.log("👀 Game is full. Spectate mode only.");
+        setCanJoinGame(false);
       }
     } catch (error) {
-      console.error("❌ Error checking game existence:", error);
+      console.error("⚠️ Error checking active games:", error);
+      setCanJoinGame(true);
     }
   };
 
-  // Modified createGame function
-  const createGame = async () => {
+  const handleStartGame = async (mode: "online" | "ai" | "predict") => {
+    setGameMode(mode);
     try {
-      console.log("🟢 Creating a new game...");
-      const response = await axios.post(`${API_URL}/create_game`);
-      console.log("✅ Game created:", response.data);
+      console.log(`🔄 Starting ${mode} game...`);
+      const response = await axios.get(`${API_URL}/active_games`);
+      const gameData = response.data.active_games["1"];
 
-      setGameId("1");
-      await joinGame("1"); // Automatically join as Player 1 after creation
+      if (!gameData) {
+        // Create new game
+        console.log("❌ No active game. Creating new game...");
+        await createGame(mode);
+      } else if (gameData.players_count === 1 && mode === "online") {
+        // Only join existing games in online mode
+        console.log("🙋 Joining existing game as Player 2...");
+        await joinGame("2", "human");
+      } else {
+        console.error("🚨 Game is full");
+      }
     } catch (error) {
-      console.error("❌ Error creating game:", error);
+      console.error("❌ Error:", error);
     }
-  };
+};
 
-  // Modified joinGame function
-  const joinGame = async (playerName: string) => {
+const createGame = async (mode: string) => {
+  try {
+    console.log(`🟢 Creating new ${mode} game...`);
+    const response = await axios.post(`${API_URL}/create_game`, {
+      game_mode: mode
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.data.status === "success" || response.data.game_id) {
+      setGameId("1");
+      if (mode === "ai") {
+        // For AI mode, backend creates both players automatically
+        // We just need to set human player as player 1
+        setPlayerId("1");
+        setScreen("board");
+      } else {
+        // For online mode, join as player 1
+        await joinGame("1", "human");
+      }
+    }
+  } catch (error) {
+    console.error("❌ Error creating game:", error);
+  }
+};
+
+  const joinGame = async (playerId: string, playerType: "human" | "ai") => {
     try {
-      console.log(`🟢 Joining game 1 as ${playerName}...`);
+      console.log(`🟢 Joining as ${playerType} player ${playerId}...`);
       const response = await axios.post(`${API_URL}/join_game`, {
         game_id: "1",
-        player_id: playerName,
-        player_type: "human",
+        player_id: playerId,
+        player_type: playerType
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       if (response.data.status === "success") {
-        console.log(`✅ Joined game 1 as Player ${response.data.symbol}`);
+        console.log(`✅ Joined as Player ${response.data.symbol}`);
         setPlayerId(response.data.symbol.toString());
-        setScreen("gameBoard");
+        setScreen("board");
       } else {
-        console.error("❌ Error joining game:", response.data);
+        console.error("❌ Failed to join game:", response.data.error);
       }
     } catch (error) {
       console.error("❌ Error joining game:", error);
@@ -143,27 +124,24 @@ const TicTacToe: React.FC = () => {
     <div className={styles.wrapper}>
       <div className={styles.gameContainer}>
         {screen === "landing" && (
-          <GameLanding onNext={() => setScreen("gameMode")} />
+          <GameLanding onNext={() => setScreen("mode")} />
         )}
-        {screen === "gameMode" && (
+        {screen === "mode" && (
           <GameMode
             onBack={() => setScreen("landing")}
-            onStart={handleStartGame} // Changed to use new handleStartGame function
+            onStart={handleStartGame}
           />
         )}
-        {/* Comment out unused component */}
-        {/* {showUsernamePrompt && (
-          <UsernamePrompt
-            onSubmit={handleUsernameSubmit}
-            onClose={() => setShowUsernamePrompt(false)}
-          />
-        )} */}
-        {screen === "gameBoard" && gameId && playerId && (
+        {screen === "board" && gameId && playerId && (
           <GameBoard
-            username={playerId} // Changed to use playerId as username
+            username={playerId}
             gameId={gameId}
             playerId={playerId}
-            onBack={() => setScreen("gameMode")}
+            gameMode={gameMode}
+            onBack={() => {
+              setScreen("mode");
+              checkGameStatus();
+            }}
           />
         )}
       </div>

@@ -10,7 +10,7 @@ const API_URL = "https://wanemregmi.pythonanywhere.com";
 
 const GameLanding: React.FC<LandingProps> = ({ onNext }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [gameExists, setGameExists] = useState(false);
+  const [_gameExists, setGameExists] = useState(false);
   const [canSpectate, setCanSpectate] = useState(false);
 
   // ✅ Check active game on mount

@@ -8,12 +8,14 @@ interface GameBoardProps {
   username: string;
   gameId: string;
   playerId: string;
+  gameMode: "online" | "ai" | "predict" | null;
   onBack: () => void;
 }
 
 interface Player {
   id: string;
   symbol: number;
+  type: "human" | "ai";  // Added type to track AI players
 }
 
 interface BoardState {
@@ -40,13 +42,14 @@ const GameBoard: React.FC<GameBoardProps> = ({
   username,
   gameId,
   playerId,
+  gameMode,
   onBack,
 }) => {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [selectedCell, setSelectedCell] = useState<[number, number] | null>(null);
 
   const fetchGameState = useCallback(async () => {
-    console.log(`🔄 Fetching game state for Game IDs: ${gameId}`);
+    console.log(`🔄 Fetching game state for Game ID: ${gameId}`);
     try {
       const response = await axios.get(`${API_URL}/game_info/${gameId}`);
       const data = response.data;
@@ -63,12 +66,19 @@ const GameBoard: React.FC<GameBoardProps> = ({
         current_player: data.current_player,
         players: Object.fromEntries(
           Object.entries(data.players).map(([player_id, player]) => {
-            const typedPlayer = player as { username: string; symbol: number };
-            return [player_id, { id: player_id, symbol: typedPlayer.symbol }];
+            const typedPlayer = player as { username: string; symbol: number; type: string };
+            return [
+              player_id, 
+              { 
+                id: player_id, 
+                symbol: typedPlayer.symbol,
+                type: typedPlayer.type as "human" | "ai"
+              }
+            ];
           }),
         ),
         players_count: Object.keys(data.players).length,
-        playing_with_ai: false,
+        playing_with_ai: gameMode === "ai",
         status: data.status || "ongoing",
         winner: data.winner || null,
       };
@@ -77,7 +87,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
     } catch (error) {
       console.error(`❌ Error fetching game state for game ${gameId}:`, error);
     }
-  }, [gameId]);
+  }, [gameId, gameMode]);
 
   useEffect(() => {
     if (!gameId) return;
@@ -106,14 +116,14 @@ const GameBoard: React.FC<GameBoardProps> = ({
         current_player: data.current_player,
         players: gameState?.players || {},
         players_count: Object.keys(gameState?.players || {}).length,
-        playing_with_ai: false,
+        playing_with_ai: gameMode === "ai",
         status: data.is_game_over ? "finished" : "ongoing",
         winner: data.winner
       };
 
       setGameState(formattedState);
       if (formattedState.status === "finished") {
-        setSelectedCell(null); // Clear selection when game ends
+        setSelectedCell(null);
       }
     });
 
@@ -121,7 +131,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
       console.log(`❌ Unsubscribing from Pusher channel: game-${gameId}`);
       pusher.unsubscribe(`game-${gameId}`);
     };
-  }, [gameId, fetchGameState]);
+  }, [gameId, fetchGameState, gameMode, gameState?.players]);
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -130,35 +140,37 @@ const GameBoard: React.FC<GameBoardProps> = ({
       if (
         !gameState ||
         gameState.status === "finished" ||
-        gameState.current_player !== parseInt(playerId)
+        gameState.current_player !== parseInt(playerId) ||
+        gameMode === "predict"
       ) {
-        console.warn("⛔ Move not allowed: Either game over or not your turn.");
+        console.warn("⛔ Move not allowed: Either game over, not your turn, or in predict mode.");
         return;
       }
 
       console.log("✅ Valid move. Processing...");
 
       if (gameState.board_state.phase === "placement") {
-        console.log(
-          `📤 Sending placement move: [${row}, ${col}] as Player ${playerId}.`,
-        );
+        if (gameState.board_state.pieces_placed[playerId] >= 4) {
+          console.warn("⛔ Cannot place more than 4 pieces.");
+          return;
+        }
+        console.log(`📤 Sending placement move: [${row}, ${col}] as Player ${playerId}`);
         sendMove("place", [row, col]);
       } else if (gameState.board_state.phase === "movement") {
         if (selectedCell) {
           console.log(
-            `📤 Sending movement move: ${selectedCell} to [${row}, ${col}] as Player ${playerId}.`,
+            `📤 Sending movement move: ${selectedCell} to [${row}, ${col}] as Player ${playerId}`
           );
           sendMove("move", [selectedCell[0], selectedCell[1], row, col]);
           setSelectedCell(null);
         } else {
-          // Only select cell if it contains the player's piece
           if (gameState.board_state.board[row][col] === parseInt(playerId)) {
             setSelectedCell([row, col]);
           }
         }
       }
     },
-    [gameState, playerId, selectedCell],
+    [gameState, playerId, selectedCell, gameMode],
   );
 
   const sendMove = useCallback(
@@ -191,7 +203,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   );
 
   const renderBoard = useMemo(() => {
-    if (!gameState || !gameState.board_state || !gameState.board_state.board) {
+    if (!gameState?.board_state?.board) {
       return <div className={styles.loading}>Loading board...</div>;
     }
 
@@ -206,7 +218,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
               isSelected={Boolean(
                 selectedCell &&
                   selectedCell[0] === rIdx &&
-                  selectedCell[1] === cIdx,
+                  selectedCell[1] === cIdx
               )}
             />
           )),
@@ -227,6 +239,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
       <div className={styles.boardContainer}>
         <h2 className={styles.greeting}>Hello, {username}!</h2>
+
+        {gameMode === "ai" && (
+          <p className={styles.modeIndicator}>Playing against AI</p>
+        )}
+        {gameMode === "predict" && (
+          <p className={styles.modeIndicator}>Prediction Mode</p>
+        )}
 
         {gameState.players_count < 2 ? (
           <p className={styles.waitingText}>⏳ Waiting for opponent...</p>
