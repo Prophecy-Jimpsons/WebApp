@@ -46,7 +46,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const [selectedCell, setSelectedCell] = useState<[number, number] | null>(null);
 
   const fetchGameState = useCallback(async () => {
-    console.log(`🔄 Fetching game state for Game ID: ${gameId}`);
+    console.log(`🔄 Fetching game state for Game IDs: ${gameId}`);
     try {
       const response = await axios.get(`${API_URL}/game_info/${gameId}`);
       const data = response.data;
