@@ -8,9 +8,9 @@ interface GameModeProps {
 const GameMode: React.FC<GameModeProps> = ({ onBack, onStart }) => {
   return (
     <div className={styles.container}>
-      {/* <button className={styles.backButton} onClick={onBack}>
+      <button className={styles.backButton} onClick={onBack}>
         ← Back
-      </button> */}
+      </button>
       <h1 className={styles.title}>Choose Your Game Mode</h1>
       <button className={styles.button} onClick={() => onStart('online')}>
         Challenge a Human
