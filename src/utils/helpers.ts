@@ -162,3 +162,110 @@ export function getDaysSinceFirstPurchase(
 
   return diffDays;
 }
+
+// function to determine winning cells
+
+export const determineWinningCells = (
+  board: number[][],
+  winner: number | null,
+): [number, number][] => {
+  if (winner === null) return [];
+
+  const winningCells: [number, number][] = [];
+
+  // Helper function to check if a cell belongs to the winner
+  const isWinningCell = (row: number, col: number) =>
+    board[row][col] === winner;
+
+  // Check rows
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 1; col++) {
+      if (
+        isWinningCell(row, col) &&
+        isWinningCell(row, col + 1) &&
+        isWinningCell(row, col + 2) &&
+        isWinningCell(row, col + 3)
+      ) {
+        return [
+          [row, col],
+          [row, col + 1],
+          [row, col + 2],
+          [row, col + 3],
+        ];
+      }
+    }
+  }
+
+  // Check columns
+  for (let col = 0; col < 4; col++) {
+    for (let row = 0; row < 1; row++) {
+      if (
+        isWinningCell(row, col) &&
+        isWinningCell(row + 1, col) &&
+        isWinningCell(row + 2, col) &&
+        isWinningCell(row + 3, col)
+      ) {
+        return [
+          [row, col],
+          [row + 1, col],
+          [row + 2, col],
+          [row + 3, col],
+        ];
+      }
+    }
+  }
+
+  // Check diagonals (main and anti)
+  for (let i = 0; i < 1; i++) {
+    if (
+      isWinningCell(i, i) &&
+      isWinningCell(i + 1, i + 1) &&
+      isWinningCell(i + 2, i + 2) &&
+      isWinningCell(i + 3, i + 3)
+    ) {
+      return [
+        [i, i],
+        [i + 1, i + 1],
+        [i + 2, i + 2],
+        [i + 3, i + 3],
+      ];
+    }
+  }
+
+  for (let i = 0; i < 1; i++) {
+    if (
+      isWinningCell(i, 3 - i) &&
+      isWinningCell(i + 1, 2 - i) &&
+      isWinningCell(i + 2, 1 - i) &&
+      isWinningCell(i + 3, 0 - i)
+    ) {
+      return [
+        [i, 3 - i],
+        [i + 1, 2 - i],
+        [i + 2, 1 - i],
+        [i + 3, 0 - i],
+      ];
+    }
+  }
+
+  // Check 2x2 squares
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      if (
+        isWinningCell(row, col) &&
+        isWinningCell(row + 1, col) &&
+        isWinningCell(row, col + 1) &&
+        isWinningCell(row + 1, col + 1)
+      ) {
+        return [
+          [row, col],
+          [row + 1, col],
+          [row, col + 1],
+          [row + 1, col + 1],
+        ];
+      }
+    }
+  }
+
+  return winningCells; // No winning pattern found
+};

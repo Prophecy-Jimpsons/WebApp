@@ -11,7 +11,9 @@ const TicTacToe: React.FC = () => {
   const [screen, setScreen] = useState<"landing" | "mode" | "board">("landing");
   const [gameId, setGameId] = useState<string | null>("1");
   const [playerId, setPlayerId] = useState<string | null>(null);
-  const [gameMode, setGameMode] = useState<"online" | "ai" | "predict" | null>(null);
+  const [gameMode, setGameMode] = useState<"online" | "ai" | "predict" | null>(
+    null,
+  );
   const [_canJoinGame, setCanJoinGame] = useState(false);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ const TicTacToe: React.FC = () => {
       const response = await axios.get(`${API_URL}/active_games`);
       console.log("✅ Active Games Response:", response.data);
       const gameData = response.data.active_games["1"];
-      
+
       if (!gameData) {
         console.log("❌ No active game. Ready to create.");
         setCanJoinGame(true);
@@ -65,48 +67,56 @@ const TicTacToe: React.FC = () => {
     } catch (error) {
       console.error("❌ Error:", error);
     }
-};
+  };
 
-const createGame = async (mode: string) => {
-  try {
-    console.log(`🟢 Creating new ${mode} game...`);
-    const response = await axios.post(`${API_URL}/create_game`, {
-      game_mode: mode
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+  const createGame = async (mode: string) => {
+    try {
+      console.log(`🟢 Creating new ${mode} game...`);
+      const response = await axios.post(
+        `${API_URL}/create_game`,
+        {
+          game_mode: mode,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-    if (response.data.status === "success" || response.data.game_id) {
-      setGameId("1");
-      if (mode === "ai") {
-        // For AI mode, backend handles both players
-        setPlayerId("1");
-        setScreen("board");
-      } else {
-        // For online mode, creator is always player 1
-        setPlayerId("1");
-        setScreen("board");
+      if (response.data.status === "success" || response.data.game_id) {
+        setGameId("1");
+        if (mode === "ai") {
+          // For AI mode, backend handles both players
+          setPlayerId("1");
+          setScreen("board");
+        } else {
+          // For online mode, creator is always player 1
+          setPlayerId("1");
+          setScreen("board");
+        }
       }
+    } catch (error) {
+      console.error("❌ Error creating game:", error);
     }
-  } catch (error) {
-    console.error("❌ Error creating game:", error);
-  }
-};
+  };
 
   const joinGame = async (playerId: string, playerType: "human" | "ai") => {
     try {
       console.log(`🟢 Joining as ${playerType} player ${playerId}...`);
-      const response = await axios.post(`${API_URL}/join_game`, {
-        game_id: "1",
-        player_id: playerId,
-        player_type: playerType
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await axios.post(
+        `${API_URL}/join_game`,
+        {
+          game_id: "1",
+          player_id: playerId,
+          player_type: playerType,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
       if (response.data.status === "success") {
         console.log(`✅ Joined as Player ${response.data.symbol}`);

@@ -12,6 +12,18 @@
   transition: all 0.1s ease-in-out;
 }
 
+@media (max-width: 640px) {
+  .cell {
+    width: 50px;
+    height: 50px;
+    font-size: 1.8rem;
+  }
+}
+
+.cell.disabled {
+  cursor: not-allowed;
+}
+
 .cell.X {
   background: linear-gradient(145deg, #ff6b6b, #d3a72f);
   color: white;
@@ -26,4 +38,19 @@
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.89);
   border: 1px solid rgba(255, 255, 255, 0.89);
   transform: scale(1.1);
+}
+
+.cell.highlighted {
+  transition: all 0.1s ease-in-out;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
