@@ -21,7 +21,8 @@
 /* Back Button */
 .backButton {
   align-self: flex-start;
-  padding: 8px 16px;
+  border: 1px solid red;
+  /* padding: var(--space-2) var(--space-4); */
   font-size: 1.4rem;
   background: transparent;
   color: var(--color-primary);
@@ -30,44 +31,45 @@
   transition:
     transform 0.2s ease,
     color 0.2s ease;
+  z-index: 11;
+}
 
-  position: absolute;
-  top: 2rem;
+@media screen and (max-width: 768px) {
+  .backButton {
+    top: var(--space-3);
+    left: 0;
+  }
 }
 
 .backButton:hover {
-  color: var(--color-white);
-  transform: translateX(-5px);
+  transform: translateY(-3px);
+  text-decoration: underline;
 }
 
 /* Game Mode Buttons */
+
 .button {
   width: 100%;
-  max-width: 300px;
-  padding: 14px;
-  font-size: 1.4rem;
-  font-weight: bold;
+  padding: 16px;
+  font-size: 1.6rem;
+  background: linear-gradient(
+    145deg,
+    var(--color-primary),
+    var(--color-yellow-600)
+  );
+  color: var(--color-black);
   border: none;
   border-radius: 12px;
   cursor: pointer;
+  font-weight: bold;
   transition: all 0.3s ease;
-}
-
-/* Online VS Button */
-.button:first-of-type {
-  background: linear-gradient(
-    145deg,
-    var(--color-secondary),
-    var(--color-blue-600)
-  );
-  color: var(--color-white);
   box-shadow:
-    0 4px 10px rgba(5, 104, 252, 0.2),
+    0 4px 10px rgba(252, 175, 5, 0.2),
     inset 0 2px 5px rgba(255, 255, 255, 0.3);
 }
 
-.button:first-of-type:hover {
-  background: var(--color-blue-400);
+.button:hover {
+  background: var(--color-yellow-400);
   transform: translateY(-3px);
 }
 

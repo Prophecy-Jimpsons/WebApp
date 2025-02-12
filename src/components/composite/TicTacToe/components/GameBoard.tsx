@@ -6,7 +6,6 @@ import Board from "./Board";
 import Controls from "./Controls";
 import styles from "./GameBoard.module.css";
 import GameStatus from "./GameStatus";
-import { on } from "events";
 
 interface GameBoardProps {
   username: string;
@@ -159,6 +158,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
           pieces_placed: data.board.pieces_placed || {},
         },
         current_player: data.current_player,
+        players: gameState?.players,
+        // players_count: Object.keys(gameState?.players).length,
         playing_with_ai: gameMode === "ai",
         status: data.is_game_over ? "finished" : "ongoing",
         winner: data.winner,
@@ -211,6 +212,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
     };
   }, [gameId, fetchGameState, initializePusher, gameMode]);
 
+  console.log("🎮 Game State:", gameState);
 
   // effect for timeout handling
   // useEffect(() => {

@@ -22,15 +22,15 @@ const GameStatus: React.FC<GameStatusProps> = ({
 
   const callResetEndpoint = async () => {
     try {
-      await fetch('https://wanemregmi.pythonanywhere.com/reset_all', {
-        method: 'POST',
+      await fetch("https://wanemregmi.pythonanywhere.com/reset_all", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
-      console.log('Reset endpoint called successfully');
+      console.log("Reset endpoint called successfully");
     } catch (error) {
-      console.error('Error calling reset endpoint:', error);
+      console.error("Error calling reset endpoint:", error);
     }
   };
 
@@ -65,24 +65,27 @@ const GameStatus: React.FC<GameStatusProps> = ({
           "AVAI: Winning move! High five! ...Oh right, I'm digital.",
           "AVAI: Champion status unlocked! Use code 'WINNER' for 0% off nothing.",
           "AVAI: You're on fire! Should I call the virtual fire department?",
-          "AVAI: Winner! Next challenge: Explain your strategy to a goldfish."
+          "AVAI: Winner! Next challenge: Explain your strategy to a goldfish.",
         ];
-        
-        
-        const randomIndexAnimation = Math.floor(Math.random() * winAnimations.length);
-          animationOptions = {
-            path: winAnimations[randomIndexAnimation],
-          };
 
-         const randomIndexMessage = Math.floor(Math.random() * winMessages.length);
-          message = winMessages[randomIndexMessage];
+        const randomIndexAnimation = Math.floor(
+          Math.random() * winAnimations.length,
+        );
+        animationOptions = {
+          path: winAnimations[randomIndexAnimation],
+        };
+
+        const randomIndexMessage = Math.floor(
+          Math.random() * winMessages.length,
+        );
+        message = winMessages[randomIndexMessage];
       } else {
         // Player lost
         const loseAnimations = [
           "https://lottie.host/326e70e7-d592-4860-91a3-c597cdf9e6d8/5qsW10ceui.lottie",
           // Add other lose animation Lottie file URLs here
         ];
-      
+
         const loseMessages = [
           "AVAI: Ouch! Did your skills take a vacation?",
           "AVAI: Congrats! You've mastered the art of not winning.",
@@ -93,21 +96,21 @@ const GameStatus: React.FC<GameStatusProps> = ({
           "AVAI: On the bright side, you're really good at losing!",
           "AVAI: Game over! Insert more practice to continue.",
           "AVAI: You participated! That's... something, right?",
-          "AVAI: Remember, in games as in life: You win some, you lose most."
+          "AVAI: Remember, in games as in life: You win some, you lose most.",
         ];
-        
-        
-      
-        const randomIndexAnimation = Math.floor(Math.random() * loseAnimations.length);
+
+        const randomIndexAnimation = Math.floor(
+          Math.random() * loseAnimations.length,
+        );
         animationOptions = {
           path: loseAnimations[randomIndexAnimation],
         };
-      
-        const randomIndexMessage = Math.floor(Math.random() * loseMessages.length);
+
+        const randomIndexMessage = Math.floor(
+          Math.random() * loseMessages.length,
+        );
         message = loseMessages[randomIndexMessage];
       }
-      
-      
     }
   }
 
@@ -120,7 +123,7 @@ const GameStatus: React.FC<GameStatusProps> = ({
       if (player?.type === "human") {
         turnMessage = "Current turn: Human";
       } else if (player?.type === "ai") {
-        turnMessage = "Current turn: AI is Thinking...";
+        turnMessage = "Current turn: AVAI is Thinking...";
       }
     } else {
       turnMessage = `Current turn: Player ${gameState?.current_player}`;
@@ -149,12 +152,9 @@ const GameStatus: React.FC<GameStatusProps> = ({
     <>
       <h2 className={styles.greeting}>
         {isGameOver
-          ? `Game Over! ${gameState.playing_with_ai && gameState.winner === 2 
-              ? "AVAI" 
-              : "Player " + gameState.winner} Wins!`
+          ? `Game Over! ${gameState.winner === 2 ? "AVAI" : "Player " + gameState.winner} Wins!`
           : `Hello, ${playerId === "spectator" ? "" : "Player"} ${username}!`}
       </h2>
-
       {isGameOver ? (
         <div className={styles.gameOverMessage}>
           {playerId !== "spectator" && (

@@ -14,7 +14,8 @@ const TicTacToe: React.FC = () => {
   const [gameMode, setGameMode] = useState<"online" | "ai" | "predict" | null>(
     null,
   );
-  const [_canJoinGame, setCanJoinGame] = useState(false);
+  const [canJoinGame, setCanJoinGame] = useState<boolean>(false);
+  const [gameExists, setGameExists] = useState<boolean>(false);
 
   useEffect(() => {
     checkGameStatus();
@@ -30,19 +31,23 @@ const TicTacToe: React.FC = () => {
       if (!gameData) {
         console.log("❌ No active game. Ready to create.");
         setCanJoinGame(true);
+        setGameExists(false);
         return;
       }
 
       if (gameData.players_count === 1) {
         console.log("🙋 One player in game. Another player can join.");
         setCanJoinGame(true);
+        setGameExists(true);
       } else {
         console.log("👀 Game is full. Spectate mode only.");
         setCanJoinGame(false);
+        setGameExists(true);
       }
     } catch (error) {
       console.error("⚠️ Error checking active games:", error);
       setCanJoinGame(true);
+      setGameExists(false);
     }
   };
 
@@ -130,7 +135,7 @@ const TicTacToe: React.FC = () => {
     }
   };
 
-  console.log("gamemode", gameMode);
+  console.log("canJoinGame:", canJoinGame, "gameMode:", gameMode);
 
   return (
     <div className={styles.wrapper}>
@@ -142,10 +147,15 @@ const TicTacToe: React.FC = () => {
             }}
             onSpectate={() => setScreen("board")} // Directly navigate to board for spectators
             setPlayerId={setPlayerId}
+            gameExists={gameExists}
+            canJoinGame={canJoinGame}
           />
         )}
         {screen === "mode" && (
           <GameMode
+            gameMode={gameMode}
+            gameExists={gameExists}
+            canJoinGame={canJoinGame}
             onBack={() => setScreen("landing")}
             onStart={handleStartGame}
           />
