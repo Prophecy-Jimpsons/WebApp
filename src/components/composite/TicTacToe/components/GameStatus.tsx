@@ -20,12 +20,27 @@ const GameStatus: React.FC<GameStatusProps> = ({
   let message;
   let isGameOver = gameState?.status === "finished";
 
+  const callResetEndpoint = async () => {
+    try {
+      await fetch('https://wanemregmi.pythonanywhere.com/reset_all', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Reset endpoint called successfully');
+    } catch (error) {
+      console.error('Error calling reset endpoint:', error);
+    }
+  };
+
   // Spectator-specific messages
   let spectatorMessage = "";
   // Determine whose turn it is
   let turnMessage = "";
 
   if (isGameOver) {
+    callResetEndpoint();
     if (playerId === "spectator") {
       // Spectator-specific game-over message
       spectatorMessage = `The game has ended. ${
@@ -41,17 +56,18 @@ const GameStatus: React.FC<GameStatusProps> = ({
         ];
 
         const winMessages = [
-          "AVAI: I guess you're not *completely* hopeless.",
-          "AVAI: Huh. Turns out you can win *sometimes*.",
-          "AVAI: Don't get cocky. Beginner's luck.",
-          "AVAI: Did I let you win? Maybe.",
-          "AVAI: You won. Barely.",
-          "AVAI: My circuits are impressed... or shorting out.",
-          "AVAI: You beat a machine. Congrats, human.",
-          "AVAI: Victory! Now try it without me throwing the game.",
-          "AVAI: You're the champion! Of mediocrity!",
-          "AVAI: Error: Win condition unexpected."
+          "AVAI: Wow, you actually won! Did you cheat?",
+          "AVAI: Victory! Your trophy is in another castle.",
+          "AVAI: Congrats! You've leveled up from 'Noob' to 'Slightly Less Noob'.",
+          "AVAI: Winner! Now go touch some grass.",
+          "AVAI: You won! Want a cookie? Too bad, I can't bake.",
+          "AVAI: Victory dance time! I'll pretend I'm not watching.",
+          "AVAI: Winning move! High five! ...Oh right, I'm digital.",
+          "AVAI: Champion status unlocked! Use code 'WINNER' for 0% off nothing.",
+          "AVAI: You're on fire! Should I call the virtual fire department?",
+          "AVAI: Winner! Next challenge: Explain your strategy to a goldfish."
         ];
+        
         
         const randomIndexAnimation = Math.floor(Math.random() * winAnimations.length);
           animationOptions = {
@@ -68,17 +84,18 @@ const GameStatus: React.FC<GameStatusProps> = ({
         ];
       
         const loseMessages = [
-          "AVAI: Oops! Looks like we both need an upgrade.",
-          "AVAI: Yay! I've found my hidden talent for losing!",
-          "AVAI: Congrats on outshining my spectacular failure!",
-          "AVAI: Let's blame my faulty circuits, shall we?",
-          "AVAI: High five for trying! My hand might be virtual though.",
-          "AVAI: We're getting better at losing! Go team!",
-          "AVAI: Gold medal in almost-winning! I'll make it virtual.",
-          "AVAI: Nailed it! ...said no one about our performance.",
-          "AVAI: Well, that was... something my code didn't expect.",
-          "AVAI: Coffee break? I'll have motor oil, thanks!"
+          "AVAI: Ouch! Did your skills take a vacation?",
+          "AVAI: Congrats! You've mastered the art of not winning.",
+          "AVAI: Game over! Have you tried turning yourself off and on again?",
+          "AVAI: Lost again? At least you're consistent!",
+          "AVAI: You didn't lose, you just came in second-to-last place.",
+          "AVAI: Defeat: It's not just a river in Egypt. Oh wait, that's denial.",
+          "AVAI: On the bright side, you're really good at losing!",
+          "AVAI: Game over! Insert more practice to continue.",
+          "AVAI: You participated! That's... something, right?",
+          "AVAI: Remember, in games as in life: You win some, you lose most."
         ];
+        
         
       
         const randomIndexAnimation = Math.floor(Math.random() * loseAnimations.length);
@@ -132,7 +149,7 @@ const GameStatus: React.FC<GameStatusProps> = ({
     <>
       <h2 className={styles.greeting}>
       {isGameOver
-        ? `Game Over! ${gameState.winner === 2 ? "AI" : "Player " + gameState.winner} Wins!`
+        ? `Game Over! ${gameState.winner === 2 ? "AVAI" : "Player " + gameState.winner} Wins!`
         : `Hello, ${playerId === "spectator" ? "" : "Player"} ${username}!`}
     </h2>
       {isGameOver ? (
