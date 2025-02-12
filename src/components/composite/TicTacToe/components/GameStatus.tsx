@@ -6,39 +6,66 @@ interface GameStatusProps {
   username: string;
   gameState: any;
   playerId: string;
-  resetGame?: () => void;
+  timeoutMessage: string;
 }
 
 const GameStatus: React.FC<GameStatusProps> = ({
   username,
   gameState,
   playerId,
-  resetGame,
+  timeoutMessage,
 }) => {
+  console.log("GameStatus", gameState);
   let animationOptions;
   let message;
   let isGameOver = gameState?.status === "finished";
-  console.log("gamestate gamestatus", gameState);
+
+  // Spectator-specific messages
+  let spectatorMessage = "";
+  // Determine whose turn it is
+  let turnMessage = "";
 
   if (isGameOver) {
-    if (parseInt(playerId) === gameState.winner) {
-      // Player won
-      animationOptions = {
-        path: "https://lottie.host/5d1a1e1d-d1e7-4b08-99be-2927f13bba61/h8mXczR5zI.lottie",
-      };
-      message = "Congratulations! You Won!";
+    if (playerId === "spectator") {
+      // Spectator-specific game-over message
+      spectatorMessage = `The game has ended. ${
+        gameState.winner === 2 ? "AI" : "Player " + gameState.winner
+      } is the winner!`;
     } else {
-      // Player lost
-      animationOptions = {
-        path: "https://lottie.host/326e70e7-d592-4860-91a3-c597cdf9e6d8/5qsW10ceui.lottie",
-      };
-      message = "Better Luck Next Time!";
+      // Player-specific animations and messages
+      if (parseInt(playerId) === gameState.winner) {
+        // Player won
+        animationOptions = {
+          path: "https://lottie.host/5d1a1e1d-d1e7-4b08-99be-2927f13bba61/h8mXczR5zI.lottie",
+        };
+        message = "Congratulations! You Won!";
+      } else {
+        // Player lost
+        animationOptions = {
+          path: "https://lottie.host/326e70e7-d592-4860-91a3-c597cdf9e6d8/5qsW10ceui.lottie",
+        };
+        message = "Better Luck Next Time!";
+      }
     }
   }
 
-  // Determine whose turn it is
-  let turnMessage = "";
-  if (gameState?.playing_with_ai) {
+  // Spectator
+  if (playerId === "spectator") {
+    if (gameState?.playing_with_ai) {
+      const currentPlayer = gameState?.current_player;
+      const player = gameState?.players[currentPlayer.toString()];
+
+      if (player?.type === "human") {
+        turnMessage = "Current turn: Human";
+      } else if (player?.type === "ai") {
+        turnMessage = "Current turn: AI is Thinking...";
+      }
+    } else {
+      turnMessage = `Current turn: Player ${gameState?.current_player}`;
+    }
+  }
+  // Player vs AI
+  else if (gameState?.playing_with_ai) {
     const currentPlayer = gameState?.current_player;
     const player = gameState?.players[currentPlayer.toString()];
 
@@ -47,7 +74,9 @@ const GameStatus: React.FC<GameStatusProps> = ({
     } else if (player?.type === "ai") {
       turnMessage = "AI is Thinking...";
     }
-  } else {
+  }
+  // Player vs Player
+  else {
     turnMessage =
       gameState?.current_player === parseInt(playerId)
         ? `Your Turn (${gameState.current_player === 1 ? "X" : "O"})`
@@ -56,11 +85,24 @@ const GameStatus: React.FC<GameStatusProps> = ({
 
   return (
     <>
-      <h2 className={styles.greeting}>Hello, player {username}!</h2>
+      <h2 className={styles.greeting}>
+        Hello, {`${playerId === "spectator" ? "" : "Player"} ${username}`}!
+      </h2>
       {isGameOver ? (
         <div className={styles.gameOverMessage}>
-          <DotLottieReact src={animationOptions?.path} loop autoplay />
-          <h2 className={styles.gameOverTitle}>{message}</h2>
+          {playerId !== "spectator" && (
+            <>
+              {/* Show animations only for players */}
+              <DotLottieReact src={animationOptions?.path} loop autoplay />
+              <h2 className={styles.gameOverTitle}>{message}</h2>
+            </>
+          )}
+          {playerId === "spectator" && (
+            <>
+              {/* Show text-based message for spectators */}
+              <h2 className={styles.gameOverTitle}>{spectatorMessage}</h2>
+            </>
+          )}
         </div>
       ) : (
         <>
@@ -79,13 +121,12 @@ const GameStatus: React.FC<GameStatusProps> = ({
           )}
         </>
       )}
-      {/* <p className={styles.winnerText}>
-        🎉 Game Over!{" "}
-        {gameState.winner
-          ? `${gameState.winner === parseInt(username) ? "You Won!" : "Opponent Won!"}`
-          : "It's a Draw!"}{" "}
-        🎉
-      </p> */}
+
+      {timeoutMessage && (
+        <div className={styles.timeoutMessage}>
+          <p>{timeoutMessage}</p>
+        </div>
+      )}
     </>
   );
 };

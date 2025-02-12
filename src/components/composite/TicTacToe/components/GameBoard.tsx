@@ -1,3 +1,4 @@
+import { determineWinningCells } from "@/utils/helpers"; // Import isValidMove
 import axios from "axios";
 import Pusher from "pusher-js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -5,7 +6,7 @@ import Board from "./Board";
 import Controls from "./Controls";
 import styles from "./GameBoard.module.css";
 import GameStatus from "./GameStatus";
-import { determineWinningCells } from "@/utils/helpers";
+import { on } from "events";
 
 interface GameBoardProps {
   username: string;
@@ -39,7 +40,7 @@ interface Player {
 }
 
 const API_URL = "https://wanemregmi.pythonanywhere.com";
-// const pusher = new Pusher("23f29026f51de66ea541", { cluster: "us2" });
+const TIMEOUT_DURATION = 20000; // 20 seconds
 
 const GameBoard: React.FC<GameBoardProps> = ({
   onBack,
@@ -56,9 +57,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
     [],
   );
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
-  // const [playerId, set PlayerId] = useState<"1" | "2" | null>(null);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [timeoutMessage, setTimeoutMessage] = useState<string>("");
   const pusherClientRef = useRef<Pusher | null>(null);
-  const inactivityTimeoutRef = useRef<any>(null);
 
   // Initialize Pusher only once using useRef
   const initializePusher = useCallback(() => {
@@ -109,12 +110,27 @@ const GameBoard: React.FC<GameBoardProps> = ({
         status: data.status || "ongoing",
         winner: data.winner || null,
       };
-
+      console.log("✅ Formatted Game State:", formattedGameState);
       setGameState(formattedGameState);
     } catch (error) {
       console.error(`❌ Error fetching game state for game ${gameId}:`, error);
     }
   }, [gameId, gameMode]);
+
+  // Reset game logic
+  const resetGame = async () => {
+    try {
+      await axios.post(`${API_URL}/reset_all`);
+      setSelectedCell(null);
+      setHighlightedCells([]);
+      setIsGameOver(false);
+      setTimeoutMessage("");
+      onBack();
+      // await fetchGameState(); // Fetch a fresh game state
+    } catch (error) {
+      console.error("Error resetting the game:", error);
+    }
+  };
 
   useEffect(() => {
     if (!gameId) return;
@@ -143,8 +159,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
           pieces_placed: data.board.pieces_placed || {},
         },
         current_player: data.current_player,
-        // players: gameState?.players,
-        // players_count: gameState?.players_count,
         playing_with_ai: gameMode === "ai",
         status: data.is_game_over ? "finished" : "ongoing",
         winner: data.winner,
@@ -165,6 +179,51 @@ const GameBoard: React.FC<GameBoardProps> = ({
       client.unsubscribe(`game-${gameId}`);
     };
   }, [gameId, fetchGameState, initializePusher, gameMode]);
+
+  // effect for timeout handling
+  // useEffect(() => {
+  //   if (gameState?.status === "ongoing" && !isGameOver) {
+  //     // Clear existing timeout
+  //     if (timeoutId) {
+  //       clearTimeout(timeoutId);
+  //     }
+
+  //     // Set new timeout
+  //     const newTimeoutId = setTimeout(() => {
+  //       setTimeoutMessage("⏰ Game Over - Timeout!");
+  //       setIsGameOver(true);
+  //       setGameState((prev) => (prev ? { ...prev, status: "finished" } : null));
+  //     }, TIMEOUT_DURATION);
+
+  //     setTimeoutId(newTimeoutId);
+  //   } else {
+  //     // If the game is over, clear any existing timeout
+  //     if (timeoutId) {
+  //       clearTimeout(timeoutId);
+  //     }
+  //   }
+
+  //   return () => {
+  //     if (timeoutId) clearTimeout(timeoutId);
+  //   };
+  // }, [gameState?.status, isGameOver]);
+
+  // Handle timeout message display and reset
+  // useEffect(() => {
+  //   if (timeoutMessage) {
+  //     const timeout = setTimeout(() => {
+  //       resetGame();
+  //     }, 5000); // Automatically reset after 5 seconds
+
+  //     return () => clearTimeout(timeout);
+  //   }
+  // }, [timeoutMessage, resetGame]);
+
+  // Handle quitting mid-game
+  const handleQuit = () => {
+    resetGame();
+    onBack(); // Navigate back to the main menu
+  };
 
   const handleCellClick = useCallback(
     async (row: number, col: number) => {
@@ -194,16 +253,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
           }
         }
       }
-      // clearTimeout(inactivityTimeoutRef.current);
-      // inactivityTimeoutRef.current = setTimeout(
-      //   () => setIsGameOver(true),
-      //   20000, // 20 seconds
-      // );
     },
     [gameState, playerId, selectedCell, gameMode],
   );
-
-  console.log("🟢 Game State:", gameState);
 
   const sendMove = useCallback(
     async (moveType: "place" | "move", move: number[]) => {
@@ -237,11 +289,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
     [gameId, playerId],
   );
 
-  const resetGame = async () => {
-    await axios.post(`${API_URL}/reset_all`);
-    onBack();
-  };
-
   useEffect(() => {
     if (gameState?.status === "finished") {
       setSelectedCell(null);
@@ -260,14 +307,21 @@ const GameBoard: React.FC<GameBoardProps> = ({
     return <div className={styles.loading}>Loading game...</div>;
   }
 
+  console.log("gameState: ", gameState);
+
   return (
     <div className={styles.boardContainer}>
-      <Controls onBack={onBack} onReset={resetGame} isGameOver={isGameOver} />
+      <Controls
+        playerId={playerId as string}
+        onBack={handleQuit}
+        onReset={resetGame}
+        isGameOver={isGameOver}
+      />
       <GameStatus
         playerId={playerId as string}
         username={username}
         gameState={gameState}
-        resetGame={resetGame}
+        timeoutMessage={timeoutMessage}
       />
       <Board
         board={gameState.board_state.board}

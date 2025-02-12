@@ -131,3 +131,11 @@
     transform: scale(1);
   }
 }
+
+.finishedMessage {
+  font-size: var(--space-4);
+  color: var(--color-yellow-400);
+  padding: var(--space-4);
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}

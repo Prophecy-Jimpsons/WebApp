@@ -1,49 +1,67 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "./GameLanding.module.css";
 
 interface LandingProps {
   onNext: () => void;
+  onSpectate: () => void; // Add this prop for spectating
+  setPlayerId: (id: string) => void;
 }
 
 const API_URL = "https://wanemregmi.pythonanywhere.com";
 
-const GameLanding: React.FC<LandingProps> = ({ onNext }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_gameExists, setGameExists] = useState(false);
-  const [canSpectate, setCanSpectate] = useState(false);
+const GameLanding: React.FC<LandingProps> = ({
+  onNext,
+  onSpectate,
+  setPlayerId,
+}) => {
+  const [gameExists, setGameExists] = useState(false);
+  const [isGameFinished, setIsGameFinished] = useState(false);
+  const [canJoin, setCanJoin] = useState(false);
 
-  // ✅ Check active game on mount
   useEffect(() => {
     console.log("🔄 Checking active games...");
     axios
       .get(`${API_URL}/active_games`)
       .then((response) => {
         console.log("✅ Active Games Response:", response.data);
+        const activeGames = response.data.active_games;
+        setIsGameFinished(Object.keys(activeGames).length === 0);
 
-        const gameData = response.data.active_games["1"]; // Always check game_id = 1
+        const gameData = activeGames["1"]; // Always check game_id = 1
         if (!gameData) {
           console.log("❌ No active game. Allowing Play Game.");
           setGameExists(false);
-          setCanSpectate(false);
+          setCanJoin(false);
           return;
         }
 
         const playerCount = gameData.players_count;
+        const playingWithAI = gameData.playing_with_ai;
         setGameExists(true);
 
-        if (playerCount === 2) {
-          console.log("👀 Game is full. Spectate mode enabled.");
-          setCanSpectate(true);
+        if (playingWithAI) {
+          console.log("🤖 Playing with AI. Allowing Play Game.");
+          setCanJoin(false);
         } else {
-          console.log("🎲 Game has space. Allowing Play Game.");
-          setCanSpectate(false);
+          if (playerCount < 2) {
+            console.log("🎲 Game has space. Allowing Join Game.");
+            setCanJoin(true);
+          } else {
+            console.log("👀 Game is full. Spectate mode enabled.");
+            setCanJoin(false);
+          }
         }
       })
       .catch((error) => {
         console.error("⚠️ Error checking active games:", error);
       });
   }, []);
+
+  const handleSpectate = () => {
+    if (gameExists) setPlayerId("spectator"); // Set playerId as spectator
+    onSpectate(); // Directly navigate to board for spectating
+  };
 
   return (
     <div className={styles.container}>
@@ -58,18 +76,19 @@ const GameLanding: React.FC<LandingProps> = ({ onNext }) => {
 
       <div className={styles.buttonContainer}>
         <button
-          className={`${styles.primaryButton}`}
-          onClick={onNext} // ✅ Always allow Play Game
+          className={`${styles.primaryButton} ${gameExists && !canJoin ? styles.disabled : ""}`}
+          disabled={gameExists && !canJoin}
+          onClick={onNext} // ✅ Navigate to board
         >
-          Play Game
+          {canJoin ? "Join Game" : "Play Game"}
         </button>
 
         <button
           className={`${styles.secondaryButton} ${
-            !canSpectate ? styles.disabled : ""
+            !gameExists || isGameFinished ? styles.disabled : ""
           }`}
-          onClick={() => console.log("🔎 Spectating Game")}
-          disabled={!canSpectate} // ✅ Spectate if full
+          onClick={handleSpectate}
+          disabled={!gameExists || isGameFinished} // ✅ Spectate if full
         >
           Spectate Game
         </button>

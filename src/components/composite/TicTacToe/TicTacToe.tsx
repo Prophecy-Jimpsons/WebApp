@@ -130,11 +130,19 @@ const TicTacToe: React.FC = () => {
     }
   };
 
+  console.log("gamemode", gameMode);
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.gameContainer}>
         {screen === "landing" && (
-          <GameLanding onNext={() => setScreen("mode")} />
+          <GameLanding
+            onNext={() => {
+              setScreen("mode");
+            }}
+            onSpectate={() => setScreen("board")} // Directly navigate to board for spectators
+            setPlayerId={setPlayerId}
+          />
         )}
         {screen === "mode" && (
           <GameMode
@@ -142,11 +150,11 @@ const TicTacToe: React.FC = () => {
             onStart={handleStartGame}
           />
         )}
-        {screen === "board" && gameId && playerId && (
+        {screen === "board" && gameId && (
           <GameBoard
-            username={playerId}
+            username={playerId || "spectator"} // Use spectator as username if spectating
             gameId={gameId}
-            playerId={playerId}
+            playerId={playerId || ""} // Pass empty string for spectators
             gameMode={gameMode}
             onBack={() => {
               setScreen("mode");
