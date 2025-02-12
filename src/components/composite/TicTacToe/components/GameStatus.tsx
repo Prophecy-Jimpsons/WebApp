@@ -15,7 +15,7 @@ const GameStatus: React.FC<GameStatusProps> = ({
   playerId,
   timeoutMessage,
 }) => {
-  console.log("GameStatus", gameState);
+  console.log("timeoutMessage", timeoutMessage);
   let animationOptions;
   let message;
   let isGameOver = gameState?.status === "finished";
@@ -123,7 +123,7 @@ const GameStatus: React.FC<GameStatusProps> = ({
       if (player?.type === "human") {
         turnMessage = "Current turn: Human";
       } else if (player?.type === "ai") {
-        turnMessage = "Current turn: AVAI is Thinking...";
+        turnMessage = "Current turn: AI is Thinking...";
       }
     } else {
       turnMessage = `Current turn: Player ${gameState?.current_player}`;
@@ -152,9 +152,14 @@ const GameStatus: React.FC<GameStatusProps> = ({
     <>
       <h2 className={styles.greeting}>
         {isGameOver
-          ? `Game Over! ${gameState.winner === 2 ? "AVAI" : "Player " + gameState.winner} Wins!`
+          ? `Game Over! ${
+              gameState.playing_with_ai && gameState.winner === 2
+                ? "AVAI"
+                : "Player " + gameState.winner
+            } Wins!`
           : `Hello, ${playerId === "spectator" ? "" : "Player"} ${username}!`}
       </h2>
+
       {isGameOver ? (
         <div className={styles.gameOverMessage}>
           {playerId !== "spectator" && (

@@ -1,11 +1,12 @@
-import { determineWinningCells } from "@/utils/helpers"; // Import isValidMove
-import axios from "axios";
-import Pusher from "pusher-js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Board from "./Board";
 import Controls from "./Controls";
 import styles from "./GameBoard.module.css";
 import GameStatus from "./GameStatus";
+import Timer from "./TimerUI";
+import axios from "axios";
+import Pusher from "pusher-js";
+import { determineWinningCells } from "@/utils/helpers";
 
 interface GameBoardProps {
   username: string;
@@ -39,7 +40,8 @@ interface Player {
 }
 
 const API_URL = "https://wanemregmi.pythonanywhere.com";
-const TIMEOUT_DURATION = 20000; // 20 seconds
+const TIMEOUT_DURATION = 10000; // 10 seconds
+const INACTIVITY_THRESHOLD = 3000; // 3 seconds
 
 const GameBoard: React.FC<GameBoardProps> = ({
   onBack,
@@ -56,18 +58,17 @@ const GameBoard: React.FC<GameBoardProps> = ({
     [],
   );
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
   const [timeoutMessage, setTimeoutMessage] = useState<string>("");
   const pusherClientRef = useRef<Pusher | null>(null);
 
-  // Initialize Pusher only once using useRef
   const initializePusher = useCallback(() => {
     if (pusherClientRef.current) {
-      return pusherClientRef.current; // Return existing instance
+      return pusherClientRef.current;
     }
 
     const client = new Pusher("23f29026f51de66ea541", { cluster: "us2" });
-    pusherClientRef.current = client; // Store the instance in the ref
+    pusherClientRef.current = client;
     return client;
   }, []);
 
@@ -116,7 +117,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
     }
   }, [gameId, gameMode]);
 
-  // Reset game logic
   const resetGame = async () => {
     try {
       await axios.post(`${API_URL}/reset_all`);
@@ -125,7 +125,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
       setIsGameOver(false);
       setTimeoutMessage("");
       onBack();
-      // await fetchGameState(); // Fetch a fresh game state
     } catch (error) {
       console.error("Error resetting the game:", error);
     }
@@ -134,10 +133,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
   useEffect(() => {
     if (!gameId) return;
 
-    // Get the Pusher client from the ref
     const client = initializePusher();
     console.log(`📡 Subscribing to Pusher channel: game-${gameId}`);
-
     fetchGameState();
 
     const channel = client.subscribe(`game-${gameId}`);
@@ -158,8 +155,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
           pieces_placed: data.board.pieces_placed || {},
         },
         current_player: data.current_player,
-        players: gameState?.players,
-        // players_count: Object.keys(gameState?.players).length,
         playing_with_ai: gameMode === "ai",
         status: data.is_game_over ? "finished" : "ongoing",
         winner: data.winner,
@@ -174,13 +169,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
         }
         return formattedState;
       });
+      setIsTimerActive(false);
     });
 
     channel.bind("player-joined", (data: any) => {
       console.log("📢 Player Joined event received from Pusher:", data);
 
-      // Add new state parameters to what already exists
-       const formattedState: GameState = {
+      const formattedState: GameState = {
         board_state: {
           board: data.board.board,
           last_move: data.board.last_move || null,
@@ -189,14 +184,14 @@ const GameBoard: React.FC<GameBoardProps> = ({
         },
         current_player: data.current_player,
         playing_with_ai: gameMode === "ai",
-        status: data.status ,
+        status: data.status,
         winner: data.winner,
         players: data.players,
-        players_count: data.players_count
+        players_count: data.players_count,
       };
 
       setGameState((prevState) => {
-        if (prevState && gameMode !== 'ai') {
+        if (prevState && gameMode !== "ai") {
           return {
             ...prevState,
             ...formattedState,
@@ -212,84 +207,34 @@ const GameBoard: React.FC<GameBoardProps> = ({
     };
   }, [gameId, fetchGameState, initializePusher, gameMode]);
 
-  console.log("🎮 Game State:", gameState);
-
-  // effect for timeout handling
+  // HANDLE TIMER TO CHECK FOR INACTIVITY
   // useEffect(() => {
-  //   if (gameState?.status === "ongoing" && !isGameOver) {
-  //     // Clear existing timeout
-  //     if (timeoutId) {
-  //       clearTimeout(timeoutId);
-  //     }
+  //   let inactivityTimer: NodeJS.Timeout;
+  //   let timeoutTimer: NodeJS.Timeout;
 
-  //     // Set new timeout
-  //     const newTimeoutId = setTimeout(() => {
-  //       setTimeoutMessage("⏰ Game Over - Timeout!");
-  //       setIsGameOver(true);
-  //       setGameState((prev) => (prev ? { ...prev, status: "finished" } : null));
-  //     }, TIMEOUT_DURATION);
-
-  //     setTimeoutId(newTimeoutId);
-  //   } else {
-  //     // If the game is over, clear any existing timeout
-  //     if (timeoutId) {
-  //       clearTimeout(timeoutId);
-  //     }
+  //   if (gameState?.status === "ongoing" && !isGameOver && !isTimerActive) {
+  //     inactivityTimer = setTimeout(() => {
+  //       setIsTimerActive(true);
+  //       timeoutTimer = setTimeout(() => {
+  //         setTimeoutMessage("Game Over - Timeout!");
+  //         setIsGameOver(true);
+  //         setGameState((prev) =>
+  //           prev ? { ...prev, status: "finished" } : null,
+  //         );
+  //       }, TIMEOUT_DURATION);
+  //     }, INACTIVITY_THRESHOLD);
   //   }
 
   //   return () => {
-  //     if (timeoutId) clearTimeout(timeoutId);
+  //     clearTimeout(inactivityTimer);
+  //     clearTimeout(timeoutTimer);
   //   };
-  // }, [gameState?.status, isGameOver]);
+  // }, [gameState?.status, isGameOver, isTimerActive]);
 
-  // Handle timeout message display and reset
-  // useEffect(() => {
-  //   if (timeoutMessage) {
-  //     const timeout = setTimeout(() => {
-  //       resetGame();
-  //     }, 5000); // Automatically reset after 5 seconds
-
-  //     return () => clearTimeout(timeout);
-  //   }
-  // }, [timeoutMessage, resetGame]);
-
-  // Handle quitting mid-game
   const handleQuit = () => {
     resetGame();
-    onBack(); // Navigate back to the main menu
+    onBack();
   };
-
-  const handleCellClick = useCallback(
-    async (row: number, col: number) => {
-      if (
-        !gameState ||
-        !playerId ||
-        gameState.status === "finished" ||
-        gameState.current_player !== parseInt(playerId) ||
-        gameMode === "predict"
-      ) {
-        return;
-      }
-
-      if (gameState.board_state.phase === "placement") {
-        if (gameState.board_state.pieces_placed[playerId] >= 4) {
-          console.warn("⛔ Cannot place more than 4 pieces.");
-          return;
-        }
-        await sendMove("place", [row, col]);
-      } else if (gameState.board_state.phase === "movement") {
-        if (selectedCell) {
-          await sendMove("move", [selectedCell[0], selectedCell[1], row, col]);
-          setSelectedCell(null);
-        } else {
-          if (gameState.board_state.board[row][col] === parseInt(playerId)) {
-            setSelectedCell([row, col]);
-          }
-        }
-      }
-    },
-    [gameState, playerId, selectedCell, gameMode],
-  );
 
   const sendMove = useCallback(
     async (moveType: "place" | "move", move: number[]) => {
@@ -323,6 +268,40 @@ const GameBoard: React.FC<GameBoardProps> = ({
     [gameId, playerId],
   );
 
+  const handleCellClick = useCallback(
+    async (row: number, col: number) => {
+      if (
+        !gameState ||
+        !playerId ||
+        gameState.status === "finished" ||
+        isGameOver ||
+        gameState.current_player !== parseInt(playerId) ||
+        gameMode === "predict"
+      ) {
+        return;
+      }
+
+      if (gameState.board_state.phase === "placement") {
+        if (gameState.board_state.pieces_placed[playerId] >= 4) {
+          console.warn("⛔ Cannot place more than 4 pieces.");
+          return;
+        }
+        await sendMove("place", [row, col]);
+      } else if (gameState.board_state.phase === "movement") {
+        if (selectedCell) {
+          await sendMove("move", [selectedCell[0], selectedCell[1], row, col]);
+          setSelectedCell(null);
+        } else {
+          if (gameState.board_state.board[row][col] === parseInt(playerId)) {
+            setSelectedCell([row, col]);
+          }
+        }
+      }
+      setIsTimerActive(false);
+    },
+    [gameState, playerId, selectedCell, gameMode, sendMove, isGameOver],
+  );
+
   useEffect(() => {
     if (gameState?.status === "finished") {
       setSelectedCell(null);
@@ -333,6 +312,14 @@ const GameBoard: React.FC<GameBoardProps> = ({
           gameState.winner as number,
         ),
       );
+
+      const refreshTimer = setTimeout(() => {
+        window.location.reload();
+      }, 6000);
+
+      return () => {
+        clearTimeout(refreshTimer);
+      };
     }
   }, [gameState]);
 
@@ -357,6 +344,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
         gameState={gameState}
         timeoutMessage={timeoutMessage}
       />
+      {/* {isTimerActive && playerId !== "spectator" && (
+        <Timer initialTime={TIMEOUT_DURATION / 1000} onTimeout={() => {}}  timeoutMessage={timeoutMessage}/>
+      )} */}
       <Board
         board={gameState.board_state.board}
         onClick={handleCellClick}
