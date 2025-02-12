@@ -136,24 +136,30 @@
   margin-top: 20px;
 }
 
-/* Game Over Message */
 .gameOverMessage {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 22rem;
-  width: 22rem;
+  height: auto; /* Adjusted height to auto */
+  width: 80%; /* Adjusted width to percentage */
+  max-width: 400px; /* Maximum width for larger screens */
+  margin: 0 auto; /* Center horizontally */
+  padding: var(--space-3);
+  background-color: rgba(var(--color-background-rgb), 0.9);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-@media screen and (max-width: 768px) {
-  .gameOverMessage {
-    height: 17rem;
-    width: 17rem;
-  }
-  .gameOverTitle {
-    font-size: var(--space-4);
-  }
+.gameOverTitle {
+  font-size: var(--space-5);
+  text-align: center;
+  font-weight: 600;
+  width: 100%;
+  color: var(--color-primary);
+  margin-top: var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--border-radius);
 }
 
 .gameOver .cell.disabled {
@@ -162,12 +168,25 @@
   pointer-events: none;
 }
 
-.gameOverTitle {
-  font-size: var(--space-5);
-  text-align: center;
-  font-weight: bold;
-  color: var(--color-primary);
+/* Responsiveness for smaller screens */
+@media screen and (max-width: 768px) {
+  .gameOverMessage {
+    width: 90%; /* Adjust for smaller screens */
+    padding: var(--space-2);
+  }
+  .gameOverTitle {
+    font-size: var(--space-4);
+  }
 }
+
+/* Smaller screens */
+@media screen and (max-width: 480px) {
+  .gameOverTitle {
+    font-size: var(--space-3);
+  }
+}
+
+
 
 .aiMode {
   font-style: italic;

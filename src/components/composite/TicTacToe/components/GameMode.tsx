@@ -8,17 +8,17 @@ interface GameModeProps {
 const GameMode: React.FC<GameModeProps> = ({ onBack, onStart }) => {
   return (
     <div className={styles.container}>
-      <button className={styles.backButton} onClick={onBack}>
+      {/* <button className={styles.backButton} onClick={onBack}>
         ← Back
-      </button>
+      </button> */}
       <h1 className={styles.title}>Choose Your Game Mode</h1>
       <button className={styles.button} onClick={() => onStart('online')}>
-        Online VS
+        Challenge a Human
       </button>
       <button className={styles.button} onClick={() => onStart('ai')}>
-        Play with AI
+        Face AVAI (AI Opponent)
       </button>
-      <button className={styles.button} onClick={() => onStart('predict')}>
+      <button className={styles.button} onClick={() => onStart('predict')} disabled>
         Predict the Game
       </button>
     </div>
