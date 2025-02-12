@@ -174,11 +174,43 @@ const GameBoard: React.FC<GameBoardProps> = ({
         return formattedState;
       });
     });
+
+    channel.bind("player-joined", (data: any) => {
+      console.log("📢 Player Joined event received from Pusher:", data);
+
+      // Add new state parameters to what already exists
+       const formattedState: GameState = {
+        board_state: {
+          board: data.board.board,
+          last_move: data.board.last_move || null,
+          phase: data.board.phase || "placement",
+          pieces_placed: data.board.pieces_placed || {},
+        },
+        current_player: data.current_player,
+        playing_with_ai: gameMode === "ai",
+        status: data.status ,
+        winner: data.winner,
+        players: data.players,
+        players_count: data.players_count
+      };
+
+      setGameState((prevState) => {
+        if (prevState && gameMode !== 'ai') {
+          return {
+            ...prevState,
+            ...formattedState,
+          };
+        }
+        return formattedState;
+      });
+    });
+
     return () => {
       console.log(`❌ Unsubscribing from Pusher channel: game-${gameId}`);
       client.unsubscribe(`game-${gameId}`);
     };
   }, [gameId, fetchGameState, initializePusher, gameMode]);
+
 
   // effect for timeout handling
   // useEffect(() => {

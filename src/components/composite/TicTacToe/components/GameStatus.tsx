@@ -148,10 +148,13 @@ const GameStatus: React.FC<GameStatusProps> = ({
   return (
     <>
       <h2 className={styles.greeting}>
-      {isGameOver
-        ? `Game Over! ${gameState.winner === 2 ? "AVAI" : "Player " + gameState.winner} Wins!`
-        : `Hello, ${playerId === "spectator" ? "" : "Player"} ${username}!`}
-    </h2>
+        {isGameOver
+          ? `Game Over! ${gameState.playing_with_ai && gameState.winner === 2 
+              ? "AVAI" 
+              : "Player " + gameState.winner} Wins!`
+          : `Hello, ${playerId === "spectator" ? "" : "Player"} ${username}!`}
+      </h2>
+
       {isGameOver ? (
         <div className={styles.gameOverMessage}>
           {playerId !== "spectator" && (
