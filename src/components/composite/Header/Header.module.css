@@ -20,11 +20,11 @@
   position: relative;
 }
 
-.desktopNav {
+/* .desktopNav {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-}
+} */
 
 .rightSection {
   display: flex;

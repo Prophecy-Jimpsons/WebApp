@@ -1,0 +1,116 @@
+/* Fullscreen overlay with fade-in & fade-out */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Fade Out */
+.overlay.fadeOut {
+  animation: fadeOut 0.3s ease-in-out forwards;
+}
+
+/* Glassmorphic username prompt */
+.promptCard {
+  width: 90%;
+  max-width: 350px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  box-shadow:
+    0 4px 15px rgba(255, 255, 255, 0.2),
+    inset 0 2px 5px rgba(255, 255, 255, 0.1);
+  transform: scale(0.9);
+  animation: scaleIn 0.2s ease-in-out forwards;
+}
+
+/* Fade In */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade Out */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Title */
+.title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--color-primary);
+  margin-bottom: 10px;
+}
+
+/* Input Field */
+.input {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.4rem;
+  border: none;
+  border-radius: 10px;
+  text-align: center;
+  /* background: rgba(255, 255, 255, 0.3);   */
+  color: var(--color-black);
+  outline: none;
+}
+
+/* Button Container */
+.buttonContainer {
+  margin-top: 20px;
+}
+
+/* Continue Button */
+.primaryButton {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.4rem;
+  background: linear-gradient(
+    145deg,
+    var(--color-primary),
+    var(--color-yellow-600)
+  );
+  color: var(--color-black);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 4px 10px rgba(252, 175, 5, 0.2),
+    inset 0 2px 5px rgba(255, 255, 255, 0.3);
+}
+
+.primaryButton:hover {
+  background: var(--color-yellow-400);
+  transform: translateY(-3px);
+}

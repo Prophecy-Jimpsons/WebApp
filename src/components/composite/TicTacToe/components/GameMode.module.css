@@ -1,0 +1,83 @@
+/* Centered Mobile-Like Layout */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 2rem;
+  position: relative;
+}
+
+/* Title Styling */
+.title {
+  font-size: 2.4rem;
+  font-weight: bold;
+  color: var(--color-primary);
+  text-align: center;
+}
+
+/* Back Button */
+.backButton {
+  align-self: flex-start;
+  border: 1px solid red;
+  /* padding: var(--space-2) var(--space-4); */
+  font-size: 1.4rem;
+  background: transparent;
+  color: var(--color-primary);
+  border: none;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+  z-index: 11;
+}
+
+@media screen and (max-width: 768px) {
+  .backButton {
+    top: var(--space-3);
+    left: 0;
+  }
+}
+
+.backButton:hover {
+  transform: translateY(-3px);
+  text-decoration: underline;
+}
+
+/* Game Mode Buttons */
+
+.button {
+  width: 100%;
+  padding: 16px;
+  font-size: 1.6rem;
+  background: linear-gradient(
+    145deg,
+    var(--color-primary),
+    var(--color-yellow-600)
+  );
+  color: var(--color-black);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 4px 10px rgba(252, 175, 5, 0.2),
+    inset 0 2px 5px rgba(255, 255, 255, 0.3);
+}
+
+.button:hover {
+  background: var(--color-yellow-400);
+  transform: translateY(-3px);
+}
+
+/* Disabled Buttons (For Coming Soon Features) */
+.disabled {
+  opacity: 0.5;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-grey);
+  cursor: not-allowed;
+  box-shadow: none;
+}
