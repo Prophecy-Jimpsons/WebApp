@@ -31,6 +31,7 @@ interface GameState {
   playing_with_ai: boolean;
   status: string;
   winner?: number | null;
+  last_activity: number;
 }
 
 interface Player {
@@ -109,6 +110,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         playing_with_ai: gameMode === "ai",
         status: data.status || "ongoing",
         winner: data.winner || null,
+        last_activity: data.last_activity, // Add this line
       };
       console.log("✅ Formatted Game State:", formattedGameState);
       setGameState(formattedGameState);
@@ -158,6 +160,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         playing_with_ai: gameMode === "ai",
         status: data.is_game_over ? "finished" : "ongoing",
         winner: data.winner,
+        last_activity: data.last_activity, // Add this line
       };
 
       setGameState((prevState) => {
@@ -188,6 +191,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         winner: data.winner,
         players: data.players,
         players_count: data.players_count,
+        last_activity: data.last_activity, // Add this line
       };
 
       setGameState((prevState) => {
