@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
+// import axios from "axios";
 import styles from "./GameLanding.module.css";
 
 interface LandingProps {
@@ -10,7 +10,7 @@ interface LandingProps {
   gameExists: boolean;
 }
 
-const API_URL = "https://wanemregmi.pythonanywhere.com";
+// const API_URL = "https://wanemregmi.pythonanywhere.com";
 
 const GameLanding: React.FC<LandingProps> = ({
   onNext,

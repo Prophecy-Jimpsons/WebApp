@@ -3,7 +3,7 @@ import Board from "./Board";
 import Controls from "./Controls";
 import styles from "./GameBoard.module.css";
 import GameStatus from "./GameStatus";
-import Timer from "./TimerUI";
+// import Timer from "./TimerUI";
 import axios from "axios";
 import Pusher from "pusher-js";
 import { determineWinningCells } from "@/utils/helpers";
@@ -40,8 +40,8 @@ interface Player {
 }
 
 const API_URL = "https://wanemregmi.pythonanywhere.com";
-const TIMEOUT_DURATION = 10000; // 10 seconds
-const INACTIVITY_THRESHOLD = 3000; // 3 seconds
+// const TIMEOUT_DURATION = 10000; // 10 seconds
+// const INACTIVITY_THRESHOLD = 3000; // 3 seconds
 
 const GameBoard: React.FC<GameBoardProps> = ({
   onBack,
@@ -58,7 +58,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
     [],
   );
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
-  const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
+  const [_isTimerActive, setIsTimerActive] = useState<boolean>(false);
   const [timeoutMessage, setTimeoutMessage] = useState<string>("");
   const pusherClientRef = useRef<Pusher | null>(null);
 
