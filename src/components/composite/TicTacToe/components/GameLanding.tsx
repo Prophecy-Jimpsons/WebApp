@@ -69,14 +69,14 @@ const GameLanding: React.FC<LandingProps> = ({
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Tic Tac Toe</h1>
-      <p className={styles.subtitle}>A New Era of Strategy & Fun!</p>
+              <h1 className={styles.title}>4x4 JIMP-TAC-TOE</h1>
+        <p className={styles.subtitle}>Tic-Tac-Toe on Steroids!</p>
 
-      <p className={styles.description}>
-        Play <b className={styles.primaryColor}>4x4 Super Tic-Tac-Toe</b> with
-        friends or spectate real-time battles. A sleek, modern twist to the
-        classic strategy game.
-      </p>
+        <div className={styles.description}>
+          <p>
+            Regular Tic-Tac-Toe? Boring! Play our <b className={styles.primaryColor}>4x4 version</b> against friends or AVAI, our AI that's probably planning world domination.
+          </p>
+        </div>
 
       <div className={styles.buttonContainer}>
         <button
