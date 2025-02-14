@@ -10,7 +10,7 @@ export interface GameState {
     pieces_placed: Record<string, number>;
   };
   current_player: number;
-  players: Record<string, Player>;
+  players?: Record<string, Player>;
   playing_with_ai: boolean;
   status: string;
   winner?: number | null;
@@ -76,13 +76,27 @@ const GameStatus: React.FC<GameStatusProps> = ({
   const getRandomMessage = (messages: string[]) =>
     messages[Math.floor(Math.random() * messages.length)];
 
+  const callResetEndpoint = async () => {
+    try {
+      await fetch("https://wanemregmi.pythonanywhere.com/reset_all", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Reset endpoint called successfully");
+    } catch (error) {
+      console.error("Error calling reset endpoint:", error);
+    }
+  };
+
   const updateAvaiMessage = useCallback((state: GameState) => {
     setIsTyping(true);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     timeoutRef.current = setTimeout(() => {
       let newMessage = "";
-      const actualPlayersCount = Object.keys(state.players).length;
+      const actualPlayersCount = state.players ? Object.keys(state.players).length : 0;
 
       if (actualPlayersCount < 2) {
         newMessage = getRandomMessage(AVAI_MESSAGES.waiting);
@@ -107,13 +121,16 @@ const GameStatus: React.FC<GameStatusProps> = ({
 
   useEffect(() => {
     updateAvaiMessage(gameState);
+    if (gameState.status === "finished") {
+      callResetEndpoint();
+    }
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [gameState, updateAvaiMessage]);
 
   const renderGameStatus = () => {
-    const actualPlayersCount = Object.keys(gameState.players).length;
+    const actualPlayersCount = gameState.players ? Object.keys(gameState.players).length : 0;
 
     if (actualPlayersCount < 2) {
       return <p className={styles.waitingText}>⏳ Waiting for opponent to join...</p>;
