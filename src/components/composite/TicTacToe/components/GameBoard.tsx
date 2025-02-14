@@ -53,24 +53,22 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const [selectedCell, setSelectedCell] = useState<[number, number] | null>(null);
   const [highlightedCells, setHighlightedCells] = useState<[number, number][]>([]);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
-  const [timeoutMessage, setTimeoutMessage] = useState<string>("");
+  const [showTimeoutModal, setShowTimeoutModal] = useState<boolean>(false);
   const pusherClientRef = useRef<Pusher | null>(null);
   const lastActivityRef = useRef<number>(Date.now());
-  const [showTimeoutModal, setShowTimeoutModal] = useState<boolean>(false);
-
 
   const initializePusher = useCallback(() => {
-    if (pusherClientRef.current) return pusherClientRef.current;
-    const client = new Pusher("23f29026f51de66ea541", { cluster: "us2" });
-    pusherClientRef.current = client;
-    return client;
+    if (!pusherClientRef.current) {
+      pusherClientRef.current = new Pusher("23f29026f51de66ea541", { cluster: "us2" });
+    }
+    return pusherClientRef.current;
   }, []);
 
   const fetchGameState = useCallback(async () => {
     try {
       const response = await axios.get(`${API_URL}/game_info/${gameId}`);
       const data = response.data;
-      const formattedGameState: GameState = {
+      setGameState({
         board_state: {
           board: data.board.board,
           last_move: data.board.last_move || null,
@@ -96,8 +94,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         status: data.status || "ongoing",
         winner: data.winner || null,
         last_activity: data.last_activity,
-      };
-      setGameState(formattedGameState);
+      });
       lastActivityRef.current = Date.now();
     } catch (error) {
       console.error(`Error fetching game state for game ${gameId}:`, error);
@@ -110,7 +107,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
       setSelectedCell(null);
       setHighlightedCells([]);
       setIsGameOver(false);
-      setTimeoutMessage("");
       onBack();
     } catch (error) {
       console.error("Error resetting the game:", error);
@@ -125,13 +121,11 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
     const channel = client.subscribe(`game-${gameId}`);
 
-    channel.bind("move-made", (data: any) => {
-      if (!data?.board?.board) {
-        console.warn("Received invalid game state from Pusher:", data);
-        return;
-      }
+    const handleGameUpdate = (data: any) => {
+      if (!data?.board?.board) return;
 
-      const formattedState: GameState = {
+      setGameState(prevState => ({
+        ...prevState,
         board_state: {
           board: data.board.board,
           last_move: data.board.last_move || null,
@@ -143,32 +137,14 @@ const GameBoard: React.FC<GameBoardProps> = ({
         status: data.is_game_over ? "finished" : "ongoing",
         winner: data.winner,
         last_activity: data.last_activity,
-      };
-
-      setGameState((prevState) => prevState ? { ...prevState, ...formattedState } : formattedState);
+        ...(data.players && { players: data.players }),
+        ...(data.players_count && { players_count: data.players_count }),
+      }));
       lastActivityRef.current = Date.now();
-    });
+    };
 
-    channel.bind("player-joined", (data: any) => {
-      const formattedState: GameState = {
-        board_state: {
-          board: data.board.board,
-          last_move: data.board.last_move || null,
-          phase: data.board.phase || "placement",
-          pieces_placed: data.board.pieces_placed || {},
-        },
-        current_player: data.current_player,
-        playing_with_ai: gameMode === "ai",
-        status: data.status,
-        winner: data.winner,
-        players: data.players,
-        players_count: data.players_count,
-        last_activity: data.last_activity,
-      };
-
-      setGameState((prevState) => prevState && gameMode !== "ai" ? { ...prevState, ...formattedState } : formattedState);
-      lastActivityRef.current = Date.now();
-    });
+    channel.bind("move-made", handleGameUpdate);
+    channel.bind("player-joined", handleGameUpdate);
 
     const inactivityCheck = setInterval(() => {
       if (Date.now() - lastActivityRef.current > INACTIVITY_THRESHOLD) {
@@ -176,10 +152,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
         setTimeout(() => {
           setShowTimeoutModal(false);
           resetGame();
-        }, 5000); // Show the modal for 3 seconds before resetting
+        }, 5000);
       }
     }, 1000);
-    
 
     return () => {
       client.unsubscribe(`game-${gameId}`);
@@ -191,16 +166,12 @@ const GameBoard: React.FC<GameBoardProps> = ({
     if (!gameId || !playerId) return;
 
     try {
-      const response = await axios.post(`${API_URL}/make_move`, {
+      await axios.post(`${API_URL}/make_move`, {
         game_id: gameId,
         player_id: playerId,
         move_type: moveType,
         move: move,
       });
-
-      if (response.data.status !== "success") {
-        console.warn("Move rejected:", response.data.error);
-      }
       lastActivityRef.current = Date.now();
     } catch (error) {
       console.error("Error sending move:", error);
@@ -220,19 +191,15 @@ const GameBoard: React.FC<GameBoardProps> = ({
     }
 
     if (gameState.board_state.phase === "placement") {
-      if (gameState.board_state.pieces_placed[playerId] >= 4) {
-        console.warn("Cannot place more than 4 pieces.");
-        return;
+      if (gameState.board_state.pieces_placed[playerId] < 4) {
+        await sendMove("place", [row, col]);
       }
-      await sendMove("place", [row, col]);
     } else if (gameState.board_state.phase === "movement") {
       if (selectedCell) {
         await sendMove("move", [selectedCell[0], selectedCell[1], row, col]);
         setSelectedCell(null);
-      } else {
-        if (gameState.board_state.board[row][col] === parseInt(playerId)) {
-          setSelectedCell([row, col]);
-        }
+      } else if (gameState.board_state.board[row][col] === parseInt(playerId)) {
+        setSelectedCell([row, col]);
       }
     }
     lastActivityRef.current = Date.now();
@@ -248,9 +215,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         window.location.reload();
       }, 6000);
 
-      return () => {
-        clearTimeout(refreshTimer);
-      };
+      return () => clearTimeout(refreshTimer);
     }
   }, [gameState]);
 
@@ -261,16 +226,16 @@ const GameBoard: React.FC<GameBoardProps> = ({
   return (
     <div className={styles.boardContainer}>
       <Controls
-        playerId={playerId as string}
+        playerId={playerId}
         onBack={onBack}
         onReset={resetGame}
         isGameOver={isGameOver}
       />
       <GameStatus
-        playerId={playerId as string}
+        playerId={playerId}
         username={username}
         gameState={gameState}
-        timeoutMessage={timeoutMessage}
+        timeoutMessage=""
       />
       <Board
         board={gameState.board_state.board}
@@ -289,7 +254,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
           </div>
         </div>
       )}
-
     </div>
   );
 };
