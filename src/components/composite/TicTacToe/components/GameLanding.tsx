@@ -74,7 +74,7 @@ const GameLanding: React.FC<LandingProps> = ({
 
         <div className={styles.description}>
           <p>
-            Regular Tic-Tac-Toe? Boring! Play our <b className={styles.primaryColor}>4x4 version</b> against friends or AVAI, our AI that's probably planning world domination.
+            Regular Tic-Tac-Toe? Boring! Play our <b className={styles.primaryColor}><a href="https://jimpsons.gitbook.io/jimpsons.org/getting-started/tic-tac-toe-game-for-jimpsons" style={{textDecoration: 'none', color: 'inherit'}}>4x4 version</a></b> against friends or AVAI, our AI that's probably planning world domination.
           </p>
         </div>
 
