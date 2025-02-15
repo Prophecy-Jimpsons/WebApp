@@ -3,16 +3,16 @@ export const generateUsername = (
   walletAddress: string | null,
   isCreatingGame: boolean,
 ): string => {
-  // Clean up the base username and default to "Anonymous" if empty
+  // Clean up the input username, default to "Anonymous" only if empty
   const cleanUsername = baseUsername.trim() || "Anonymous";
 
   if (walletAddress) {
-    // For wallet users, append last 4 digits
+    // For wallet users
     const lastFourDigits = walletAddress.slice(-4);
     return `${cleanUsername}#${lastFourDigits}`;
   }
 
-  // For non-wallet users, generate random number based on create/join
+  // For non-wallet users, use their input username
   const min = isCreatingGame ? 1 : 50;
   const max = isCreatingGame ? 50 : 100;
   const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;

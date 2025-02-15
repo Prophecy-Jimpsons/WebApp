@@ -20,6 +20,7 @@ interface Player {
   id: string;
   symbol: number;
   type: "human" | "ai";
+  username?: string;
 }
 
 interface GameStatusProps {
@@ -74,6 +75,15 @@ const GameStatus: React.FC<GameStatusProps> = ({
 
   const getRandomMessage = (messages: string[]) =>
     messages[Math.floor(Math.random() * messages.length)];
+
+  const getOpponentUsername = () => {
+    if (!gameState.players) return "Opponent";
+
+    const opponent = Object.values(gameState.players).find(
+      (player) => player.id !== playerId,
+    );
+    return opponent?.username || "Opponent";
+  };
 
   const callResetEndpoint = async () => {
     try {
@@ -151,6 +161,7 @@ const GameStatus: React.FC<GameStatusProps> = ({
     }
 
     if (gameState.status === "ongoing") {
+      const opponentUsername = getOpponentUsername();
       return (
         <>
           {gameState.playing_with_ai && (
@@ -163,7 +174,7 @@ const GameStatus: React.FC<GameStatusProps> = ({
             🎮{" "}
             {gameState.current_player === parseInt(playerId)
               ? "Your Turn"
-              : "Opponent's Turn"}
+              : `${opponentUsername}'s Turn`}
           </p>
         </>
       );
@@ -174,7 +185,12 @@ const GameStatus: React.FC<GameStatusProps> = ({
         <div className={styles.gameOverMessage}>
           <h2 className={styles.gameOverTitle}>
             Game Over!{" "}
-            {gameState.winner === parseInt(playerId) ? "You Win!" : "You Lose!"}
+            {gameState.playing_with_ai &&
+            gameState.winner !== parseInt(playerId)
+              ? "AVAI Wins! 🤖"
+              : gameState.winner === parseInt(playerId)
+                ? "You Win!"
+                : "Opponent Wins!"}
           </h2>
         </div>
       );
@@ -183,11 +199,40 @@ const GameStatus: React.FC<GameStatusProps> = ({
     return null;
   };
 
+  useEffect(() => {
+    console.log("Current gameState:", gameState);
+    console.log("Players:", gameState.players);
+    console.log("Current playerId:", playerId);
+  }, [gameState, playerId]);
+
+  const renderPlayersVersus = () => {
+    if (!gameState.players) {
+      console.log("No players in gameState");
+      return username;
+    }
+
+    const players = Object.values(gameState.players);
+    console.log("Players array:", players);
+
+    if (players.length === 0) {
+      return username;
+    }
+
+    // Sort players so the current player always appears first
+    const sortedPlayers = players.sort((a, b) => {
+      if (a.id === playerId) return -1;
+      if (b.id === playerId) return 1;
+      return 0;
+    });
+
+    return sortedPlayers
+      .map((player) => player.username || "Waiting...")
+      .join(" vs. ");
+  };
+
   return (
     <>
-      <h2 className={styles.greeting}>
-        Hello, {localStorage.getItem("username") || username}!
-      </h2>
+      <h2 className={styles.greeting}>{renderPlayersVersus()}</h2>
       {renderGameStatus()}
       <div className={styles.avaiContainer}>
         <div className={styles.avaiAvatar}>🤖</div>

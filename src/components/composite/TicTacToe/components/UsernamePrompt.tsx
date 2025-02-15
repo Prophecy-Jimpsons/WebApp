@@ -16,7 +16,7 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
 }) => {
   const [closing, setClosing] = useState(false);
   const promptRef = useRef<HTMLDivElement>(null);
-  const [input, setInput] = useState("Anonymous");
+  const [input, setInput] = useState("");
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -41,30 +41,37 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
   };
 
   const generateUsername = (inputUsername: string): string => {
+    // Clean up the input username, default to "Anonymous" only if empty
     const cleanUsername = inputUsername.trim() || "Anonymous";
 
+    // For users with wallet
     if (publicKey) {
       const lastFourDigits = publicKey.slice(-4);
       const walletUsername = `${cleanUsername}#${lastFourDigits}`;
       console.log("Wallet username generated:", walletUsername);
       return walletUsername;
-    } else {
-      // For non-wallet users
-      const min = isCreatingGame ? 1 : 50;
-      const max = isCreatingGame ? 50 : 100;
-      const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
-      const randomUsername = `${cleanUsername}#${randomNum}`;
-      console.log("Random username generated:", randomUsername);
-      return randomUsername;
     }
+
+    // For non-wallet users, use their input username
+    const min = isCreatingGame ? 1 : 50;
+    const max = isCreatingGame ? 50 : 100;
+    const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+    const randomUsername = `${cleanUsername}#${randomNum}`;
+    console.log("Random username generated:", randomUsername);
+    return randomUsername;
   };
 
   const handleSubmit = () => {
+    console.log("Input value before generation:", input); // Check input value
     const finalUsername = generateUsername(input);
-    console.log("Setting username in localStorage:", finalUsername);
+    console.log("Generated username:", finalUsername); // Check generated username
 
     // Store in localStorage
     localStorage.setItem("username", finalUsername);
+    console.log(
+      "Username in localStorage after setting:",
+      localStorage.getItem("username"),
+    ); // Verify storage
 
     // Update game session
     const gameSession = localStorage.getItem("current_game_session");
@@ -90,7 +97,7 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
         <input
           type="text"
           className={styles.input}
-          placeholder="Enter your username"
+          placeholder="Enter username (or leave empty for anonymous)"
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />

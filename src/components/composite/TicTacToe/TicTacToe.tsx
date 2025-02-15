@@ -151,11 +151,18 @@ const TicTacToe: React.FC = () => {
   const joinGame = useCallback(
     async (playerId: string, playerType: "human" | "ai") => {
       try {
-        const username = generateUsername(
-          publicKey ? publicKey.toString() : "Player",
-          publicKey?.toString() || null,
-          false,
-        );
+        // First try to get the existing username from localStorage
+        let username = localStorage.getItem("username");
+
+        // Only generate a new username if one doesn't exist
+        if (!username) {
+          username = generateUsername(
+            publicKey ? publicKey.toString() : "Player",
+            publicKey?.toString() || null,
+            false,
+          );
+          localStorage.setItem("username", username);
+        }
 
         logger(`🟢 Joining as ${playerType} player ${playerId}...`);
         const response = await axios.post(
@@ -171,7 +178,6 @@ const TicTacToe: React.FC = () => {
         if (response.data.status === "success") {
           logger(`✅ Joined as Player ${response.data.symbol}`);
           setPlayerId(response.data.symbol.toString());
-          localStorage.setItem("username", username);
           setScreen("board");
         } else {
           console.error("❌ Failed to join game:", response.data.error);
