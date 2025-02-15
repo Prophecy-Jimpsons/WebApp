@@ -10,7 +10,6 @@ interface GameModeProps {
 
 const GameMode: React.FC<GameModeProps> = ({
   canJoinGame,
-  // gameMode,
   onBack,
   onStart,
   gameExists,
