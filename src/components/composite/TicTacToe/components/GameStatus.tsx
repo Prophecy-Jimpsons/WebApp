@@ -90,59 +90,81 @@ const GameStatus: React.FC<GameStatusProps> = ({
     }
   };
 
-  const updateAvaiMessage = useCallback((state: GameState) => {
-    setIsTyping(true);
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  const updateAvaiMessage = useCallback(
+    (state: GameState) => {
+      setIsTyping(true);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    timeoutRef.current = setTimeout(() => {
-      let newMessage = "";
-      const actualPlayersCount = state.players ? Object.keys(state.players).length : 0;
+      timeoutRef.current = setTimeout(() => {
+        let newMessage = "";
+        const actualPlayersCount = state.players
+          ? Object.keys(state.players).length
+          : 0;
 
-      if (actualPlayersCount < 2) {
-        newMessage = getRandomMessage(AVAI_MESSAGES.waiting);
-      } else if (state.status === "ongoing") {
-        if (state.playing_with_ai && state.current_player !== parseInt(playerId)) {
-          newMessage = getRandomMessage(AVAI_MESSAGES.aiTurn);
-        } else {
-          newMessage = getRandomMessage(state.board_state.phase === "placement" 
-            ? AVAI_MESSAGES.placement 
-            : AVAI_MESSAGES.movement);
+        if (actualPlayersCount < 2) {
+          newMessage = getRandomMessage(AVAI_MESSAGES.waiting);
+        } else if (state.status === "ongoing") {
+          if (
+            state.playing_with_ai &&
+            state.current_player !== parseInt(playerId)
+          ) {
+            newMessage = getRandomMessage(AVAI_MESSAGES.aiTurn);
+          } else {
+            newMessage = getRandomMessage(
+              state.board_state.phase === "placement"
+                ? AVAI_MESSAGES.placement
+                : AVAI_MESSAGES.movement,
+            );
+          }
+        } else if (state.status === "finished") {
+          newMessage =
+            state.winner === parseInt(playerId)
+              ? getRandomMessage(AVAI_MESSAGES.victory)
+              : getRandomMessage(AVAI_MESSAGES.defeat);
         }
-      } else if (state.status === "finished") {
-        newMessage = state.winner === parseInt(playerId)
-          ? getRandomMessage(AVAI_MESSAGES.victory)
-          : getRandomMessage(AVAI_MESSAGES.defeat);
-      }
 
-      setAvaiMessage(newMessage);
-      setIsTyping(false);
-    }, 800);
-  }, [playerId]);
+        setAvaiMessage(newMessage);
+        setIsTyping(false);
+      }, 800);
+    },
+    [playerId],
+  );
 
   useEffect(() => {
     updateAvaiMessage(gameState);
-    if (gameState.status === "finished") {
-      callResetEndpoint();
-    }
+    // if (gameState.status === "finished") {
+    //   callResetEndpoint();
+    // }
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [gameState, updateAvaiMessage]);
 
   const renderGameStatus = () => {
-    const actualPlayersCount = gameState.players ? Object.keys(gameState.players).length : 0;
+    const actualPlayersCount = gameState.players
+      ? Object.keys(gameState.players).length
+      : 0;
 
     if (actualPlayersCount < 2) {
-      return <p className={styles.waitingText}>⏳ Waiting for opponent to join...</p>;
+      return (
+        <p className={styles.waitingText}>⏳ Waiting for opponent to join...</p>
+      );
     }
 
     if (gameState.status === "ongoing") {
       return (
         <>
-          {gameState.playing_with_ai && <p className={styles.aiMode}>🤖 Playing against AVAI</p>}
-          <p className={styles.phaseIndicator}>Current Phase: {gameState.board_state.phase}</p>
+          {gameState.playing_with_ai && (
+            <p className={styles.aiMode}>🤖 Playing against AVAI</p>
+          )}
+          <p className={styles.phaseIndicator}>
+            Current Phase: {gameState.board_state.phase}
+          </p>
           <p className={styles.turnIndicator}>
-            🎮 {gameState.current_player === parseInt(playerId) ? "Your Turn" : "Opponent's Turn"}
+            🎮{" "}
+            {gameState.current_player === parseInt(playerId)
+              ? "Your Turn"
+              : "Opponent's Turn"}
           </p>
         </>
       );
@@ -152,8 +174,13 @@ const GameStatus: React.FC<GameStatusProps> = ({
       return (
         <div className={styles.gameOverMessage}>
           <h2 className={styles.gameOverTitle}>
-            Game Over! {gameState.winner === parseInt(playerId) ? "You Win!" : "You Lose!"}
+            Game Over!{" "}
+            {gameState.winner === parseInt(playerId) ? "You Win!" : "You Lose!"}
           </h2>
+          <button onClick={callResetEndpoint} className={styles.restartButton}>
+            {" "}
+            Play Again
+          </button>
         </div>
       );
     }

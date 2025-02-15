@@ -6,6 +6,8 @@ import GameStatus from "./GameStatus";
 import axios from "axios";
 import Pusher from "pusher-js";
 import { determineWinningCells } from "@/utils/helpers";
+import Timer from "./Timer";
+import Modal from "@/components/ui/Modal";
 
 interface GameBoardProps {
   username: string;
@@ -31,6 +33,7 @@ interface GameState {
   status: string;
   winner?: number | null;
   last_activity: number;
+  time_left?: number;
 }
 
 interface Player {
@@ -57,7 +60,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
     [],
   );
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
+
+  //Timer state
+  const timerDuration = 20; // 20 seconds
   const [showTimeoutModal, setShowTimeoutModal] = useState<boolean>(false);
+  const [timeLeft, setTimeLeft] = useState<number>(timerDuration);
+
+  // Pusher
   const pusherClientRef = useRef<Pusher | null>(null);
   const lastActivityRef = useRef<number>(Date.now());
 
@@ -104,12 +113,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
         status: data.status || "ongoing",
         winner: data.winner || null,
         last_activity: data.last_activity,
+        time_left: timerDuration,
       });
       lastActivityRef.current = Date.now();
     } catch (error) {
       console.error(`Error fetching game state for game ${gameId}:`, error);
     }
-  }, [gameId, gameMode]);
+  }, [gameId, gameMode, timerDuration]);
 
   const resetGame = useCallback(async () => {
     try {
@@ -151,6 +161,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         ...(data.players_count && { players_count: data.players_count }),
       }));
       lastActivityRef.current = Date.now();
+      setTimeLeft(timerDuration);
     };
 
     channel.bind("move-made", handleGameUpdate);
@@ -170,7 +181,14 @@ const GameBoard: React.FC<GameBoardProps> = ({
       client.unsubscribe(`game-${gameId}`);
       clearInterval(inactivityCheck);
     };
-  }, [gameId, fetchGameState, initializePusher, gameMode, resetGame]);
+  }, [
+    gameId,
+    fetchGameState,
+    initializePusher,
+    gameMode,
+    resetGame,
+    timerDuration,
+  ]);
 
   const sendMove = useCallback(
     async (moveType: "place" | "move", move: number[]) => {
@@ -234,19 +252,34 @@ const GameBoard: React.FC<GameBoardProps> = ({
         ),
       );
 
-      const refreshTimer = setTimeout(() => {
-        window.location.reload();
-      }, 6000);
+      // const refreshTimer = setTimeout(() => {
+      //   window.location.reload();
+      // }, 6000);
 
-      return () => clearTimeout(refreshTimer);
+      // return () => clearTimeout(refreshTimer);
     }
   }, [gameState]);
+
+  useEffect(() => {
+    if (gameState && gameState.status !== "finished" && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer);
+            setShowTimeoutModal(true);
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [gameState, timeLeft]);
 
   if (!gameState) {
     return <div className={styles.loading}>Loading game...</div>;
   }
-
-  console.log("GameBoard.tsx: gameState", gameState);
 
   return (
     <div className={styles.boardContainer}>
@@ -262,6 +295,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         gameState={gameState}
         timeoutMessage=""
       />
+      <Timer timeLeft={timeLeft} />
       <Board
         board={gameState.board_state.board}
         onClick={handleCellClick}
@@ -270,14 +304,20 @@ const GameBoard: React.FC<GameBoardProps> = ({
         isGameOver={isGameOver}
       />
       {showTimeoutModal && (
-        <div className={styles.timeoutModal}>
-          <div className={styles.timeoutModalContent}>
-            <h2 className={styles.timeoutModalTitle}>Game Timed Out</h2>
-            <p className={styles.timeoutModalMessage}>
-              The game has been inactive for too long and will reset.
-            </p>
-          </div>
-        </div>
+        <Modal
+          isOpen={showTimeoutModal}
+          onClose={() => setShowTimeoutModal(false)}
+          title="Game Timed Out"
+        >
+          {/* <div className={styles.timeoutModal}> */}
+          {/* <div className={styles.timeoutModalContent}> */}
+          <h2 className={styles.timeoutModalTitle}>Game Timed Out</h2>
+          <p className={styles.timeoutModalMessage}>
+            The game has been inactive for too long and will reset.
+          </p>
+          {/* </div> */}
+          {/* </div> */}
+        </Modal>
       )}
     </div>
   );

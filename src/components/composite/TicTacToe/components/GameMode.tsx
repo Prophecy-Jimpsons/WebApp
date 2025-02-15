@@ -26,7 +26,6 @@ const GameMode: React.FC<GameModeProps> = ({
       <button
         className={`${canJoinGame && gameExists ? styles.disabled : ""} ${styles.button}`}
         onClick={() => onStart("ai")}
-        disabled={!canJoinGame}
       >
         Face AVAI (AI Opponent)
       </button>

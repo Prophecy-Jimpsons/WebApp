@@ -246,7 +246,6 @@ const TicTacToe: React.FC = () => {
             setScreen("mode");
             checkGameStatus();
           }}
-          pusherClient={pusherRef.current}
         />
       ),
     [gameId, playerId, gameMode, checkGameStatus],

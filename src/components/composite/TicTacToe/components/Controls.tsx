@@ -7,7 +7,6 @@ const Controls: React.FC<{
   playerId: string;
   isGameOver: boolean;
 }> = ({ onBack, onReset, isGameOver, playerId }) => {
-  console.log("isGameOver", isGameOver);
   return (
     <div className={styles.controls}>
       <button className={styles.backButton} onClick={onBack}>

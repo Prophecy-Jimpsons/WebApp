@@ -75,7 +75,11 @@
   border-radius: var(--space-3);
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
-  background: linear-gradient(145deg, var(--color-primary), var(--color-secondary));
+  background: linear-gradient(
+    145deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
   box-shadow: 0 5px 15px rgba(252, 175, 5, 0.3);
   margin-top: var(--space-4);
 }
@@ -94,7 +98,9 @@
   color: var(--color-primary);
   border: none;
   cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
   z-index: 11;
 }
 
@@ -203,7 +209,8 @@
 .timeoutModalTitle {
   font-size: var(--space-4);
   font-weight: 600;
-  margin-bottom: var(--space-3);
+  text-align: center;
+  margin: var(--space-3) 0;
   color: var(--color-yellow-400);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
@@ -211,14 +218,21 @@
 .timeoutModalMessage {
   font-size: var(--space-3);
   color: var(--color-white);
+  text-align: center;
   margin-bottom: var(--space-4);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Animations */
 @keyframes popIn {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* Media Query for Small Devices */
@@ -293,6 +307,11 @@
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
 }
