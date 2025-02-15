@@ -185,7 +185,9 @@ const GameStatus: React.FC<GameStatusProps> = ({
 
   return (
     <>
-      <h2 className={styles.greeting}>Hello, Player {username}!</h2>
+      <h2 className={styles.greeting}>
+        Hello, Player {localStorage.getItem("username") || username}!
+      </h2>
       {renderGameStatus()}
       <div className={styles.avaiContainer}>
         <div className={styles.avaiAvatar}>🤖</div>
