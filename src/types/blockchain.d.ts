@@ -1,5 +1,3 @@
-import { ConfirmedSignatureInfo } from "@solana/web3.js";
-
 // Transaction types
 export interface TokenTransfer {
   mint: string;
@@ -18,5 +16,3 @@ export interface TransactionMeta {
   preTokenBalances: TokenBalance[];
   postTokenBalances: TokenBalance[];
 }
-
-

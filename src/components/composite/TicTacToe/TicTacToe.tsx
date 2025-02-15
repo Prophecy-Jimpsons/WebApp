@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import axios from "axios";
 import GameLanding from "./components/GameLanding";
 import GameMode from "./components/GameMode";
@@ -7,8 +13,9 @@ import styles from "./TicTacToe.module.css";
 
 const API_URL = "https://wanemregmi.pythonanywhere.com";
 const CHECK_COOLDOWN = 5000;
-const DEBUG = process.env.NODE_ENV === 'development';
+const DEBUG = process.env.NODE_ENV === "development";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const logger = (message: string, ...args: any[]) => {
   if (DEBUG) {
     console.log(message, ...args);
@@ -19,7 +26,9 @@ const TicTacToe: React.FC = () => {
   const [screen, setScreen] = useState<"landing" | "mode" | "board">("landing");
   const [gameId, setGameId] = useState<string | null>("1");
   const [playerId, setPlayerId] = useState<string | null>(null);
-  const [gameMode, setGameMode] = useState<"online" | "ai" | "predict" | null>(null);
+  const [gameMode, setGameMode] = useState<"online" | "ai" | "predict" | null>(
+    null,
+  );
   const [canJoinGame, setCanJoinGame] = useState<boolean>(false);
   const [gameExists, setGameExists] = useState<boolean>(false);
   const lastCheckRef = useRef<number>(0);
@@ -65,33 +74,37 @@ const TicTacToe: React.FC = () => {
     checkGameStatus();
   }, [checkGameStatus]);
 
-  const handleStartGame = useCallback(async (mode: "online" | "ai" | "predict") => {
-    if (gameExists && !canJoinGame) {
-      logger("🚫 Game already full - starting spectator mode");
-      setGameMode(mode);
-      setScreen("board");
-      return;
-    }
-
-    setGameMode(mode);
-    try {
-      logger(`🔄 Starting ${mode} game...`);
-      const response = await axios.get(`${API_URL}/active_games`);
-      const gameData = response.data.active_games["1"];
-
-      if (!gameData) {
-        logger("❌ No active game. Creating new game...");
-        await createGame(mode);
-      } else if (gameData.players_count === 1 && mode === "online") {
-        logger("🙋 Joining existing game as Player 2...");
-        await joinGame("2", "human");
-      } else {
-        console.error("🚨 Game is full");
+  const handleStartGame = useCallback(
+    async (mode: "online" | "ai" | "predict") => {
+      if (gameExists && !canJoinGame) {
+        logger("🚫 Game already full - starting spectator mode");
+        setGameMode(mode);
+        setScreen("board");
+        return;
       }
-    } catch (error) {
-      console.error("❌ Error:", error);
-    }
-  }, [gameExists, canJoinGame]);
+
+      setGameMode(mode);
+      try {
+        logger(`🔄 Starting ${mode} game...`);
+        const response = await axios.get(`${API_URL}/active_games`);
+        const gameData = response.data.active_games["1"];
+
+        if (!gameData) {
+          logger("❌ No active game. Creating new game...");
+          await createGame(mode);
+        } else if (gameData.players_count === 1 && mode === "online") {
+          logger("🙋 Joining existing game as Player 2...");
+          await joinGame("2", "human");
+        } else {
+          console.error("🚨 Game is full");
+        }
+      } catch (error) {
+        console.error("❌ Error:", error);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [gameExists, canJoinGame],
+  );
 
   const createGame = useCallback(async (mode: string) => {
     try {
@@ -99,7 +112,7 @@ const TicTacToe: React.FC = () => {
       const response = await axios.post(
         `${API_URL}/create_game`,
         { game_mode: mode },
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { "Content-Type": "application/json" } },
       );
 
       if (response.data.status === "success" || response.data.game_id) {
@@ -112,61 +125,72 @@ const TicTacToe: React.FC = () => {
     }
   }, []);
 
-  const joinGame = useCallback(async (playerId: string, playerType: "human" | "ai") => {
-    try {
-      logger(`🟢 Joining as ${playerType} player ${playerId}...`);
-      const response = await axios.post(
-        `${API_URL}/join_game`,
-        { game_id: "1", player_id: playerId, player_type: playerType },
-        { headers: { "Content-Type": "application/json" } }
-      );
+  const joinGame = useCallback(
+    async (playerId: string, playerType: "human" | "ai") => {
+      try {
+        logger(`🟢 Joining as ${playerType} player ${playerId}...`);
+        const response = await axios.post(
+          `${API_URL}/join_game`,
+          { game_id: "1", player_id: playerId, player_type: playerType },
+          { headers: { "Content-Type": "application/json" } },
+        );
 
-      if (response.data.status === "success") {
-        logger(`✅ Joined as Player ${response.data.symbol}`);
-        setPlayerId(response.data.symbol.toString());
-        setScreen("board");
-      } else {
-        console.error("❌ Failed to join game:", response.data.error);
+        if (response.data.status === "success") {
+          logger(`✅ Joined as Player ${response.data.symbol}`);
+          setPlayerId(response.data.symbol.toString());
+          setScreen("board");
+        } else {
+          console.error("❌ Failed to join game:", response.data.error);
+        }
+      } catch (error) {
+        console.error("❌ Error joining game:", error);
       }
-    } catch (error) {
-      console.error("❌ Error joining game:", error);
-    }
-  }, []);
+    },
+    [],
+  );
 
-  const memoizedGameLanding = useMemo(() => (
-    <GameLanding
-      onNext={() => setScreen("mode")}
-      onSpectate={() => setScreen("board")}
-      setPlayerId={setPlayerId}
-      gameExists={gameExists}
-      canJoinGame={canJoinGame}
-    />
-  ), [gameExists, canJoinGame]);
-
-  const memoizedGameMode = useMemo(() => (
-    <GameMode
-      gameMode={gameMode}
-      gameExists={gameExists}
-      canJoinGame={canJoinGame}
-      onBack={() => setScreen("landing")}
-      onStart={handleStartGame}
-    />
-  ), [gameMode, gameExists, canJoinGame, handleStartGame]);
-
-  const memoizedGameBoard = useMemo(() => (
-    gameId && (
-      <GameBoard
-        username={playerId || "spectator"}
-        gameId={gameId}
-        playerId={playerId || ""}
-        gameMode={gameMode}
-        onBack={() => {
-          setScreen("mode");
-          checkGameStatus();
-        }}
+  const memoizedGameLanding = useMemo(
+    () => (
+      <GameLanding
+        onNext={() => setScreen("mode")}
+        onSpectate={() => setScreen("board")}
+        setPlayerId={setPlayerId}
+        gameExists={gameExists}
+        canJoinGame={canJoinGame}
       />
-    )
-  ), [gameId, playerId, gameMode, checkGameStatus]);
+    ),
+    [gameExists, canJoinGame],
+  );
+
+  const memoizedGameMode = useMemo(
+    () => (
+      <GameMode
+        gameMode={gameMode}
+        gameExists={gameExists}
+        canJoinGame={canJoinGame}
+        onBack={() => setScreen("landing")}
+        onStart={handleStartGame}
+      />
+    ),
+    [gameMode, gameExists, canJoinGame, handleStartGame],
+  );
+
+  const memoizedGameBoard = useMemo(
+    () =>
+      gameId && (
+        <GameBoard
+          username={playerId || "spectator"}
+          gameId={gameId}
+          playerId={playerId || ""}
+          gameMode={gameMode}
+          onBack={() => {
+            setScreen("mode");
+            checkGameStatus();
+          }}
+        />
+      ),
+    [gameId, playerId, gameMode, checkGameStatus],
+  );
 
   return (
     <div className={styles.wrapper}>

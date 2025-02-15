@@ -4,6 +4,7 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 interface GameStatusProps {
   username: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   gameState: any;
   playerId: string;
   timeoutMessage: string;
@@ -18,7 +19,7 @@ const GameStatus: React.FC<GameStatusProps> = ({
   console.log("timeoutMessage", timeoutMessage);
   let animationOptions;
   let message;
-  let isGameOver = gameState?.status === "finished";
+  const isGameOver = gameState?.status === "finished";
 
   const callResetEndpoint = async () => {
     try {

@@ -75,6 +75,7 @@ export const SupportWidget: FC = () => {
           message: "Failed to submit ticket. Please try again.",
         },
       ]);
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }

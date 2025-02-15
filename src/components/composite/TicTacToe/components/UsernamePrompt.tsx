@@ -27,6 +27,7 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle Closing with Fade-Out
