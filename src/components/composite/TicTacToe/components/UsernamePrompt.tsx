@@ -4,17 +4,38 @@ import styles from "./UsernamePrompt.module.css";
 interface UsernamePromptProps {
   onSubmit: (username: string) => void;
   onClose: () => void;
+  publicKey?: string | null;
 }
 
 const UsernamePrompt: React.FC<UsernamePromptProps> = ({
   onSubmit,
   onClose,
+  publicKey,
 }) => {
-  const [input, setInput] = useState(localStorage.getItem("username") || ""); // Remember last username
   const [closing, setClosing] = useState(false);
   const promptRef = useRef<HTMLDivElement>(null);
 
-  // Close prompt when clicking outside
+  // ✅ Restore stored username if available
+  const getDefaultUsername = () => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) return storedUsername;
+
+    if (publicKey) {
+      const lastFourDigits = publicKey.slice(-4);
+      return `Anonymous${lastFourDigits}`;
+    }
+
+    return "Anonymous";
+  };
+
+  const [input, setInput] = useState(getDefaultUsername());
+
+  // ✅ Update input field if `publicKey` changes
+  useEffect(() => {
+    setInput(getDefaultUsername());
+  }, [publicKey]);
+
+  // ✅ Close prompt when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -27,21 +48,18 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Handle Closing with Fade-Out
   const handleClose = () => {
     setClosing(true);
     setTimeout(() => {
       onClose();
-    }, 300); // Delay matches fadeOut animation
+    }, 300);
   };
 
-  // Handle Submit & Save Username
   const handleSubmit = () => {
-    const finalUsername = input.trim() || "Anonymous";
-    localStorage.setItem("username", finalUsername); // Save to localStorage
+    const finalUsername = input.trim() || getDefaultUsername();
+    localStorage.setItem("username", finalUsername); // ✅ Store username for persistence
     onSubmit(finalUsername);
   };
 
@@ -49,13 +67,15 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
     <div className={`${styles.overlay} ${closing ? styles.fadeOut : ""}`}>
       <div className={styles.promptCard} ref={promptRef}>
         <h2 className={styles.title}>Enter Your Username</h2>
+
         <input
           type="text"
           className={styles.input}
-          placeholder="Anonymous"
+          placeholder="Enter your username"
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
+
         <div className={styles.buttonContainer}>
           <button className={styles.primaryButton} onClick={handleSubmit}>
             Continue
