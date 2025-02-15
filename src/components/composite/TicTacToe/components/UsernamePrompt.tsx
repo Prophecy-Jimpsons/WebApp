@@ -22,7 +22,7 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
 
     if (publicKey) {
       const lastFourDigits = publicKey.slice(-4);
-      return `Anonymous${lastFourDigits}`;
+      return `Anonymous#${lastFourDigits}`;
     }
 
     return "Anonymous";
@@ -33,6 +33,7 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
   // ✅ Update input field if `publicKey` changes
   useEffect(() => {
     setInput(getDefaultUsername());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey]);
 
   // ✅ Close prompt when clicking outside
@@ -48,6 +49,7 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleClose = () => {
