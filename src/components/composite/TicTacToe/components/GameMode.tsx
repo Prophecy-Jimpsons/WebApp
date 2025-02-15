@@ -22,8 +22,13 @@ const GameMode: React.FC<GameModeProps> = ({
     "online" | "ai" | "predict" | null
   >(null);
   const { publicKey } = useWallet();
+  const [isCreatingGame, setIsCreatingGame] = useState(true);
 
-  // ✅ Restore game mode if player refreshes
+  // Debug log to check wallet connection
+  useEffect(() => {
+    console.log("Wallet public key:", publicKey?.toString());
+  }, [publicKey]);
+
   useEffect(() => {
     const storedMode = localStorage.getItem("gameMode");
     if (
@@ -35,6 +40,10 @@ const GameMode: React.FC<GameModeProps> = ({
     }
   }, []);
 
+  useEffect(() => {
+    setIsCreatingGame(!gameExists || !canJoinGame);
+  }, [gameExists, canJoinGame]);
+
   const handleModeClick = (mode: "online" | "ai" | "predict") => {
     setSelectedMode(mode);
     setShowUsernamePrompt(true);
@@ -43,8 +52,8 @@ const GameMode: React.FC<GameModeProps> = ({
   const handleUsernameSubmit = (username: string) => {
     setShowUsernamePrompt(false);
     if (selectedMode) {
-      localStorage.setItem("gameMode", selectedMode); // ✅ Save mode in storage
-      localStorage.setItem("username", username); // ✅ Save username
+      localStorage.setItem("gameMode", selectedMode);
+      localStorage.setItem("username", username);
       onStart(selectedMode);
     }
   };
@@ -81,6 +90,7 @@ const GameMode: React.FC<GameModeProps> = ({
           onSubmit={handleUsernameSubmit}
           onClose={() => setShowUsernamePrompt(false)}
           publicKey={publicKey?.toString()}
+          isCreatingGame={isCreatingGame}
         />
       )}
     </div>

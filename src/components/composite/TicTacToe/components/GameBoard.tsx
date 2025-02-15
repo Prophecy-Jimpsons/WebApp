@@ -177,12 +177,15 @@ const GameBoard: React.FC<GameBoardProps> = ({
     async (moveType: "place" | "move", move: number[]) => {
       if (!gameId || !playerId) return;
 
+      const username = localStorage.getItem("username");
+
       try {
         await axios.post(`${API_URL}/make_move`, {
           game_id: gameId,
           player_id: playerId,
           move_type: moveType,
           move: move,
+          username: username,
         });
         lastActivityRef.current = Date.now();
       } catch (error) {

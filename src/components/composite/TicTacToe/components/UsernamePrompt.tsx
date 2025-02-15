@@ -5,38 +5,19 @@ interface UsernamePromptProps {
   onSubmit: (username: string) => void;
   onClose: () => void;
   publicKey?: string | null;
+  isCreatingGame: boolean;
 }
 
 const UsernamePrompt: React.FC<UsernamePromptProps> = ({
   onSubmit,
   onClose,
   publicKey,
+  isCreatingGame,
 }) => {
   const [closing, setClosing] = useState(false);
   const promptRef = useRef<HTMLDivElement>(null);
+  const [input, setInput] = useState("Anonymous");
 
-  // ✅ Restore stored username if available
-  const getDefaultUsername = () => {
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) return storedUsername;
-
-    if (publicKey) {
-      const lastFourDigits = publicKey.slice(-4);
-      return `Anonymous#${lastFourDigits}`;
-    }
-
-    return "Anonymous";
-  };
-
-  const [input, setInput] = useState(getDefaultUsername());
-
-  // ✅ Update input field if `publicKey` changes
-  useEffect(() => {
-    setInput(getDefaultUsername());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [publicKey]);
-
-  // ✅ Close prompt when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -59,9 +40,45 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
     }, 300);
   };
 
+  const generateUsername = (inputUsername: string): string => {
+    const cleanUsername = inputUsername.trim() || "Anonymous";
+
+    if (publicKey) {
+      const lastFourDigits = publicKey.slice(-4);
+      const walletUsername = `${cleanUsername}#${lastFourDigits}`;
+      console.log("Wallet username generated:", walletUsername);
+      return walletUsername;
+    } else {
+      // For non-wallet users
+      const min = isCreatingGame ? 1 : 50;
+      const max = isCreatingGame ? 50 : 100;
+      const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+      const randomUsername = `${cleanUsername}#${randomNum}`;
+      console.log("Random username generated:", randomUsername);
+      return randomUsername;
+    }
+  };
+
   const handleSubmit = () => {
-    const finalUsername = input.trim() || getDefaultUsername();
-    localStorage.setItem("username", finalUsername); // ✅ Store username for persistence
+    const finalUsername = generateUsername(input);
+    console.log("Setting username in localStorage:", finalUsername);
+
+    // Store in localStorage
+    localStorage.setItem("username", finalUsername);
+
+    // Update game session
+    const gameSession = localStorage.getItem("current_game_session");
+    if (gameSession) {
+      const session = JSON.parse(gameSession);
+      const oldUsername = session.username;
+      session.username = finalUsername;
+      localStorage.setItem("current_game_session", JSON.stringify(session));
+      console.log("Updated game session username:", {
+        old: oldUsername,
+        new: finalUsername,
+      });
+    }
+
     onSubmit(finalUsername);
   };
 
@@ -77,6 +94,12 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
+
+        {publicKey && (
+          <p className={styles.walletInfo}>
+            Your username will be appended with #{publicKey.slice(-4)}
+          </p>
+        )}
 
         <div className={styles.buttonContainer}>
           <button className={styles.primaryButton} onClick={handleSubmit}>

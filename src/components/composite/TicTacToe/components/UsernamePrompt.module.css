@@ -33,6 +33,11 @@
   animation: scaleIn 0.2s ease-in-out forwards;
 }
 
+.promptCard p {
+  color: white;
+  font-size: 1rem;
+}
+
 /* Fade In */
 @keyframes fadeIn {
   from {
