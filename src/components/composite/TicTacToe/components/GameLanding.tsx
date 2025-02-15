@@ -40,6 +40,14 @@ const GameLanding: React.FC<LandingProps> = ({
           against friends or AVAI, our AI that's probably planning world
           domination.
         </p>
+        <br />
+        <p>
+          {gameExists && canJoinGame
+            ? "A game is waiting for you! Join now!"
+            : gameExists && !canJoinGame
+              ? "The game is full. You can spectate."
+              : "Game not found? Start a new game now."}
+        </p>
       </div>
 
       <div className={styles.buttonContainer}>
