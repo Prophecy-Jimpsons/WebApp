@@ -48,7 +48,7 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
     if (publicKey) {
       const lastFourDigits = publicKey.slice(-4);
       const walletUsername = `${cleanUsername}#${lastFourDigits}`;
-      console.log("Wallet username generated:", walletUsername);
+      // console.log("Wallet username generated:", walletUsername);
       return walletUsername;
     }
 
@@ -62,9 +62,9 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
   };
 
   const handleSubmit = () => {
-    console.log("Input value before generation:", input); // Check input value
+    // console.log("Input value before generation:", input); // Check input value
     const finalUsername = generateUsername(input);
-    console.log("Generated username:", finalUsername); // Check generated username
+    // console.log("Generated username:", finalUsername); // Check generated username
 
     // Store in localStorage
     localStorage.setItem("username", finalUsername);

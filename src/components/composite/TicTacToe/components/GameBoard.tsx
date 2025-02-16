@@ -156,27 +156,26 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleGameUpdate = (data: any) => {
-      console.log("Raw Pusher data:", data);
-      console.log("Current players from Pusher:", data?.players);
-      console.log(
-        "Current localStorage username:",
-        localStorage.getItem("username"),
-      );
+      // console.log("Current players from Pusher:", data?.players);
+      // console.log(
+      //   "Current localStorage username:",
+      //   localStorage.getItem("username"),
+      // );
 
       if (!data?.board?.board) {
-        console.log("Missing board data in Pusher update");
+        // console.log("Missing board data in Pusher update");
         return;
       }
 
       // If we have player data, check the username
       if (data.players && data.players[playerId]) {
         const playerUsername = data.players[playerId].username;
-        console.log("Username from Pusher for current player:", playerUsername);
+        // console.log("Username from Pusher for current player:", playerUsername);
 
         if (playerUsername) {
           // Update localStorage
           localStorage.setItem("username", playerUsername);
-          console.log("Updated localStorage with username:", playerUsername);
+          // console.log("Updated localStorage with username:", playerUsername);
 
           // Update game session
           const gameSession = localStorage.getItem("current_game_session");
@@ -187,7 +186,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
               "current_game_session",
               JSON.stringify(session),
             );
-            console.log("Updated game session with username:", playerUsername);
+            // console.log("Updated game session with username:", playerUsername);
           }
         }
       }
@@ -211,7 +210,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
             ? Object.keys(data.players).length
             : prevState?.players_count,
         };
-        console.log("Updated game state:", newState);
+        // console.log("Updated game state:", newState);
         return newState;
       });
       lastActivityRef.current = Date.now();
@@ -242,7 +241,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
       if (!gameId || !playerId) return;
 
       const username = localStorage.getItem("username");
-      console.log("Current username in localStorage:", username); // Check current username
+      // console.log("Current username in localStorage:", username); // Check current username
 
       try {
         const response = await axios.post(`${API_URL}/make_move`, {
@@ -252,7 +251,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
           move: move,
           username: username,
         });
-        console.log("Move sent with username:", username); // Log sent username
+        // console.log("Move sent with username:", username); // Log sent username
         console.log("Server response:", response.data); // Check server response
         lastActivityRef.current = Date.now();
       } catch (error) {

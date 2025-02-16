@@ -112,7 +112,7 @@ const TicTacToe: React.FC = () => {
   const createGame = useCallback(async (mode: string) => {
     try {
       const username = localStorage.getItem("username");
-      console.log("Creating game with username:", username);
+      // console.log("Creating game with username:", username);
 
       const response = await axios.post(
         `${API_URL}/create_game`,
@@ -135,7 +135,7 @@ const TicTacToe: React.FC = () => {
           gameMode: mode,
           lastActivity: Date.now(),
         };
-        console.log("Setting game session:", gameSession);
+        // console.log("Setting game session:", gameSession);
         localStorage.setItem(
           "current_game_session",
           JSON.stringify(gameSession),

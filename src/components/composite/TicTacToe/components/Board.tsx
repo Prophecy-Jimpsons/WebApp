@@ -17,7 +17,6 @@ const Board: React.FC<BoardProps> = ({
   highlightedCells,
   isGameOver,
 }) => {
-  console.log("highlightedCells", highlightedCells);
   return (
     <div className={styles.board}>
       {board.map((row, rIdx) =>

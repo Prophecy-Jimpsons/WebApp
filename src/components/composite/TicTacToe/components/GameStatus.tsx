@@ -93,7 +93,7 @@ const GameStatus: React.FC<GameStatusProps> = ({
           "Content-Type": "application/json",
         },
       });
-      console.log("Reset endpoint called successfully");
+      // console.log("Reset endpoint called successfully");
     } catch (error) {
       console.error("Error calling reset endpoint:", error);
     }
@@ -207,12 +207,12 @@ const GameStatus: React.FC<GameStatusProps> = ({
 
   const renderPlayersVersus = () => {
     if (!gameState.players) {
-      console.log("No players in gameState");
+      // console.log("No players in gameState");
       return username;
     }
 
     const players = Object.values(gameState.players);
-    console.log("Players array:", players);
+    // console.log("Players array:", players);
 
     if (players.length === 0) {
       return username;
