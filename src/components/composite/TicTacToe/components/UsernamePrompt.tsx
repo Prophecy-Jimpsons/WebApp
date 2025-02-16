@@ -97,7 +97,7 @@ const UsernamePrompt: React.FC<UsernamePromptProps> = ({
         <input
           type="text"
           className={styles.input}
-          placeholder="Enter username (or leave empty for anonymous)"
+          placeholder="Enter username(Optional)"
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
