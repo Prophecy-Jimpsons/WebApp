@@ -9,6 +9,8 @@ import axios from "axios";
 import GameLanding from "./components/GameLanding";
 import GameMode from "./components/GameMode";
 import GameBoard from "./components/GameBoard";
+import { generateUsername } from "@/utils/username";
+import { useWallet } from "@solana/wallet-adapter-react";
 import styles from "./TicTacToe.module.css";
 
 const API_URL = "https://wanemregmi.pythonanywhere.com";
@@ -32,6 +34,7 @@ const TicTacToe: React.FC = () => {
   const [canJoinGame, setCanJoinGame] = useState<boolean>(false);
   const [gameExists, setGameExists] = useState<boolean>(false);
   const lastCheckRef = useRef<number>(0);
+  const { publicKey } = useWallet();
 
   const checkGameStatus = useCallback(async () => {
     const now = Date.now();
@@ -108,16 +111,36 @@ const TicTacToe: React.FC = () => {
 
   const createGame = useCallback(async (mode: string) => {
     try {
-      logger(`🟢 Creating new ${mode} game...`);
+      const username = localStorage.getItem("username");
+      // console.log("Creating game with username:", username);
+
       const response = await axios.post(
         `${API_URL}/create_game`,
-        { game_mode: mode },
+        {
+          game_mode: mode,
+          username: username,
+        },
         { headers: { "Content-Type": "application/json" } },
       );
 
       if (response.data.status === "success" || response.data.game_id) {
         setGameId("1");
-        setPlayerId(mode === "ai" ? "1" : "1");
+        setPlayerId("1");
+
+        // Create new game session
+        const gameSession = {
+          gameId: "1",
+          playerId: "1",
+          username: username,
+          gameMode: mode,
+          lastActivity: Date.now(),
+        };
+        // console.log("Setting game session:", gameSession);
+        localStorage.setItem(
+          "current_game_session",
+          JSON.stringify(gameSession),
+        );
+
         setScreen("board");
       }
     } catch (error) {
@@ -128,10 +151,27 @@ const TicTacToe: React.FC = () => {
   const joinGame = useCallback(
     async (playerId: string, playerType: "human" | "ai") => {
       try {
+        // First try to get the existing username from localStorage
+        let username = localStorage.getItem("username");
+
+        // Only generate a new username if one doesn't exist
+        if (!username) {
+          username = generateUsername(
+            publicKey ? publicKey.toString() : "Player",
+            publicKey?.toString() || null,
+            false,
+          );
+          localStorage.setItem("username", username);
+        }
+
         logger(`🟢 Joining as ${playerType} player ${playerId}...`);
         const response = await axios.post(
           `${API_URL}/join_game`,
-          { game_id: "1", player_id: playerId, player_type: playerType },
+          {
+            game_id: "1",
+            player_type: playerType,
+            username: username,
+          },
           { headers: { "Content-Type": "application/json" } },
         );
 
@@ -146,7 +186,7 @@ const TicTacToe: React.FC = () => {
         console.error("❌ Error joining game:", error);
       }
     },
-    [],
+    [publicKey],
   );
 
   const memoizedGameLanding = useMemo(

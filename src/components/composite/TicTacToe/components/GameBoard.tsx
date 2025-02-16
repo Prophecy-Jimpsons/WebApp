@@ -61,6 +61,19 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const pusherClientRef = useRef<Pusher | null>(null);
   const lastActivityRef = useRef<number>(Date.now());
 
+  const updateUsernameStorage = useCallback((username: string) => {
+    // Update username in localStorage
+    localStorage.setItem("username", username);
+
+    // Update username in current game session
+    const gameSession = localStorage.getItem("current_game_session");
+    if (gameSession) {
+      const session = JSON.parse(gameSession);
+      session.username = username;
+      localStorage.setItem("current_game_session", JSON.stringify(session));
+    }
+  }, []);
+
   const initializePusher = useCallback(() => {
     if (!pusherClientRef.current) {
       pusherClientRef.current = new Pusher("23f29026f51de66ea541", {
@@ -74,6 +87,15 @@ const GameBoard: React.FC<GameBoardProps> = ({
     try {
       const response = await axios.get(`${API_URL}/game_info/${gameId}`);
       const data = response.data;
+
+      // Update username if it exists in the response
+      if (data.players && data.players[playerId]) {
+        const playerUsername = data.players[playerId].username;
+        if (playerUsername) {
+          updateUsernameStorage(playerUsername);
+        }
+      }
+
       setGameState({
         board_state: {
           board: data.board.board,
@@ -95,6 +117,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
                 id: player_id,
                 symbol: typedPlayer.symbol,
                 type: typedPlayer.type as "human" | "ai",
+                username: typedPlayer.username,
               },
             ];
           }),
@@ -109,7 +132,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
     } catch (error) {
       console.error(`Error fetching game state for game ${gameId}:`, error);
     }
-  }, [gameId, gameMode]);
+  }, [gameId, gameMode, playerId, updateUsernameStorage]);
 
   const resetGame = useCallback(async () => {
     try {
@@ -133,24 +156,63 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleGameUpdate = (data: any) => {
-      if (!data?.board?.board) return;
+      // console.log("Current players from Pusher:", data?.players);
+      // console.log(
+      //   "Current localStorage username:",
+      //   localStorage.getItem("username"),
+      // );
 
-      setGameState((prevState) => ({
-        ...prevState,
-        board_state: {
-          board: data.board.board,
-          last_move: data.board.last_move || null,
-          phase: data.board.phase || "placement",
-          pieces_placed: data.board.pieces_placed || {},
-        },
-        current_player: data.current_player,
-        playing_with_ai: gameMode === "ai",
-        status: data.is_game_over ? "finished" : "ongoing",
-        winner: data.winner,
-        last_activity: data.last_activity,
-        ...(data.players && { players: data.players }),
-        ...(data.players_count && { players_count: data.players_count }),
-      }));
+      if (!data?.board?.board) {
+        // console.log("Missing board data in Pusher update");
+        return;
+      }
+
+      // If we have player data, check the username
+      if (data.players && data.players[playerId]) {
+        const playerUsername = data.players[playerId].username;
+        // console.log("Username from Pusher for current player:", playerUsername);
+
+        if (playerUsername) {
+          // Update localStorage
+          localStorage.setItem("username", playerUsername);
+          // console.log("Updated localStorage with username:", playerUsername);
+
+          // Update game session
+          const gameSession = localStorage.getItem("current_game_session");
+          if (gameSession) {
+            const session = JSON.parse(gameSession);
+            session.username = playerUsername;
+            localStorage.setItem(
+              "current_game_session",
+              JSON.stringify(session),
+            );
+            // console.log("Updated game session with username:", playerUsername);
+          }
+        }
+      }
+
+      setGameState((prevState) => {
+        const newState = {
+          ...prevState,
+          board_state: {
+            board: data.board.board,
+            last_move: data.board.last_move || null,
+            phase: data.board.phase || "placement",
+            pieces_placed: data.board.pieces_placed || {},
+          },
+          current_player: data.current_player,
+          playing_with_ai: gameMode === "ai",
+          status: data.is_game_over ? "finished" : "ongoing",
+          winner: data.winner,
+          last_activity: data.last_activity,
+          players: data.players || prevState?.players,
+          players_count: data.players
+            ? Object.keys(data.players).length
+            : prevState?.players_count,
+        };
+        // console.log("Updated game state:", newState);
+        return newState;
+      });
       lastActivityRef.current = Date.now();
     };
 
@@ -171,19 +233,26 @@ const GameBoard: React.FC<GameBoardProps> = ({
       client.unsubscribe(`game-${gameId}`);
       clearInterval(inactivityCheck);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId, fetchGameState, initializePusher, gameMode, resetGame]);
 
   const sendMove = useCallback(
     async (moveType: "place" | "move", move: number[]) => {
       if (!gameId || !playerId) return;
 
+      const username = localStorage.getItem("username");
+      // console.log("Current username in localStorage:", username); // Check current username
+
       try {
-        await axios.post(`${API_URL}/make_move`, {
+        const response = await axios.post(`${API_URL}/make_move`, {
           game_id: gameId,
           player_id: playerId,
           move_type: moveType,
           move: move,
+          username: username,
         });
+        // console.log("Move sent with username:", username); // Log sent username
+        console.log("Server response:", response.data); // Check server response
         lastActivityRef.current = Date.now();
       } catch (error) {
         console.error("Error sending move:", error);

@@ -26,7 +26,7 @@ const GameLanding: React.FC<LandingProps> = ({
   // useEffect(() => {
   //   console.log("🔄 Checking active games...");
   //   axios
-  //     .get(`${API_URL}/active_games`)
+  //     .get(${API_URL}/active_games)
   //     .then((response) => {
   //       console.log("✅ Active Games Response:", response.data);
   //       const activeGames = response.data.active_games;
@@ -69,14 +69,24 @@ const GameLanding: React.FC<LandingProps> = ({
 
   return (
     <div className={styles.container}>
-              <h1 className={styles.title}>4x4 JIMP-TAC-TOE</h1>
-        <p className={styles.subtitle}>Tic-Tac-Toe on Steroids!</p>
+      <h1 className={styles.title}>4x4 JIMP-TAC-TOE</h1>
+      <p className={styles.subtitle}>Tic-Tac-Toe on Steroids!</p>
 
-        <div className={styles.description}>
-          <p>
-            Regular Tic-Tac-Toe? Boring! Play our <b className={styles.primaryColor}><a href="https://jimpsons.gitbook.io/jimpsons.org/getting-started/4x4-jimp-tac-toe" style={{textDecoration: 'none', color: 'inherit'}}>4x4 version</a></b> against friends or AVAI, our AI that's probably planning world domination.
-          </p>
-        </div>
+      <div className={styles.description}>
+        <p>
+          Regular Tic-Tac-Toe? Boring! Play our{" "}
+          <b className={styles.primaryColor}>
+            <a
+              href="https://jimpsons.gitbook.io/jimpsons.org/getting-started/4x4-jimp-tac-toe"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              4x4 version
+            </a>
+          </b>{" "}
+          against friends or AVAI, our AI that's probably planning world
+          domination.
+        </p>
+      </div>
 
       <div className={styles.buttonContainer}>
         <button
