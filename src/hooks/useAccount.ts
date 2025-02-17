@@ -19,7 +19,6 @@ const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/3RUqQ1hDkb
 // console.log("Syndica API Key:", import.meta.env);
 // console.log("Syndica Host URL:", syndicaHostUrl);
 
-
 // console.log("is this host url" + syndicaHostUrl);
 
 const connection = new Connection(syndicaHostUrl, "confirmed");
@@ -50,9 +49,13 @@ export function useGetTokenInfo({ address }: { address: PublicKey }) {
     queryKey: ["get-token-info", address.toString()],
     queryFn: async () => {
       try {
-        return await connection.getParsedTokenAccountsByOwner(address, {
-          programId: TOKEN_PROGRAM_ID,
-        });
+        const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+          address,
+          {
+            programId: TOKEN_PROGRAM_ID,
+          },
+        );
+        return tokenAccounts;
       } catch (error) {
         console.error("Error fetching token info:", error);
         throw error;
@@ -63,16 +66,22 @@ export function useGetTokenInfo({ address }: { address: PublicKey }) {
     staleTime: 1000 * 60 * 5, // Data is fresh for 5 minutes
     refetchInterval: 1000 * 60 * 10, // Refetch every 10 minutes
   });
-  return { data, isLoading, error };
+  return {
+    data,
+    isLoading,
+    error,
+    hasTokens: data?.value && data.value.length > 0,
+  };
 }
 
 // Fetch the Associated Token Account (ATA) for a given mint and owner.
 export function useGetATA(mint?: string, address?: PublicKey) {
   return useQuery({
-    queryKey: ["ata", mint, address?.toBase58()],
+    queryKey: ["ata", mint, address?.toString()],
     queryFn: async () => {
       if (!mint || !address) {
-        throw new Error("Missing required parameters");
+        return "N/A";
+        // throw new Error("Missing required parameters");
       }
       const tokenAccount = await getAssociatedTokenAddress(
         new PublicKey(mint),
@@ -83,7 +92,6 @@ export function useGetATA(mint?: string, address?: PublicKey) {
       );
       return tokenAccount.toString();
     },
-    enabled: !!mint && !!address,
     staleTime: 1000 * 60 * 60, // Data is fresh for 1 hour
     refetchOnWindowFocus: false, // No need to refetch
     refetchOnMount: false, // No need to refetch
@@ -95,6 +103,9 @@ export function useGetTxs({ ata }: { ata: string }) {
   return useQuery({
     queryKey: ["get-txs", ata],
     queryFn: async () => {
+      if (ata === "N/A") {
+        return [];
+      }
       try {
         const signatures = await connection.getSignaturesForAddress(
           new PublicKey(ata),
@@ -108,13 +119,12 @@ export function useGetTxs({ ata }: { ata: string }) {
           { maxSupportedTransactionVersion: 0 },
         );
 
-        return txs;
+        return txs ?? [];
       } catch (error) {
         console.error("Error fetching data:", error);
         throw error;
       }
     },
-    enabled: !!ata,
     refetchOnMount: true, // Get fresh data on component mount
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
     refetchOnReconnect: false, // Don't refetch when reconnecting

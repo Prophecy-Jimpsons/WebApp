@@ -41,49 +41,62 @@ export default function TierLevel({
     return TIER_LEVELS[2]; // Silver
   })();
 
+  const noDataFound =
+    !isLoading && (transactions.length === 0 || jimpBalance === 0);
+
   return (
     <Card title="HODL Tier Level">
-      <div className={styles.tierSection}>
-        <div className={styles.tierHeader}>
-          <currentTier.icon size={24} className={styles.tierIcon} />
-          <h3>{currentTier.level}</h3>
+      {noDataFound && (
+        <div className={styles.noDataMessage}>
+          <p>
+            No data found. Make sure you have JIMP tokens in your wallet and
+            have made transactions to qualify for a tier.
+          </p>
         </div>
-        <div className={styles.tierDetails}>
-          <p>Reward Multiplier: {currentTier.multiplier}X</p>
-          {currentTier.level !== "Tier 0" && (
-            <>
-              <p>
-                Required Days: <span>{currentTier.daysRequired}+ </span> days
-              </p>
+      )}
+      {!noDataFound && (
+        <div className={styles.tierSection}>
+          <div className={styles.tierHeader}>
+            <currentTier.icon size={24} className={styles.tierIcon} />
+            <h3>{currentTier.level}</h3>
+          </div>
+          <div className={styles.tierDetails}>
+            <p>Reward Multiplier: {currentTier.multiplier}X</p>
+            {currentTier.level !== "Tier 0" && (
+              <>
+                <p>
+                  Required Days: <span>{currentTier.daysRequired}+ </span> days
+                </p>
 
-              <p>
-                Days Held:{" "}
-                {isLoading ? (
-                  <span className={styles.loading}>00</span>
-                ) : (
-                  daysSincePurchase.toString()
-                )}{" "}
-                days
-              </p>
-            </>
+                <p>
+                  Days Held:{" "}
+                  {isLoading ? (
+                    <span className={styles.loading}>00</span>
+                  ) : (
+                    daysSincePurchase.toString()
+                  )}{" "}
+                  days
+                </p>
+              </>
+            )}
+          </div>
+          {currentTier.level !== "Tier 0" && (
+            <div className={styles.tierProgress}>
+              {isLoading && (
+                <div
+                  className={`${styles.loadingProgressBar} ${styles.loading}`}
+                />
+              )}
+              <div
+                className={styles.progressBar}
+                style={{
+                  width: `${(daysSincePurchase / currentTier.daysRequired) * 100}%`,
+                }}
+              />
+            </div>
           )}
         </div>
-        {currentTier.level !== "Tier 0" && (
-          <div className={styles.tierProgress}>
-            {isLoading && (
-              <div
-                className={`${styles.loadingProgressBar} ${styles.loading}`}
-              />
-            )}
-            <div
-              className={styles.progressBar}
-              style={{
-                width: `${(daysSincePurchase / currentTier.daysRequired) * 100}%`,
-              }}
-            />
-          </div>
-        )}
-      </div>
+      )}
     </Card>
   );
 }

@@ -28,6 +28,25 @@ export function OverviewCard({
     <Card title="Overview">
       <div className={styles.infoGrid}>
         <div className={styles.infoRow}>
+          <span className={styles.label}>Owner</span>
+          <div className={styles.valueWrapper}>
+            <span
+              className={isLoading ? styles.loadingText : styles.addressLink}
+            >
+              {owner}
+            </span>
+            <button
+              className={styles.copyButton}
+              onClick={async () => await copyToClipboard(owner, "owner")}
+            >
+              <span className={styles.copyIcon}>
+                {copiedMap["owner"] ? <Check size={16} /> : <Copy size={16} />}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div className={styles.infoRow}>
           <span className={styles.label}>Token Address</span>
           <div className={styles.valueWrapper}>
             <span
@@ -67,25 +86,6 @@ export function OverviewCard({
             >
               <span className={styles.copyIcon}>
                 {copiedMap["mint"] ? <Check size={16} /> : <Copy size={16} />}
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <div className={styles.infoRow}>
-          <span className={styles.label}>Owner</span>
-          <div className={styles.valueWrapper}>
-            <span
-              className={isLoading ? styles.loadingText : styles.addressLink}
-            >
-              {owner}
-            </span>
-            <button
-              className={styles.copyButton}
-              onClick={async () => await copyToClipboard(owner, "owner")}
-            >
-              <span className={styles.copyIcon}>
-                {copiedMap["owner"] ? <Check size={16} /> : <Copy size={16} />}
               </span>
             </button>
           </div>
