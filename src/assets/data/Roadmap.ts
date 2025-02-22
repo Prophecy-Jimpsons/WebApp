@@ -47,42 +47,51 @@ export const benefits: Benefit[] = [
 export const roadmapData: RoadmapPhase[] = [
   {
     phase: "Phase 1",
-    title: "Initial Launch on Pump.fun",
+    title: "Platform Foundation Phase",
     timing: "Q1 2025",
-    status: "upcoming",
+    status: "completed",
     icon: "rocket-solid",
     mainItems: [
       {
         subtitle: "Platform Launch",
         items: [
-          "Initial token deployment on Pump.fun platform",
-          "Establishment of initial liquidity pools",
-          "Launching beta version of AI",
-          "Beta version of platform released",
-          "Initial community building initiatives",
-          "Development of Aira AI model (256.3B parameters)",
-          "Implementation of stable diffusion for NFT generation",
-          "Compression NFT system for long-term minting",
-          "Vault contract development",
+          "Token Deployment on Pump.fun",
+          "Migrated to Radium",
+          "Beta Version of AVAI-Image Generator Released",
+          "Beta version of Game Jimp-Tac-Toe Released",
+          "Beta version of AVAI-Abhishek's intelligence (14B parameters) Unleased",
+          "cNFTs Minted on Testnet",
+
         ],
-        completedItems: [0, 1, 2, 3, 4, 5, 6, 7],
+        completedItems: [0, 1, 2, 3, 4, 5, 6],
+      },
+      {
+        subtitle: "Game Features",
+        items: [
+          "Launched Jimp-Tac-Toe ",
+          "Implement UI/UX optimization",
+          "Play online",
+          "Integrate AI opponents",
+        ],
+        completedItems: [0, 1, 2, 3],
       },
     ],
   },
   {
     phase: "Phase 2",
-    title: "Platform Evolution",
+    title: "Verification & Security Infrastructure Phase",
     timing: "Q2 2025",
     status: "upcoming",
     icon: "chart-line-solid",
     mainItems: [
       {
-        subtitle: "Oracle Development",
+        subtitle: "AVAI Oracle Development",
         items: [
-          "Fine tune AI model for oracle",
+          "Fine tune AVAI-Oracle model",
+          "AVAI's oracle system achieves 99.99% parameter sparsity",
+          "Get community approved sources",
+          "Implement real-world data integration of approved sources",
           "Create prediction verification system",
-          "Implement real-world data integration",
-          "Deploy verification mechanism",
           "Achieve 99% accuracy in predictions",
         ],
         completedItems: [],
@@ -90,11 +99,26 @@ export const roadmapData: RoadmapPhase[] = [
       {
         subtitle: "Game Features",
         items: [
-          "Launch Jimp Tic-Tac-Toe on Solana",
-          "Implement UI/UX optimization",
-          "Create leaderboard on IPFS",
-          "Integrate AI opponents",
-          "Enable weekly free predictions",
+          "Jimp-Tac-Toe games prediction feature",
+          "Implement leaderboard on IPFS and mint its cNFTs",
+          "Introduce seasonal events and challenge",
+          "Tournament integration",
+        ],
+        completedItems: [],
+      },
+      {
+        subtitle: "Smart Contracts",
+        items: [
+          "Vault contract creation",
+          "cNFTs mint on mainnet",
+        ],
+        completedItems: [],
+      },
+      {
+        subtitle: "Security Enhancements",
+        items: [
+          "Smart contract audits",
+          "Tech stack modernization",
         ],
         completedItems: [],
       },
@@ -102,19 +126,16 @@ export const roadmapData: RoadmapPhase[] = [
   },
   {
     phase: "Phase 3",
-    title: "Technical Innovation",
+    title: "Marketplace Expansion & Optimization Phase",
     timing: "Q3 2025",
     status: "upcoming",
     icon: "gear-solid",
     mainItems: [
       {
-        subtitle: "Core Features",
+        subtitle: "Marketplace Development",
         items: [
-          "Implement listing and bidding mechanisms",
-          "Create secure storefront interface",
-          "Deploy royalty distribution system",
-          "Implement price history tracking",
-          "Target 500-1,000 monthly active users",
+          "NFT listing/bidding mechanisms",
+          "Royalty distribution system",
         ],
         completedItems: [],
       },
@@ -122,7 +143,6 @@ export const roadmapData: RoadmapPhase[] = [
         subtitle: "User Experience",
         items: [
           "Advanced filtering and search options",
-          "Category-based organization",
           "Real-time listing updates",
           "Price history charts",
           "Initial listing of 500-1,000 cNFTs",
@@ -133,31 +153,27 @@ export const roadmapData: RoadmapPhase[] = [
   },
   {
     phase: "Phase 4",
-    title: "Market Expansion",
+    title: "Decentralized Governance & Community Growth Phase",
     timing: "Q4 2025",
     status: "upcoming",
     icon: "globe-solid",
     mainItems: [
       {
-        subtitle: "DAO Development",
+        subtitle: "DAO Implementation",
         items: [
-          "Design and develop DAO on Solana",
-          "Create governance interface",
-          "Establish tokenomics structure",
-          "Deploy smart contracts",
-          "Complete security audits",
-          "Multiple chain integration",
+          "On-chain voting mechanisms",
+          "Governance token deployment",
+          
         ],
         completedItems: [],
       },
       {
-        subtitle: "Community Building",
+        subtitle: "Community Programs",
         items: [
-          "Launch community initiatives",
-          "Create educational resources",
-          "Deploy governance token",
-          "Implement voting mechanisms",
-          "Release documentation",
+          "Educational initiatives",
+          "Documentation portal launch",
+          "Early investor participation program",
+          "Future airdrop campaigns for token holders",
         ],
         completedItems: [],
       },
