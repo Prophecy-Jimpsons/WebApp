@@ -27,7 +27,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Add these to AccountUI.module.css */
+
 .connectPrompt {
   display: flex;
   flex-direction: column;
@@ -37,7 +37,6 @@
   padding: var(--space-8) 0;
 }
 
-/* Add to AccountUI.module.css */
 .iconContainer {
   width: 80px;
   height: 80px;
