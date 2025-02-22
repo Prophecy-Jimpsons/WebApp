@@ -1,0 +1,107 @@
+/* NFTDetails.module.css */
+.nftDetails {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .detailsGrid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  
+  .detailItem {
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .detailItem h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: #e2e8f0;
+    font-size: 1rem;
+  }
+  
+  .infoIcon {
+    color: #8a63d2;
+  }
+  
+  .hash {
+    color: #8a63d2;
+    word-break: break-all;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  
+  .hash:hover {
+    opacity: 0.8;
+  }
+  
+  .spinIcon {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .statusGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .successText {
+    color: #68d391;
+  }
+  
+  .collectionLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #8a63d2;
+    margin-top: 0.5rem;
+    transition: opacity 0.2s;
+  }
+  
+  .collectionLink:hover {
+    opacity: 0.8;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .nftDetails {
+      padding: 1rem;
+    }
+    
+    .detailsGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .detailItem h3 {
+      font-size: 0.875rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .nftDetails {
+      margin-top: 1rem;
+      padding: 0.75rem;
+    }
+    
+    .detailItem {
+      padding: 0.75rem;
+    }
+  }
+  
