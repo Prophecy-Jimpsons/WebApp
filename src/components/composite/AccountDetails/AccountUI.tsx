@@ -25,16 +25,22 @@ export function AccountDetail({ address }: { address: PublicKey }) {
   const convertedSolBalance = solBalance
     ? (Math.round((solBalance / LAMPORTS_PER_SOL) * 100000) / 100000).toFixed(5)
     : 0;
-  const { data: tokenInfo, isLoading: tokenInfoLoading } = useGetTokenInfo({
+  const {
+    data: tokenInfo,
+    isLoading: tokenInfoLoading,
+    hasTokens,
+  } = useGetTokenInfo({
     address,
   });
 
-  const {
-    mint = "",
-    owner = "",
-    tokenAmount: { uiAmount = 0 } = {},
-    state = "",
-  } = tokenInfo?.value?.[0]?.account?.data?.parsed?.info ?? {};
+  const tokenData = hasTokens
+    ? tokenInfo?.value[0]?.account?.data?.parsed?.info
+    : null;
+
+  const mint = tokenData?.mint ?? "N/A";
+  const owner = tokenData?.owner ?? address.toString();
+  const uiAmount = tokenData?.tokenAmount?.uiAmount ?? 0;
+  const state = tokenData?.state ?? "N/A";
 
   const { data: ata, isLoading: ataLoading } = useGetATA(mint, address);
 
@@ -44,7 +50,7 @@ export function AccountDetail({ address }: { address: PublicKey }) {
     refetch,
     isError: txsError,
   } = useGetTxs({
-    ata: ata ?? "",
+    ata: ata ?? "N/A",
   });
 
   const filteredTxs = txs?.filter(
@@ -58,7 +64,7 @@ export function AccountDetail({ address }: { address: PublicKey }) {
       <h1 className={styles.mainTitle}>ACCOUNT DETAILS</h1>
       <div className={styles.detailsSection}>
         <OverviewCard
-          token={ata ?? ""}
+          token={ata ?? "N/A"}
           solBalance={convertedSolBalance}
           jimpBalance={uiAmount.toFixed(5)}
           owner={owner}
@@ -69,7 +75,7 @@ export function AccountDetail({ address }: { address: PublicKey }) {
         <TierLevel
           address={address}
           transactions={filteredTxs ?? []}
-          jimpBalance={uiAmount}
+          jimpBalance={uiAmount ?? 0}
           isLoading={isLoading}
         />
         <AccountTransactions

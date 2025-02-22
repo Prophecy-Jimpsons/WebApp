@@ -1,11 +1,10 @@
 import React from "react";
 import styles from "./PrivacyPolicy.module.css";
 
-// Import the same chain icons used in hero section
 import SOLANA from "@/assets/icons/chains/Solana_Network_Logo.png";
-import BASE from "@/assets/icons/chains/Base_Network_Logo.svg";
-import POLYGON from "@/assets/icons/chains/Polygon_Network_Logo.png";
-import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
+import SOLANA2 from "@/assets/icons/chains/Solana_Network_Logo_2.png";
+import SOLANA3 from "@/assets/icons/chains/Solana_Network_Logo_3.png";
+import SOLANA4 from "@/assets/icons/chains/Solana_Network_Logo_4.png";
 
 interface PolicySection {
   title: string;
@@ -59,13 +58,13 @@ const PrivacyPolicy: React.FC = () => {
           <img src={SOLANA} alt="Solana logo" />
         </div>
         <div className={`${styles.icon} ${styles.icon2}`}>
-          <img src={BASE} alt="Base logo" />
+          <img src={SOLANA2} alt="Solona2 logo" />
         </div>
         <div className={`${styles.icon} ${styles.icon3}`}>
-          <img src={POLYGON} alt="Polygon logo" />
+          <img src={SOLANA3} alt="Solona3 logo" />
         </div>
         <div className={`${styles.icon} ${styles.icon4}`}>
-          <img src={STARKNET} alt="Starknet logo" />
+          <img src={SOLANA4} alt="Solana4 logo" />
         </div>
       </div>
 

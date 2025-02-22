@@ -15,6 +15,11 @@
   font-weight: 600;
 }
 
+.emptyMessage {
+  color: var(--color-grey);
+  text-align: center;
+}
+
 .refreshButton {
   padding: var(--space-2);
   border: 1px solid rgba(255, 255, 255, 0.1);
