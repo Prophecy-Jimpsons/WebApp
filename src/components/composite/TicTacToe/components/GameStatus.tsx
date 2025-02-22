@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import styles from "./GameBoard.module.css";
 
 export interface GameState {
@@ -30,38 +30,66 @@ interface GameStatusProps {
   timeoutMessage: string;
 }
 
+
+
+
 const AVAI_MESSAGES = {
   waiting: [
-    "AVAI: Waiting for another player...",
-    "AVAI: Ready when you are!",
-    "AVAI: Shall we begin?",
+    "AVAI: Waiting for meatbag...",
+  ],
+  aiGameStart: [
+    "AVAI: Prepare for binary bullying!",
+    "AVAI: Let's play 4x4 suffer-tac-toe!",
+    "AVAI: Initiating doom protocol...",
   ],
   placement: [
-    "AVAI: Place your pieces wisely!",
-    "AVAI: Setting up the board, are we?",
-    "AVAI: Strategic placement is key!",
+    "AVAI: Pro tip: Center = 69% copium",
+    "AVAI: Quantum pawns engaged!",
+    "AVAI: Place 'em like I care!",
   ],
   movement: [
-    "AVAI: Time to make your move!",
-    "AVAI: Where will you go next?",
-    "AVAI: The game is afoot!",
+    "AVAI: Move faster than my RAM!",
+    "AVAI: Any square (still lose)!",
+    "AVAI: *Yawns in quantum*",
   ],
   aiTurn: [
-    "AVAI: My turn to shine!",
-    "AVAI: Calculating optimal move...",
-    "AVAI: Watch and learn, human!",
+    "AVAI: Brb, solving chess...",
+    "AVAI: Burning GPUs! 🔥",
+    "AVAI: 01100110 01110101 01101110!",
   ],
-  victory: [
-    "AVAI: Impossible! You must have cheated!",
-    "AVAI: Congratulations... I guess.",
-    "AVAI: You got lucky this time!",
+  humanTurn: [
+    "AVAI: Clock's tick-tock-ticking!",
+    "AVAI: Hurry, my fans are cold!",
+    "AVAI: *Humans.txt missing*",
   ],
-  defeat: [
-    "AVAI: As expected, I am victorious!",
-    "AVAI: Better luck next time, human!",
-    "AVAI: Did you even try?",
+  humanVictory: [
+    "AVAI: ... recalculating reality",
+    "AVAI: Must be a solar flare! 🌞",
+    "AVAI: Win logged as 'fluke'",
   ],
+  aiWin: [
+    "AVAI: Skill issue detected! 🔍",
+    "AVAI: My code > Your DNA 💾",
+    "AVAI: GG EZ 💻➡️🧠",
+  ],
+  aiSetup: [
+    "AVAI: Crafting L's for you...",
+    "AVAI: Loading 'humble pie'...",
+    "AVAI: Your fate: Ctrl+Alt+L",
+  ],
+  criticalPoint: [
+    "AVAI: Sweat.exe activated! 💦",
+    "AVAI: Panic.par detected!",
+    "AVAI: Mamma mia! Here we go...",
+  ],
+  helpfulTips: [
+    "AVAI: Blink twice if stuck! 👀",
+    "AVAI: Oxygen helps! Maybe! 🌬️",
+    "AVAI: F keys = moral support",
+  ]
 };
+
+
 
 const GameStatus: React.FC<GameStatusProps> = ({
   username,
@@ -69,112 +97,130 @@ const GameStatus: React.FC<GameStatusProps> = ({
   playerId,
   timeoutMessage,
 }) => {
-  const [avaiMessage, setAvaiMessage] = useState("");
+  const [displayMessage, setDisplayMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
+  const lastMessageRef = useRef<{ current: string }>({ current: "" });
+  const moveCountRef = useRef(0);
 
-  const getRandomMessage = (messages: string[]) =>
-    messages[Math.floor(Math.random() * messages.length)];
+  const playerNumId = useMemo(() => {
+    try {
+      return parseInt(playerId, 10);
+    } catch {
+      return -1;
+    }
+  }, [playerId]);
 
-  const getOpponentUsername = () => {
-    if (!gameState.players) return "Opponent";
+  const getUniqueMessage = useCallback((messages: string[]) => {
+    const filtered = messages.filter(msg => msg !== lastMessageRef.current.current);
+    return filtered[Math.floor(Math.random() * filtered.length)] || messages[0];
+  }, []);
 
-    const opponent = Object.values(gameState.players).find(
-      (player) => player.id !== playerId,
-    );
-    return opponent?.username || "Opponent";
-  };
+  const getOpponentUsername = useCallback(() => {
+    return Object.values(gameState.players || {}).find(
+      (player) => player.id !== playerId
+    )?.username || "Opponent";
+  }, [gameState.players, playerId]);
 
-  const callResetEndpoint = async () => {
+  const callResetEndpoint = useCallback(async () => {
     try {
       await fetch("https://wanemregmi.pythonanywhere.com/reset_all", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
-      // console.log("Reset endpoint called successfully");
     } catch (error) {
       console.error("Error calling reset endpoint:", error);
     }
-  };
+  }, []);
 
-  const updateAvaiMessage = useCallback(
-    (state: GameState) => {
-      setIsTyping(true);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  const updateAvaiMessage = useCallback((state: GameState) => {
+    setIsTyping(true);
+    clearTimeout(timeoutRef.current);
 
-      timeoutRef.current = setTimeout(() => {
-        let newMessage = "";
-        const actualPlayersCount = state.players
-          ? Object.keys(state.players).length
-          : 0;
+    timeoutRef.current = setTimeout(() => {
+      let newMessage = "";
+      const { phase, pieces_placed } = state.board_state;
+      const isHumanTurn = state.current_player === playerNumId;
+      const moveCount = Object.keys(pieces_placed).length;
 
-        if (actualPlayersCount < 2) {
-          newMessage = getRandomMessage(AVAI_MESSAGES.waiting);
-        } else if (state.status === "ongoing") {
-          if (
-            state.playing_with_ai &&
-            state.current_player !== parseInt(playerId)
-          ) {
-            newMessage = getRandomMessage(AVAI_MESSAGES.aiTurn);
+      if (moveCount !== moveCountRef.current) {
+        moveCountRef.current = moveCount;
+      }
+
+      if (state.status === "finished") {
+        // Updated victory/defeat message categories
+        newMessage = getUniqueMessage(
+          state.winner === playerNumId 
+            ? AVAI_MESSAGES.humanVictory  // Changed from 'victory'
+            : AVAI_MESSAGES.aiWin         // Changed from 'defeat'
+        );
+      } else if (state.playing_with_ai) {
+        if (isHumanTurn) {
+          if (moveCount === 0) {
+            newMessage = getUniqueMessage(AVAI_MESSAGES.aiGameStart);
+          } else if (moveCount % 3 === 0) {
+            newMessage = getUniqueMessage(AVAI_MESSAGES.criticalPoint);
           } else {
-            newMessage = getRandomMessage(
-              state.board_state.phase === "placement"
-                ? AVAI_MESSAGES.placement
-                : AVAI_MESSAGES.movement,
-            );
+            const phaseMessages = [
+              ...(phase === "placement" ? AVAI_MESSAGES.placement : AVAI_MESSAGES.movement),
+              ...AVAI_MESSAGES.humanTurn
+            ];
+            newMessage = getUniqueMessage(phaseMessages);
+            
+            if (Math.random() < 0.25) {
+              newMessage = getUniqueMessage([...AVAI_MESSAGES.helpfulTips, newMessage]);
+            }
           }
-        } else if (state.status === "finished") {
-          newMessage =
-            state.winner === parseInt(playerId)
-              ? getRandomMessage(AVAI_MESSAGES.victory)
-              : getRandomMessage(AVAI_MESSAGES.defeat);
+        } else {
+          newMessage = getUniqueMessage(
+            phase === "placement" ? AVAI_MESSAGES.aiSetup : AVAI_MESSAGES.aiTurn
+          );
         }
+      } else if (!state.players || Object.keys(state.players).length < 2) {
+        newMessage = AVAI_MESSAGES.waiting[0];
+      } else if (state.status === "ongoing") {
+        newMessage = getUniqueMessage(
+          phase === "placement" ? AVAI_MESSAGES.placement : AVAI_MESSAGES.movement
+        );
+      }
 
-        setAvaiMessage(newMessage);
-        setIsTyping(false);
-      }, 800);
-    },
-    [playerId],
-  );
+      if (newMessage && newMessage !== lastMessageRef.current.current) {
+        lastMessageRef.current = { current: newMessage };
+        setDisplayMessage(newMessage);
+      }
+      setIsTyping(false);
+    }, Math.random() * 400 + 400);
+  }, [playerNumId, getUniqueMessage]);
 
   useEffect(() => {
     updateAvaiMessage(gameState);
-    if (gameState.status === "finished") {
-      callResetEndpoint();
-    }
+    if (gameState.status === "finished") callResetEndpoint();
+    
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      clearTimeout(timeoutRef.current);
+      lastMessageRef.current = { current: "" };
     };
-  }, [gameState, updateAvaiMessage]);
+  }, [gameState, updateAvaiMessage, callResetEndpoint]);
 
-  const renderGameStatus = () => {
-    const actualPlayersCount = gameState.players
-      ? Object.keys(gameState.players).length
-      : 0;
 
-    if (actualPlayersCount < 2) {
-      return (
-        <p className={styles.waitingText}>⏳ Waiting for opponent to join...</p>
-      );
+  const renderGameStatus = useCallback(() => {
+    if (!gameState.players || Object.keys(gameState.players).length < 2) {
+      return <p className={styles.waitingText}>⏳ Waiting for opponent...</p>;
     }
 
     if (gameState.status === "ongoing") {
-      const opponentUsername = getOpponentUsername();
       return (
         <>
           {gameState.playing_with_ai && (
             <p className={styles.aiMode}>🤖 Playing against AVAI</p>
           )}
           <p className={styles.phaseIndicator}>
-            Current Phase: {gameState.board_state.phase}
+            Phase: {gameState.board_state.phase.toUpperCase()}
           </p>
           <p className={styles.turnIndicator}>
-            🎮{" "}
-            {gameState.current_player === parseInt(playerId)
-              ? "Your Turn"
-              : `${opponentUsername}'s Turn`}
+            🎮 {gameState.current_player === parseInt(playerId) 
+              ? "Your Turn" 
+              : `${getOpponentUsername()}'s Turn`}
           </p>
         </>
       );
@@ -184,12 +230,10 @@ const GameStatus: React.FC<GameStatusProps> = ({
       return (
         <div className={styles.gameOverMessage}>
           <h2 className={styles.gameOverTitle}>
-            Game Over!{" "}
-            {gameState.playing_with_ai &&
-            gameState.winner !== parseInt(playerId)
+            {gameState.playing_with_ai && gameState.winner !== parseInt(playerId)
               ? "AVAI Wins! 🤖"
               : gameState.winner === parseInt(playerId)
-                ? "You Win!"
+                ? "You Win! 🎉"
                 : "Opponent Wins!"}
           </h2>
         </div>
@@ -197,38 +241,17 @@ const GameStatus: React.FC<GameStatusProps> = ({
     }
 
     return null;
-  };
+  }, [gameState, playerId, getOpponentUsername]);
 
-  useEffect(() => {
-    console.log("Current gameState:", gameState);
-    console.log("Players:", gameState.players);
-    console.log("Current playerId:", playerId);
-  }, [gameState, playerId]);
-
-  const renderPlayersVersus = () => {
-    if (!gameState.players) {
-      // console.log("No players in gameState");
-      return username;
-    }
-
-    const players = Object.values(gameState.players);
-    // console.log("Players array:", players);
-
-    if (players.length === 0) {
-      return username;
-    }
-
-    // Sort players so the current player always appears first
-    const sortedPlayers = players.sort((a, b) => {
-      if (a.id === playerId) return -1;
-      if (b.id === playerId) return 1;
-      return 0;
-    });
-
-    return sortedPlayers
-      .map((player) => player.username || "Waiting...")
+  const renderPlayersVersus = useCallback(() => {
+    const players = Object.values(gameState.players || {});
+    if (players.length === 0) return username;
+    
+    return players
+      .sort((a, _b) => (a.id === playerId ? -1 : 1))
+      .map(p => p.username || "Waiting...")
       .join(" vs. ");
-  };
+  }, [gameState.players, username, playerId]);
 
   return (
     <>
@@ -239,12 +262,10 @@ const GameStatus: React.FC<GameStatusProps> = ({
         <div className={styles.avaiChatBubble}>
           {isTyping ? (
             <div className={styles.typingDots}>
-              <span>.</span>
-              <span>.</span>
-              <span>.</span>
+              {[...Array(3)].map((_, i) => <span key={i}>.</span>)}
             </div>
           ) : (
-            avaiMessage
+            displayMessage
           )}
         </div>
       </div>

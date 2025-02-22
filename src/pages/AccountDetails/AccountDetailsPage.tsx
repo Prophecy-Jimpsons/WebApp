@@ -12,12 +12,22 @@ const AccountDetails: FC = () => {
       <MainLayout>
         <div className={styles.container}>
           <div className={styles.content}>
-            <h1 className={styles.title}>Please connect your wallet</h1>
+            <div className={styles.titleSection}>
+              <div className={styles.iconContainer}>
+                <span className={styles.walletIcon}>👛</span>
+              </div>
+              <h1 className={styles.mainTitle}>Wallet Connection Required</h1>
+              <p className={styles.connectSubtext}>
+                Please connect your wallet using the "Select Wallet" button in the top-right corner to access account details and platform features.
+              </p>
+            </div>
           </div>
         </div>
       </MainLayout>
     );
   }
+  
+  
 
   return (
     <MainLayout>

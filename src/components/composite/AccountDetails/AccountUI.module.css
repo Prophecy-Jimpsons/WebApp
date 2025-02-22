@@ -27,3 +27,64 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+
+.connectPrompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  padding: var(--space-8) 0;
+}
+
+.iconContainer {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(254, 218, 3, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+}
+
+.walletIcon {
+  font-size: 32px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.connectSubtext {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--font-size-md);
+  line-height: 1.6;
+  margin: var(--space-4) auto;
+  max-width: 480px;
+}
+
+.connectText {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.125rem;
+  margin-bottom: var(--space-4);
+}
+
+.connectButton {
+  background: #feda03;
+  color: #000;
+  border: none;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--space-2);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.connectButton:hover {
+  background: #fedb03e6;
+  transform: translateY(-1px);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}

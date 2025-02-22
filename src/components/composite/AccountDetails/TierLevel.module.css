@@ -1,7 +1,5 @@
 .tierSection {
   margin-bottom: var(--space-8);
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--space-4);
   width: 80%;
   margin: 0 auto;
 }
@@ -12,6 +10,11 @@
   justify-content: center;
   gap: var(--space-3);
   margin: var(--space-4) 0;
+}
+
+.noDataMessage {
+  color: var(--color-grey);
+  text-align: center;
 }
 
 .tierHeader h3 {

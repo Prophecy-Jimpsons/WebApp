@@ -52,23 +52,36 @@ const Hero: FC = () => {
         </div>
 
         <div className={styles.content}>
-          <h1 className={styles.title}>
-            <span className={styles.highlight}>PROPHECY</span>
-            <span className={styles.regularText}>JIMPSONS</span>
-          </h1>
+                <h1 className={styles.title} style={{ textAlign: "center", marginBottom: "0.5em" }}>
+          <span className={styles.highlight} style={{ color: "#4CAF50", fontSize: "0.5em", fontWeight: "bold" }}>
+            PROPHECY
+          </span>
+          <span className={styles.regularText} style={{ color: "#FFFFFF", fontSize: "0.5em", fontWeight: "300" }}>
+            JIMPSONS
+          </span>
+        </h1>
 
-          <h2 className={styles.subtitle}>
-            Where Memes{" "}
-            <span className={styles.highlight}>Predict the Future</span>
-          </h2>
+        <h2 className={styles.subtitle} style={{ textAlign: "center", marginBottom: "1em", color: "#00BFFF", fontSize: "1.5em" }}>
+          Where Memes <span className={styles.highlight} style={{ fontWeight: "bold", color: "#FFD700" }}>Predict the Future</span>
+        </h2>
 
-          <p className={styles.description}>
-            Create FREE predictions on{" "}
-            <span className={styles.highlight}>Solana</span>, powered by{" "}
-            <span className={styles.highlight}>Artificial Intelligence</span>.
-            Join our universe of prophets and turn your 48hr visions into
-            legendary NFTs.
-          </p>
+        <p className={styles.description} style={{ textAlign: "center", lineHeight: "1.8", color: "#EAEAEA", fontSize: "1.1em" }}>
+          <span style={{ fontSize: "1.6em", fontWeight: "bold", color: "#4CAF50" }}>
+            Decode the Future
+          </span><br />
+          with <span style={{ color: "#00BFFF" }}>AI-driven predictions</span>,<br />
+          immortalized as <span style={{ color: "#FFD700" }}>Solana-compressed NFTs</span>.<br /><br />
+          Governed by <span style={{ color: "#00BFFF" }}>quadratic community voting</span><br />
+          and fueled by <span style={{ color: "#FFD700" }}>Prophet status rewards</span>.<br /><br />
+          <span style={{ fontSize: "1.3em", fontStyle: "italic", color: "#FFA500" }}>
+            Your foresight becomes crypto history.
+          </span>
+        </p>
+
+
+
+
+
 
           <div className={styles.buttonGroup}>
             <Button variant="primary" to="/account-details">
