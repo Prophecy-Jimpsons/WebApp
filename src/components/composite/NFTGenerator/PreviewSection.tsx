@@ -166,10 +166,8 @@ const PreviewSection = ({
       </div>
       {renderPreviewContent()}
       <div className={styles.legalNotes}>
-        <p>
-          No intellectual property rights are infringed in the generation of
-          these NFTs. All AI-generated content is original and unique.
-        </p>
+      <p>No intellectual property rights are infringed in the generation of these NFTs, as all AI-generated content is original and unique.</p>
+      <p><strong>Important Notice:</strong> If an NFT generates as a black image with only a watermark, it indicates that the content may be considered <em>Not Safe For Work (NSFW)</em>. Please regenerate the NFT in such cases.</p>
       </div>
     </div>
   );

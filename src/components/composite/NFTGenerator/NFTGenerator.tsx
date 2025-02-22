@@ -12,16 +12,13 @@ const NFTGenerator = () => {
   const { connected, publicKey } = useWallet();
   
   // Form handling logic
-    const {
-      formState,
-      validationState,
-      handleNameChange,
-      handleSymbolChange,
-      handleDescriptionChange,
-      handleSubmit,
-      validateInputs // Add this line
-    } = useFormHandling();
-
+  const {
+    formState,
+    validationState,
+    handleNameChange,
+    handleSubmit,
+    validateInputs
+  } = useFormHandling();
 
   // Metadata and NFT handling logic
   const {
@@ -69,15 +66,12 @@ const NFTGenerator = () => {
           formState={formState}
           validationState={validationState}
           handleNameChange={handleNameChange}
-          handleSymbolChange={handleSymbolChange}
-          handleDescriptionChange={handleDescriptionChange}
-          handleSubmit={handleFormSubmit}  // Changed from handleSubmit
-          validateInputs={validateInputs}   // Add this missing prop
+          handleSubmit={handleFormSubmit}
+          validateInputs={validateInputs}
           connected={connected}
           isLoading={isGeneratingMetadata}
           generationError={!!generationError}
         />
-
 
         {generatedNFT && (
           <NFTDetails

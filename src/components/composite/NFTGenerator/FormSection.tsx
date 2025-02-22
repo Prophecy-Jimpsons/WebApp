@@ -3,19 +3,13 @@ import styles from "./styles/FormSection.module.css";
 
 interface FormState {
   name: string;
-  symbol: string;
-  description: string;
   touched: boolean;
   hasAttempted: boolean;
 }
 
 interface ValidationState {
   nameValid: boolean;
-  symbolValid: boolean;
-  descriptionValid: boolean;
   nameError: string;
-  symbolError: string;
-  descriptionError: string;
   inputError: string;
 }
 
@@ -23,8 +17,6 @@ interface FormSectionProps {
   formState: FormState;
   validationState: ValidationState;
   handleNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSymbolChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDescriptionChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   validateInputs: () => string;
   connected: boolean;
@@ -36,8 +28,6 @@ const FormSection = ({
   formState,
   validationState,
   handleNameChange,
-  handleSymbolChange,
-  handleDescriptionChange,
   handleSubmit,
   connected,
   isLoading,
@@ -65,46 +55,6 @@ const FormSection = ({
           )}
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.inputLabel}>Prediction Ticker / Token Symbol</label>
-          <input
-            type="text"
-            className={`${styles.inputField} 
-              ${validationState.symbolError && formState.touched ? styles.error : ""} 
-              ${validationState.symbolValid && formState.touched ? styles.valid : ""}`}
-            placeholder="Example: BTC100K"
-            value={formState.symbol}
-            onChange={handleSymbolChange}
-            maxLength={10}
-            disabled={!connected || isLoading}
-          />
-          {validationState.symbolError && formState.touched && (
-            <div className={styles.fieldError}>
-              <AlertCircle size={12} />
-              {validationState.symbolError}
-            </div>
-          )}
-        </div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.inputLabel}>Brief Description</label>
-          <textarea
-            className={`${styles.descriptionField} 
-              ${validationState.descriptionError && formState.touched ? styles.error : ""} 
-              ${validationState.descriptionValid && formState.touched ? styles.valid : ""}`}
-            placeholder="Brief details about your prediction"
-            value={formState.description}
-            onChange={handleDescriptionChange}
-            disabled={!connected || isLoading}
-          />
-          {validationState.descriptionError && formState.touched && (
-            <div className={styles.fieldError}>
-              <AlertCircle size={12} />
-              {validationState.descriptionError}
-            </div>
-          )}
-        </div>
-
         {validationState.inputError && formState.touched && (
           <div className={styles.errorMessage}>
             <AlertCircle size={16} />
@@ -118,9 +68,7 @@ const FormSection = ({
           disabled={
             !connected ||
             isLoading ||
-            !validationState.nameValid ||
-            !validationState.symbolValid ||
-            !validationState.descriptionValid
+            !validationState.nameValid
           }
         >
           {isLoading ? (
