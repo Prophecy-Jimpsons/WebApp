@@ -1,0 +1,234 @@
+/* PreviewSection.module.css */
+.previewSection {
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 2rem;
+  }
+  
+  .cardHeader {
+    margin-bottom: 2rem;
+  }
+  
+  .titleGroup {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    color: #e2e8f0;
+    margin: 0;
+  }
+  
+  .emptyPreview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    color: #a0aec0;
+  }
+  
+  .emptyPreview p {
+    margin: 1rem 0 1.5rem;
+    font-size: 1.1rem;
+  }
+  
+  .walletButtonWrapper {
+    margin-top: 1rem;
+  }
+  
+  .walletButtonWrapper button {
+    background: #8a63d2;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  
+  .walletButtonWrapper button:hover {
+    opacity: 0.9;
+  }
+  
+  .nftCard {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .imageContainer {
+    position: relative;
+    aspect-ratio: 1/1;
+  }
+  
+  .imageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+  
+  .skeleton {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.1) 25%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.1) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  .loadingOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+  }
+  
+  .loadingIcon {
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+  
+  .errorPreview {
+    padding: 2rem;
+    text-align: center;
+    color: #f56565;
+  }
+  
+  .errorIcon {
+    margin-bottom: 1rem;
+  }
+  
+  .hint {
+    color: #a0aec0;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .actionButtons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .verifyButton {
+    background: rgba(138, 99, 210, 0.1);
+    border: 1px solid #8a63d2;
+    color: #8a63d2;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .verifyButton.verified {
+    background: rgba(104, 211, 145, 0.1);
+    border-color: #68d391;
+    color: #68d391;
+  }
+  
+  .verifyButton:hover {
+    opacity: 0.9;
+  }
+  
+  .downloadButton {
+    background: #8a63d2;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  
+  .downloadButton:hover {
+    opacity: 0.9;
+  }
+  
+  .collectionLink {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #8a63d2;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  
+  .collectionLink:hover {
+    opacity: 0.8;
+  }
+  
+  .verificationError {
+    color: #f56565;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .legalNotes {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: #a0aec0;
+    text-align: center;
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .previewSection {
+      padding: 1.5rem;
+    }
+    
+    .actionButtons {
+      flex-direction: column;
+    }
+    
+    .title {
+      font-size: 1.25rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .previewSection {
+      padding: 1rem;
+    }
+    
+    .emptyPreview {
+      padding: 1rem;
+    }
+    
+    .imageContainer {
+      aspect-ratio: 1/1;
+    }
+  }
+  

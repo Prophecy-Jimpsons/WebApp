@@ -1,0 +1,121 @@
+/* FormSection.module.css */
+.inputSection {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    margin-top: 1.5rem;
+  }
+  
+  .formGroup {
+    margin-bottom: 1.5rem;
+  }
+  
+  .inputLabel {
+    display: block;
+    font-size: 0.875rem;
+    color: #e2e8f0;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+  
+  .inputField {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+  
+  .inputField:focus {
+    outline: none;
+    border-color: #8a63d2;
+    box-shadow: 0 0 0 2px rgba(138, 99, 210, 0.2);
+  }
+  
+  .inputField.error {
+    border-color: #f56565;
+  }
+  
+  .inputField.valid {
+    border-color: #68d391;
+  }
+  
+  .descriptionField {
+    composes: inputField;
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  .fieldError {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #f56565;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+  
+  .errorMessage {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #f56565;
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    background: rgba(245, 101, 101, 0.1);
+    border-radius: 6px;
+    margin: 1rem 0;
+  }
+  
+  .generateButton {
+    width: 100%;
+    padding: 1rem;
+    background: #8a63d2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .generateButton:disabled {
+    background: #4a5568;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  .generateButton:not(:disabled):hover {
+    opacity: 0.9;
+  }
+  
+  .spinIcon {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 640px) {
+    .inputSection {
+      padding: 1rem;
+    }
+    
+    .inputField {
+      font-size: 0.875rem;
+    }
+  }
+  
