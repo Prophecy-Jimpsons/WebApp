@@ -29,7 +29,7 @@ const RulesContent = () => {
       title: "Game Phases",
       description: "Place → then move anywhere",
       details:
-        "🔄 The game consists of two phases:\n1. Place your pieces strategically\n2. Move your pieces to any open spot",
+        "🔄 The game consists of two phases:\n1. Place your 4 pieces strategically\n2. Move your pieces to any open spot",
     },
     {
       id: "winning",
@@ -40,7 +40,7 @@ const RulesContent = () => {
          ↔️ Horizontal line (4-in-a-row)
          ↕️ Vertical line (4-in-a-column)
          ↘️↙️ Diagonal line (any direction)
-         ⬜ 2x2 square block (anywhere)`,
+         ⊞ 2x2 square block (anywhere)`,
     },
     {
       id: "ai",
