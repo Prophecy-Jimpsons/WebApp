@@ -1,5 +1,6 @@
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/config/firebase";
+import type { NFTDocument } from "../NFTGenerator/types";
 
 export interface IPFSMetadata {
   ipfsCid: string;
@@ -18,28 +19,31 @@ export const verifyIPFSContent = async (
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      const doc = querySnapshot.docs[0].data();
-      const ipfsCid = doc.ipfsCid;
+      const doc = querySnapshot.docs[0].data() as NFTDocument;
+      console.log("🔥 Firestore Retrieved NFT Data:", doc);
 
-      // Instead of checking S3 or IPFS API, we'll verify if the image is accessible
-      const response = await fetch(`https://ipfs.filebase.io/ipfs/${ipfsCid}`, {
-        method: "HEAD",
-        mode: "no-cors", // Prevents CORS issues
-      });
-
-      if (response) {
-        return {
-          ipfsCid: doc.ipfsCid,
-          ipfsUrl: doc.ipfsUrl,
-          prompt: doc.prompt,
-          walletAddress: doc.walletAddress,
-          createdAt: doc.createdAt.toDate().toLocaleString(),
-        };
+      if (!doc.metadata_uri?.cid) {
+        console.error(
+          "❌ Firestore Error: IPFS CID is missing in Firestore document!",
+          doc,
+        );
+        return null;
       }
+
+      console.log("✅ NFT Found! CID:", doc.metadata_uri.cid);
+      return {
+        ipfsCid: doc.metadata_uri.cid,
+        ipfsUrl: doc.metadata_uri.url,
+        prompt: doc.prompt || "Untitled",
+        walletAddress: doc.walletAddress,
+        createdAt: doc.createdAt,
+      };
     }
+
+    console.error("❌ No matching NFT found in Firestore for hash:", imageHash);
     return null;
   } catch (error) {
-    console.error("Verification failed:", error);
+    console.error("❌ Verification failed:", error);
     return null;
   }
 };

@@ -1,121 +1,183 @@
-/* FormSection.module.css */
 .inputSection {
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    backdrop-filter: blur(8px);
-    margin-top: 1.5rem;
-  }
-  
-  .formGroup {
-    margin-bottom: 1.5rem;
-  }
-  
-  .inputLabel {
-    display: block;
-    font-size: 0.875rem;
-    color: #e2e8f0;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-  }
-  
-  .inputField {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    color: #fff;
-    font-size: 1rem;
-    transition: border-color 0.2s;
-  }
-  
-  .inputField:focus {
-    outline: none;
-    border-color: #8a63d2;
-    box-shadow: 0 0 0 2px rgba(138, 99, 210, 0.2);
-  }
-  
-  .inputField.error {
-    border-color: #f56565;
-  }
-  
-  .inputField.valid {
-    border-color: #68d391;
-  }
-  
-  .descriptionField {
-    composes: inputField;
-    min-height: 100px;
-    resize: vertical;
-  }
-  
-  .fieldError {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #f56565;
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-  }
-  
-  .errorMessage {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #f56565;
-    font-size: 0.875rem;
-    padding: 0.75rem;
-    background: rgba(245, 101, 101, 0.1);
-    border-radius: 6px;
-    margin: 1rem 0;
-  }
-  
-  .generateButton {
-    width: 100%;
-    padding: 1rem;
-    background: #8a63d2;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  
-  .generateButton:disabled {
-    background: #4a5568;
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-  
-  .generateButton:not(:disabled):hover {
-    opacity: 0.9;
-  }
-  
-  .spinIcon {
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 640px) {
-    .inputSection {
-      padding: 1rem;
-    }
-    
-    .inputField {
-      font-size: 0.875rem;
-    }
-  }
-  
+  padding: var(--space-4);
+  background: rgba(var(--color-black-background), 0.1);
+  border-radius: var(--space-3);
+  backdrop-filter: blur(12px);
+  margin-top: 8rem;
+  border: 1px solid rgba(var(--color-primary), 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  position: relative;
+}
+
+/* Subtle gradient background for the section */
+.inputSection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(252, 175, 5, 0.02) 0%,
+    rgba(5, 104, 252, 0.02) 100%
+  );
+  z-index: -1;
+}
+
+.formGroup {
+  margin-bottom: var(--space-4);
+  position: relative;
+}
+
+.inputLabel {
+  display: block;
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced input styling with subtle indicators */
+.inputField {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(var(--color-secondary), 0.2);
+  border-radius: var(--space-2);
+  color: var(--color-white);
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  /* Subtle inset shadow to indicate input area */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle left border to indicate input */
+  border-left: 4px solid var(--color-secondary);
+}
+
+.inputField:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(var(--color-secondary), 0.4);
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  border-left: 4px solid var(--color-primary);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.1),
+    0 0 0 4px rgba(var(--color-primary), 0.1);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* Enhanced button styling with depth and interaction cues */
+.generateButton {
+  width: 100%;
+  padding: var(--space-3);
+  /* Gradient background with slightly more opacity */
+  background: linear-gradient(
+    135deg,
+    rgba(5, 104, 252, 0.9),
+    rgba(5, 104, 252, 0.7)
+  );
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--space-2);
+  font-size: 1.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  /* Elevated shadow to indicate clickable */
+  box-shadow:
+    0 4px 12px rgba(5, 104, 252, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle text shadow */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  /* Subtle top light border */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle shine effect on button */
+.generateButton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.generateButton:hover::after {
+  left: 100%;
+}
+
+.generateButton:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(252, 175, 5, 0.9),
+    rgba(252, 175, 5, 0.7)
+  );
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 16px rgba(252, 175, 5, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.generateButton:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 2px 8px rgba(252, 175, 5, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.generateButton:disabled {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 77, 77, 0.7),
+    rgba(77, 77, 77, 0.5)
+  );
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Error states */
+.inputField.error {
+  border-color: var(--color-danger);
+  border-left: 4px solid var(--color-danger);
+  box-shadow:
+    inset 0 2px 4px rgba(220, 38, 38, 0.1),
+    0 0 0 4px rgba(220, 38, 38, 0.1);
+}
+
+.fieldError {
+  color: red;
+  display: flex;
+  align-items: center;
+  opacity: 0.5;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.inputField.valid {
+  border-color: var(--color-primary);
+  border-left: 4px solid var(--color-primary);
+  box-shadow:
+    inset 0 2px 4px rgba(252, 175, 5, 0.1),
+    0 0 0 4px rgba(252, 175, 5, 0.1);
+}

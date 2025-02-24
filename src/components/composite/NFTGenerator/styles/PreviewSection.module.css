@@ -1,234 +1,289 @@
-/* PreviewSection.module.css */
 .previewSection {
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: 2rem;
+  padding: var(--space-5);
+  background: rgba(var(--color-black-background), 0.1);
+  border-radius: var(--space-4);
+  backdrop-filter: blur(15px);
+  margin-bottom: var(--space-6);
+  border: 1px solid rgba(var(--color-primary), 0.2);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.2),
+    inset 0 0 40px rgba(252, 175, 5, 0.02);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Subtle gradient overlay */
+.previewSection::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(252, 175, 5, 0.03) 0%,
+    rgba(5, 104, 252, 0.03) 100%
+  );
+  z-index: -1;
+}
+
+.cardHeader {
+  margin-bottom: var(--space-5);
+  position: relative;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-size: 3rem;
+  color: var(--color-primary);
+  margin: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.emptyPreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-6);
+  color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--space-3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--color-primary), 0.1);
+  height: 521px;
+  justify-content: center;
+}
+
+.emptyPreview p {
+  margin: var(--space-3) 0 var(--space-4);
+  font-size: 1.7rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.nftCard {
+  position: relative;
+  border-radius: var(--space-3);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(var(--color-primary), 0.2);
+  padding: var(--space-4);
+  text-align: center;
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.1),
+    inset 0 0 40px rgba(252, 175, 5, 0.02);
+}
+
+.imageContainer {
+  position: relative;
+  width: 512px;
+  height: 512px;
+  margin: 0 auto var(--space-4);
+  border-radius: var(--space-3);
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.imageContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Changed to contain to preserve aspect ratio */
+  transition: transform 0.3s ease;
+}
+
+.emptyPreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-6);
+  color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--space-3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--color-primary), 0.1);
+  /* min-height: 512px; */
+  justify-content: center;
+}
+
+.imageContainer:hover img {
+  transform: scale(1.02);
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.verifyButton,
+.downloadButton {
+  padding: var(--space-2) var(--space-4);
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: var(--space-2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  backdrop-filter: blur(4px);
+}
+
+.verifyButton {
+  background: rgba(5, 104, 252, 0.1);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-secondary);
+}
+
+.verifyButton:hover {
+  background: var(--color-secondary);
+  color: var(--color-white);
+}
+
+.verifyButton.verified {
+  background: rgba(252, 175, 5, 0.1);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.downloadButton {
+  background: var(--color-secondary);
+  color: var(--color-white);
+  border: none;
+  box-shadow: 0 2px 8px rgba(5, 104, 252, 0.2);
+}
+
+.downloadButton:hover {
+  background: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(252, 175, 5, 0.25);
+}
+
+.collectionLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+}
+
+.collectionLink:hover {
+  color: var(--color-secondary);
+  transform: translateX(2px);
+  border: 1px solid var(--color-secondary);
+}
+
+.loadingIcon {
+  animation: spin 1s linear infinite;
+}
+
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--color-white);
+  backdrop-filter: blur(4px);
+  gap: var(--space-3);
+  font-size: 1.5rem;
+}
+
+.loadingOverlay p {
+  color: var(--color-primary);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
-  
-  .cardHeader {
-    margin-bottom: 2rem;
+  to {
+    transform: rotate(360deg);
   }
-  
-  .titleGroup {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+}
+
+.skeleton {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(5, 104, 252, 0.05) 25%,
+    rgba(252, 175, 5, 0.05) 50%,
+    rgba(5, 104, 252, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.legalNotes {
+  margin-top: var(--space-5);
+  font-size: 1rem;
+  color: var(--color-grey);
+  text-align: center;
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: var(--space-2);
+  backdrop-filter: blur(4px);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
   }
-  
-  .title {
-    font-size: 1.5rem;
-    color: #e2e8f0;
-    margin: 0;
+  100% {
+    background-position: -200% 0;
   }
-  
-  .emptyPreview {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 2rem;
-    color: #a0aec0;
-  }
-  
-  .emptyPreview p {
-    margin: 1rem 0 1.5rem;
-    font-size: 1.1rem;
-  }
-  
-  .walletButtonWrapper {
-    margin-top: 1rem;
-  }
-  
-  .walletButtonWrapper button {
-    background: #8a63d2;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  
-  .walletButtonWrapper button:hover {
-    opacity: 0.9;
-  }
-  
-  .nftCard {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    background: rgba(0, 0, 0, 0.2);
-  }
-  
+}
+
+@media (max-width: 600px) {
   .imageContainer {
-    position: relative;
-    aspect-ratio: 1/1;
+    width: fit-content;
   }
-  
-  .imageContainer img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
+}
+
+@media (max-width: 480px) {
+  .previewSection {
+    padding: var(--space-3);
   }
-  
-  .skeleton {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.1) 25%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(255, 255, 255, 0.1) 75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+  .title {
+    font-size: 2.5rem;
   }
-  
-  .loadingOverlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
+  .nftCard,
+  .emptyPreview {
+    height: 420px;
   }
-  
-  .loadingIcon {
-    animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
+  .imageContainer {
+    height: 280px;
   }
-  
-  .errorPreview {
-    padding: 2rem;
-    text-align: center;
-    color: #f56565;
-  }
-  
-  .errorIcon {
-    margin-bottom: 1rem;
-  }
-  
-  .hint {
-    color: #a0aec0;
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-  }
-  
   .actionButtons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
+    flex-direction: column;
   }
-  
-  .verifyButton {
-    background: rgba(138, 99, 210, 0.1);
-    border: 1px solid #8a63d2;
-    color: #8a63d2;
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .verifyButton.verified {
-    background: rgba(104, 211, 145, 0.1);
-    border-color: #68d391;
-    color: #68d391;
-  }
-  
-  .verifyButton:hover {
-    opacity: 0.9;
-  }
-  
+  .verifyButton,
   .downloadButton {
-    background: #8a63d2;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
+    width: 100%;
   }
-  
-  .downloadButton:hover {
-    opacity: 0.9;
-  }
-  
-  .collectionLink {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #8a63d2;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-  
-  .collectionLink:hover {
-    opacity: 0.8;
-  }
-  
-  .verificationError {
-    color: #f56565;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-  }
-  
-  .legalNotes {
-    margin-top: 2rem;
-    font-size: 0.9rem;
-    color: #a0aec0;
-    text-align: center;
-  }
-  
-  @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
-  
-  @keyframes spin {
-    100% { transform: rotate(360deg); }
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .previewSection {
-      padding: 1.5rem;
-    }
-    
-    .actionButtons {
-      flex-direction: column;
-    }
-    
-    .title {
-      font-size: 1.25rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .previewSection {
-      padding: 1rem;
-    }
-    
-    .emptyPreview {
-      padding: 1rem;
-    }
-    
-    .imageContainer {
-      aspect-ratio: 1/1;
-    }
-  }
-  
+}

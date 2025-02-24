@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { PublicKey } from "@solana/web3.js";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { Link } from "react-router-dom";
@@ -6,8 +5,6 @@ import {
   Wallet,
   RefreshCw,
   AlertCircle,
-  CheckCircle,
-  Fingerprint,
   Download,
   ArrowRight,
   Boxes,
@@ -39,25 +36,8 @@ const PreviewSection = ({
   generatedNFT,
   isLoading,
   generationError,
-  publicKey,
-  verificationStatus,
-  verifyNFT,
   downloadNFT,
 }: PreviewSectionProps) => {
-  const [localVerificationStatus, setLocalVerificationStatus] = useState<
-    string | null
-  >(null);
-
-  const handleVerify = async () => {
-    if (generatedNFT && publicKey) {
-      const result = await verifyNFT(
-        generatedNFT["Image hash"],
-        publicKey.toString()
-      );
-      setLocalVerificationStatus(result ? "verified" : "not-found");
-    }
-  };
-
   const renderPreviewContent = () => {
     if (!connected) {
       return (
@@ -109,42 +89,19 @@ const PreviewSection = ({
           </div>
           <div className={styles.actionButtons}>
             <button
-              onClick={handleVerify}
-              className={`${styles.verifyButton} ${
-                verificationStatus === "verified" || localVerificationStatus === "verified"
-                  ? styles.verified
-                  : ""
-              }`}
-            >
-              {verificationStatus === "verified" || localVerificationStatus === "verified" ? (
-                <>
-                  <CheckCircle size={20} />
-                  Verified
-                </>
-              ) : (
-                <>
-                  <Fingerprint size={20} />
-                  Verify NFT
-                </>
-              )}
-            </button>
-            <button
-              onClick={() => downloadNFT(generatedNFT.ipfs.url, generatedNFT.prompt)}
+              onClick={() =>
+                downloadNFT(generatedNFT.ipfs.url, generatedNFT.prompt)
+              }
               className={styles.downloadButton}
             >
               <Download size={20} />
-              Download
+              Download NFT
             </button>
             <Link to="/nft-collection" className={styles.collectionLink}>
               View Collection
-              <ArrowRight size={16} />
+              <ArrowRight size={20} />
             </Link>
           </div>
-          {(verificationStatus === "not-found" || localVerificationStatus === "not-found") && (
-            <p className={styles.verificationError}>
-              NFT not found or not owned by this wallet
-            </p>
-          )}
         </div>
       );
     }
@@ -158,18 +115,28 @@ const PreviewSection = ({
   };
 
   return (
-    <div className={styles.previewSection}>
-      <div className={styles.cardHeader}>
-        <div className={styles.titleGroup}>
-          <h2 className={styles.title}>NFT Preview</h2>
+    <>
+      <div className={styles.previewSection}>
+        <div className={styles.cardHeader}>
+          <div className={styles.titleGroup}>
+            <h2 className={styles.title}>NFT Preview</h2>
+          </div>
+        </div>
+        {renderPreviewContent()}
+        <div className={styles.legalNotes}>
+          <p>
+            No intellectual property rights are infringed in the generation of
+            these NFTs, as all AI-generated content is original and unique.
+          </p>
+          <p>
+            <strong>Important Notice:</strong> If an NFT generates as a black
+            image with only a watermark, it indicates that the content may be
+            considered <em>Not Safe For Work (NSFW)</em>. Please regenerate the
+            NFT in such cases.
+          </p>
         </div>
       </div>
-      {renderPreviewContent()}
-      <div className={styles.legalNotes}>
-      <p>No intellectual property rights are infringed in the generation of these NFTs, as all AI-generated content is original and unique.</p>
-      <p><strong>Important Notice:</strong> If an NFT generates as a black image with only a watermark, it indicates that the content may be considered <em>Not Safe For Work (NSFW)</em>. Please regenerate the NFT in such cases.</p>
-      </div>
-    </div>
+    </>
   );
 };
 

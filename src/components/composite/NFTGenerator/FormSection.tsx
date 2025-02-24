@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { AlertCircle, RefreshCw, Sparkles } from "lucide-react";
 import styles from "./styles/FormSection.module.css";
 
@@ -24,6 +25,29 @@ interface FormSectionProps {
   generationError: boolean;
 }
 
+const ErrorMessage = memo(
+  ({ message, size = 16 }: { message: string; size?: number }) => (
+    <div className={styles.errorMessage}>
+      <AlertCircle size={size} />
+      {message}
+    </div>
+  ),
+);
+
+const ButtonContent = memo(({ isLoading }: { isLoading: boolean }) =>
+  isLoading ? (
+    <>
+      <RefreshCw className={styles.spinIcon} size={20} />
+      Generating...
+    </>
+  ) : (
+    <>
+      <Sparkles className={styles.buttonIcon} size={20} />
+      Generate NFT
+    </>
+  ),
+);
+
 const FormSection = ({
   formState,
   validationState,
@@ -32,23 +56,33 @@ const FormSection = ({
   connected,
   isLoading,
 }: FormSectionProps) => {
+  const isFieldInvalid = validationState.nameError && formState.touched;
+  const isFieldValid = validationState.nameValid && formState.touched;
+  const isButtonDisabled =
+    !connected || isLoading || !validationState.nameValid;
+
   return (
     <div className={styles.inputSection}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <div className={styles.formGroup}>
-          <label className={styles.inputLabel}>Enter Your Prediction</label>
+          <label className={styles.inputLabel} htmlFor="prediction-input">
+            Enter Your Prediction
+          </label>
           <input
+            id="prediction-input"
             type="text"
             className={`${styles.inputField} 
-              ${validationState.nameError && formState.touched ? styles.error : ""} 
-              ${validationState.nameValid && formState.touched ? styles.valid : ""}`}
+              ${isFieldInvalid ? styles.error : ""} 
+              ${isFieldValid ? styles.valid : ""}`}
             placeholder="Example: Bitcoin will reach $100K by Dec 2024"
             value={formState.name}
             onChange={handleNameChange}
             disabled={!connected || isLoading}
+            aria-invalid={isFieldInvalid ? "true" : "false"}
+            aria-describedby={isFieldInvalid ? "prediction-error" : undefined}
           />
-          {validationState.nameError && formState.touched && (
-            <div className={styles.fieldError}>
+          {isFieldInvalid && (
+            <div id="prediction-error" className={styles.fieldError}>
               <AlertCircle size={12} />
               {validationState.nameError}
             </div>
@@ -56,36 +90,20 @@ const FormSection = ({
         </div>
 
         {validationState.inputError && formState.touched && (
-          <div className={styles.errorMessage}>
-            <AlertCircle size={16} />
-            {validationState.inputError}
-          </div>
+          <ErrorMessage message={validationState.inputError} />
         )}
 
         <button
           className={styles.generateButton}
           type="submit"
-          disabled={
-            !connected ||
-            isLoading ||
-            !validationState.nameValid
-          }
+          disabled={isButtonDisabled}
+          aria-busy={isLoading}
         >
-          {isLoading ? (
-            <>
-              <RefreshCw className={styles.spinIcon} size={20} />
-              Generating...
-            </>
-          ) : (
-            <>
-              <Sparkles className={styles.buttonIcon} size={20} />
-              Generate NFT
-            </>
-          )}
+          <ButtonContent isLoading={isLoading} />
         </button>
       </form>
     </div>
   );
 };
 
-export default FormSection;
+export default memo(FormSection);

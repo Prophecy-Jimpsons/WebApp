@@ -24,6 +24,9 @@ export const MetadataDisplay: React.FC<MetadataDisplayProps> = ({
         <p>
           <span>Wallet:</span> {metadata.walletAddress}
         </p>
+        <p>
+          <span>IPFS CID:</span> {metadata.ipfsCid}
+        </p>
         <a href={metadata.ipfsUrl} target="_blank" rel="noopener noreferrer">
           View on IPFS
         </a>

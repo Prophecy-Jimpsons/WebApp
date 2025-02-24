@@ -233,6 +233,7 @@ const VerifyNFT: React.FC = () => {
         const nftsRef = collection(db, "nfts");
         const q = query(nftsRef, where("imageHash", "==", imageHash));
         const querySnapshot = await getDocs(q);
+        console.log(querySnapshot);
 
         if (!querySnapshot.empty) {
           setVerificationSteps((prev) => ({
