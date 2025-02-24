@@ -1,0 +1,167 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal {
+  background-color: var(--color-black-background);
+  border: 1px solid var(--color-thin-grey);
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  outline: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--color-thin-grey);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0;
+}
+
+.closeButton {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-grey);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background-color: rgba(252, 175, 5, 0.1);
+  color: var(--color-primary);
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  color: var(--color-grey);
+  flex: 1;
+}
+
+.footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--color-thin-grey);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Size variants */
+.sm {
+  width: 100%;
+  max-width: 400px;
+}
+
+.md {
+  width: 100%;
+  max-width: 560px;
+}
+
+.lg {
+  width: 100%;
+  max-width: 720px;
+}
+
+.xl {
+  width: 100%;
+  max-width: 1080px;
+}
+
+.full {
+  width: calc(100% - 2rem);
+  height: calc(100% - 2rem);
+  max-width: none;
+  max-height: none;
+}
+
+/* Animations */
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+  .overlay {
+    padding: 1rem;
+  }
+
+  .modal {
+    max-height: calc(100vh - 2rem);
+  }
+
+  .sm,
+  .md,
+  .lg,
+  .xl {
+    max-width: 100%;
+  }
+}
+
+/* Custom scrollbar for the content */
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: var(--color-black-background-alt);
+  border-radius: 4px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: var(--color-thin-grey);
+  border-radius: 4px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-grey);
+}
