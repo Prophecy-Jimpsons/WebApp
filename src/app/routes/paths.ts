@@ -26,6 +26,7 @@ const PATHS = {
     NFT_COLLECTION: "/nft-collection",
     AI_CHAT: "/chat",
     GAME: "/game",
+    DAO_VOTE: "/dao-vote",
   },
 
   // Protected routes (require wallet connection)

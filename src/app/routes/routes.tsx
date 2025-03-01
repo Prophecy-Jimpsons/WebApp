@@ -19,6 +19,7 @@ const AccountDetails = lazy(
   () => import("@/pages/AccountDetails/AccountDetailsPage"),
 );
 const HowToBuy = lazy(() => import("@/pages/HowToBuy/HowToBuyPage"));
+const DaoVote = lazy(() => import("@/pages/DaoVote/DaoVote"));
 
 // Layout components should be eager loaded
 import DashBoardLayout from "@/layouts/DashboardLayout/DashboardLayout";
@@ -62,6 +63,14 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <RoadMap />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.DAO_VOTE,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DaoVote />
           </Suspense>
         ),
       },
