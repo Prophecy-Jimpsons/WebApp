@@ -4,13 +4,38 @@ import styles from "./DaoVote.module.css";
 import CardGroup from "./CardGroup";
 import VoteCard from "./VoteCard";
 import { oracleSources } from "./config";
+import { useWalletInfo } from "@/context/WalletContext";
 
 const DaoVote: React.FC = () => {
   const [selectedSource, setSelectedSource] = useState<string>("");
+  const { address, tokenAmount, tier } = useWalletInfo();
 
   const handleSourceChange = (id: string) => {
     setSelectedSource(id);
     console.log(`Selected Source: ${id}`);
+  };
+
+  const handleVote = () => {
+    if (!address || !selectedSource) return;
+
+    // Create the vote data object
+    const voteData = {
+      voter: address,
+      source_id: selectedSource,
+      stake: tokenAmount,
+      tier: tier.level,
+    };
+
+    console.log("Submitting vote:", voteData);
+
+    // Here you would typically send this data to your backend or blockchain
+    // For example:
+    // sendVoteToBlockchain(voteData);
+
+    // Show confirmation to user
+    alert(
+      `Vote submitted for ${oracleSources.find((s) => s.id === selectedSource)?.title}`,
+    );
   };
 
   return (
@@ -66,11 +91,17 @@ const DaoVote: React.FC = () => {
               <div className={styles.votingPower}>
                 <span className={styles.metricLabel}>Voting Power:</span>
                 <span className={styles.metricValue}>
-                  √Staked JIMP × Tier Multiplier
+                  √ {tokenAmount} JIMP × {tier.multiplier} Multiplier
                 </span>
               </div>
             </div>
-            <button className={`${styles.voteButton}`}>Vote Source</button>
+            <button
+              className={`${styles.voteButton}`}
+              onClick={handleVote}
+              disabled={!address}
+            >
+              {address ? "Vote Source" : "Connect Wallet to Vote"}
+            </button>
           </div>
         )}
       </section>
