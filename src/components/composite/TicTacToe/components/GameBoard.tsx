@@ -304,11 +304,11 @@ const GameBoard: React.FC<GameBoardProps> = ({
         ),
       );
 
-      const refreshTimer = setTimeout(() => {
-        window.location.reload();
-      }, 6000);
+      // const refreshTimer = setTimeout(() => {
+      //   window.location.reload();
+      // }, 6000);
 
-      return () => clearTimeout(refreshTimer);
+      // return () => clearTimeout(refreshTimer);
     }
   }, [gameState]);
 

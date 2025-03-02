@@ -63,6 +63,7 @@ const GameLanding: React.FC<LandingProps> = ({
           const lastActivityTime = gameData.last_activity;
           const currentTime = Date.now() / 1000; // Convert to seconds to match API format
           const inactiveTime = currentTime - lastActivityTime;
+          console.log("Inactive time:", inactiveTime);
           
           // If game has been inactive for more than 30 seconds
           if (inactiveTime > 30) {

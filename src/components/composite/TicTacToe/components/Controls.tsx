@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import styles from "./GameBoard.module.css";
+import axios from "axios";
+
+const API_URL = "https://wanemregmi.pythonanywhere.com";
 
 const Controls: React.FC<{
   onBack: () => void;
@@ -7,15 +10,31 @@ const Controls: React.FC<{
   playerId: string;
   isGameOver: boolean;
 }> = ({ onBack, onReset, isGameOver, playerId }) => {
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
-  const handleResetClick = () => {
-    setShowConfirm(true);
-  };
-
-  const confirmReset = () => {
-    setShowConfirm(false);
-    onReset();
+  const handleResetClick = async () => {
+    setIsResetting(true);
+    
+    try {
+      // Check if there are any active games
+      const response = await axios.get(`${API_URL}/active_games`);
+      const activeGames = response.data.active_games;
+      
+      // If there are no active games (empty object), call reset
+      if (Object.keys(activeGames).length === 0) {
+        console.log("No active games found, safe to reset");
+        onReset();
+      } else {
+        console.log("Active games exist, going back to mode selection");
+        onBack(); // Just go back without resetting if games exist
+      }
+    } catch (error) {
+      console.error("Error checking active games:", error);
+      // On error, still allow reset as a fallback
+      onReset();
+    } finally {
+      setIsResetting(false);
+    }
   };
 
   return (
@@ -29,10 +48,17 @@ const Controls: React.FC<{
         <button
           className={`${styles.restartButton} ${styles.fadeIn}`}
           onClick={handleResetClick}
+          disabled={isResetting}
         >
-          Start New Game
+          {isResetting ? "Checking..." : "Start New Game"}
         </button>
       )}
+    </div>
+  );
+};
+
+export default Controls;
+
 
       {/* Confirmation Modal */}
       {/* {showConfirm && (
@@ -52,8 +78,3 @@ const Controls: React.FC<{
           </div>
         </div>
       )} */}
-    </div>
-  );
-};
-
-export default Controls;
