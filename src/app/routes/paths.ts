@@ -26,6 +26,7 @@ const PATHS = {
     NFT_COLLECTION: "/nft-collection",
     AI_CHAT: "/chat",
     GAME: "/game",
+    PITCH: "/investment_pitch_deck",
   },
 
   // Protected routes (require wallet connection)

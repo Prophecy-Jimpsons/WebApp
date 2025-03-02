@@ -35,6 +35,9 @@ const AiChatPage = lazy(() => import("@/pages/AiChat/AiChatPage"));
 // Telegram Game Page
 import Game from "@/pages/Game/GamePage";
 
+// PDF Viewer
+import Pitch from "@/pages/Pitch/PitchPage";
+
 // Public Routes - No authentication needed
 export const publicRoutes: RouteConfig[] = [
   {
@@ -135,6 +138,14 @@ export const publicRoutes: RouteConfig[] = [
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <Game />
+          </Suspense>
+        ),
+      },
+      {
+        path: PATHS.PUBLIC.PITCH,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <Pitch />
           </Suspense>
         ),
       },
