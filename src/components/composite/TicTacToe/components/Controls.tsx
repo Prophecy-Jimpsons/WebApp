@@ -35,7 +35,7 @@ const Controls: React.FC<{
       )}
 
       {/* Confirmation Modal */}
-      {showConfirm && (
+      {/* {showConfirm && (
         <div className={styles.confirmModal}>
           <div className={styles.confirmModalContent}>
             <h2>Restart Game?</h2>
@@ -51,7 +51,7 @@ const Controls: React.FC<{
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
