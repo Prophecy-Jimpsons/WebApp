@@ -32,6 +32,12 @@
 .cardHeader {
   margin-bottom: var(--space-5);
   position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+
+.cardHeader > a {
+  height: 5rem;
 }
 
 .titleGroup {

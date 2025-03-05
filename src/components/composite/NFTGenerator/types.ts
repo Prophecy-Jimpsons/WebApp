@@ -29,6 +29,7 @@ export interface Metadata {
 }
 
 export interface NFTDocument {
+  name: string;
   imageHash: string;
   walletAddress: string;
   prompt?: string;

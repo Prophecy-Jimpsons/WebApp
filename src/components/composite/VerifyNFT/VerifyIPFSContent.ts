@@ -20,7 +20,6 @@ export const verifyIPFSContent = async (
 
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0].data() as NFTDocument;
-      console.log("🔥 Firestore Retrieved NFT Data:", doc);
 
       if (!doc.metadata_uri?.cid) {
         console.error(
@@ -30,11 +29,10 @@ export const verifyIPFSContent = async (
         return null;
       }
 
-      console.log("✅ NFT Found! CID:", doc.metadata_uri.cid);
       return {
         ipfsCid: doc.metadata_uri.cid,
         ipfsUrl: doc.metadata_uri.url,
-        prompt: doc.prompt || "Untitled",
+        prompt: doc.name || "Untitled",
         walletAddress: doc.walletAddress,
         createdAt: doc.createdAt,
       };

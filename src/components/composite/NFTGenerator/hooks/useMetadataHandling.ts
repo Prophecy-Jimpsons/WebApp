@@ -13,6 +13,9 @@ import { useNFTGeneration } from "@/hooks/useNFTGeneration";
 import { useMintNFT } from "@/hooks/useMintNFT";
 import type { MetadataResponse, Metadata } from "../types";
 
+// Maximum length for NFT name allowed by the Solana program
+const MAX_NFT_NAME_LENGTH = 32;
+
 const useMetadataHandling = (publicKey: PublicKey | null) => {
   const [metadata, setMetadata] = useState<Metadata | null>(null);
   const [isMintSuccess, setIsMintSuccess] = useState(false);
@@ -20,10 +23,38 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
     null,
   );
   const [isGeneratingMetadata, setIsGeneratingMetadata] = useState(false);
+  const [mintingAttempted, setMintingAttempted] = useState(false);
 
   const { generatedNFT, nftGenerate, isLoading, generationError } =
     useNFTGeneration();
   const { mintNFT, isLoading: isMinting } = useMintNFT();
+
+  const checkForExistingMint = useCallback(
+    async (imageHash: string): Promise<boolean> => {
+      if (!imageHash) return false;
+
+      try {
+        const nftsRef = collection(db, "nfts");
+        const q = query(
+          nftsRef,
+          where("imageHash", "==", imageHash),
+          where("mintSignature", "!=", null),
+        );
+
+        const querySnapshot = await getDocs(q);
+        const exists = !querySnapshot.empty;
+
+        if (exists) {
+          console.log("NFT already minted:", querySnapshot.docs[0].data());
+        }
+
+        return exists;
+      } catch (error) {
+        return false;
+      }
+    },
+    [],
+  );
 
   const storeNFTData = useCallback(
     async (metadataResponse: MetadataResponse) => {
@@ -44,11 +75,6 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
         return;
       }
 
-      console.log(
-        "🔥 Storing NFT in Firestore with CID:",
-        metadataResponse.metadata_uri.cid,
-      );
-
       try {
         const nftData = {
           name: generatedNFT.prompt ?? "Unknown NFT",
@@ -57,16 +83,13 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
           imageUrl: generatedNFT.ipfs.url ?? "",
           imageHash: generatedNFT["Image hash"] ?? "",
           walletAddress: publicKey.toString(),
+          ipfsCid: metadataResponse.metadata_uri.cid, // Ensure consistent field naming
           metadata_uri: metadataResponse.metadata_uri,
           createdAt: new Date().toISOString(),
+          mintingAttempted: false, // Track if we've attempted to mint
         };
 
         await setDoc(doc(db, "nfts", generatedNFT["Image hash"]), nftData);
-
-        console.log(
-          "✅ NFT stored successfully in Firestore with CID:",
-          metadataResponse.metadata_uri.cid,
-        );
       } catch (error) {
         console.error("❌ Firestore storage error:", error);
       }
@@ -97,7 +120,6 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
       if (!response.ok) throw new Error("Metadata generation failed");
 
       const data: MetadataResponse = await response.json();
-      console.log("🔥 Metadata API Response:", data);
 
       if (!data.metadata_uri?.cid) {
         throw new Error("CID is missing from metadata response");
@@ -170,35 +192,121 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
   // Auto-mint when metadata is ready
   useEffect(() => {
     const handleMint = async () => {
-      if (metadata && publicKey && generatedNFT) {
-        try {
-          const mintSignature = await mintNFT({
-            name: metadata.name || "",
-            symbol: metadata.symbol || "PREDICT",
-            uri: metadata.url,
-          });
+      if (!metadata || !publicKey || !generatedNFT) return;
 
-          if (mintSignature) {
-            await setDoc(
-              doc(db, "nfts", generatedNFT["Image hash"]),
-              {
-                mintSignature,
-                mintAddress: publicKey.toString(),
-              },
-              { merge: true },
-            );
+      // Track that we've attempted minting to prevent duplicate attempts
+      setMintingAttempted(true);
 
-            setIsMintSuccess(true);
-          }
-        } catch (error) {
-          console.error("Minting error:", error);
+      try {
+        // First check if this NFT has already been minted
+        const alreadyMinted = await checkForExistingMint(
+          generatedNFT["Image hash"],
+        );
+
+        if (alreadyMinted) {
+          setIsMintSuccess(true);
+          return;
+        }
+
+        // Mark that we're attempting to mint this NFT
+        await setDoc(
+          doc(db, "nfts", generatedNFT["Image hash"]),
+          { mintingAttempted: true },
+          { merge: true },
+        );
+
+        // Truncate name to fit Solana program limits
+        const originalName = metadata.name || "";
+        const truncatedName =
+          originalName.length > MAX_NFT_NAME_LENGTH
+            ? originalName.substring(0, MAX_NFT_NAME_LENGTH)
+            : originalName;
+
+        // console.log(
+        //   `Minting NFT with name: "${truncatedName}" (${truncatedName.length} chars)`,
+        // );
+
+        const mintResult = await mintNFT({
+          name: truncatedName,
+          symbol: metadata.symbol || "PREDICT",
+          uri: metadata.url,
+        });
+
+        if (mintResult.success && mintResult.signature) {
+          console.log("NFT minted successfully:", mintResult);
+
+          await setDoc(
+            doc(db, "nfts", generatedNFT["Image hash"]),
+            {
+              mintSignature: mintResult.signature,
+              mintAddress: mintResult.leafOwner || publicKey.toString(),
+              nftAddress: mintResult.leafOwner || publicKey.toString(),
+              mintingAttempted: true,
+              mintingCompleted: true,
+              mintedAt: new Date().toISOString(),
+            },
+            { merge: true },
+          );
+
+          setIsMintSuccess(true);
+        } else {
+          console.error(
+            "Mint returned success=false or no signature:",
+            mintResult,
+          );
+
+          // Update the record to show mint attempt failed
+          await setDoc(
+            doc(db, "nfts", generatedNFT["Image hash"]),
+            {
+              mintError: mintResult.error || "Unknown minting error",
+              mintingAttempted: true,
+              mintingCompleted: false,
+            },
+            { merge: true },
+          );
+
           setIsMintSuccess(false);
         }
+      } catch (error) {
+        console.error("Minting error:", error);
+
+        // Record the error
+        if (generatedNFT) {
+          await setDoc(
+            doc(db, "nfts", generatedNFT["Image hash"]),
+            {
+              mintError:
+                error instanceof Error ? error.message : "Unknown error",
+              mintingAttempted: true,
+              mintingCompleted: false,
+            },
+            { merge: true },
+          );
+        }
+
+        setIsMintSuccess(false);
       }
     };
 
-    handleMint();
-  }, [metadata, publicKey, mintNFT, generatedNFT]);
+    // Only attempt minting if:
+    // 1. We have metadata
+    // 2. We're not already minting
+    // 3. We haven't successfully minted yet
+    // 4. We haven't already attempted minting
+    if (metadata && !isMinting && !isMintSuccess && !mintingAttempted) {
+      handleMint();
+    }
+  }, [
+    metadata,
+    publicKey,
+    mintNFT,
+    generatedNFT,
+    isMintSuccess,
+    isMinting,
+    mintingAttempted,
+    checkForExistingMint,
+  ]);
 
   return {
     generatedNFT,

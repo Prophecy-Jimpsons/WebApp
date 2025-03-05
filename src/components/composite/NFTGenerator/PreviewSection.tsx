@@ -121,6 +121,10 @@ const PreviewSection = ({
           <div className={styles.titleGroup}>
             <h2 className={styles.title}>NFT Preview</h2>
           </div>
+          <Link to="/nft-collection" className={styles.collectionLink}>
+              View Collection
+              <ArrowRight size={20} />
+            </Link>
         </div>
         {renderPreviewContent()}
         <div className={styles.legalNotes}>
