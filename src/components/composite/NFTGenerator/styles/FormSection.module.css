@@ -1,12 +1,16 @@
 .inputSection {
   padding: var(--space-4);
-  background: rgba(var(--color-black-background), 0.1);
+  background: rgba(var(--color-black-background), 1);
   border-radius: var(--space-3);
   backdrop-filter: blur(12px);
   margin-top: 8rem;
-  border: 1px solid rgba(var(--color-primary), 0.1);
+  border: 10px solid rgba(var(--color-primary), 0.1);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-bottom: 4rem;
+  border-radius: 8px;
 }
 
 /* Subtle gradient background for the section */
@@ -19,10 +23,23 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(252, 175, 5, 0.02) 0%,
-    rgba(5, 104, 252, 0.02) 100%
+    rgba(252, 175, 5, 0.03) 0%,
+    rgba(5, 104, 252, 0.03) 100%
   );
   z-index: -1;
+}
+
+.spinIcon {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .formGroup {

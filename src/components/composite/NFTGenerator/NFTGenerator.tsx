@@ -78,17 +78,6 @@ const NFTGenerator = () => {
       <div className={styles.glassCard}>
         {activeSection === "generate" ? (
           <>
-            <PreviewSection
-              connected={connected}
-              generatedNFT={generatedNFT ?? null}
-              isLoading={isGeneratingMetadata}
-              generationError={!!generationError}
-              publicKey={publicKey}
-              verifyNFT={verifyNFT}
-              downloadNFT={downloadNFT}
-              verificationStatus={verificationStatus}
-            />
-
             <FormSection
               formState={formState}
               validationState={validationState}
@@ -98,6 +87,17 @@ const NFTGenerator = () => {
               connected={connected}
               isLoading={isGeneratingMetadata}
               generationError={!!generationError}
+            />
+
+            <PreviewSection
+              connected={connected}
+              generatedNFT={generatedNFT ?? null}
+              isLoading={isGeneratingMetadata}
+              generationError={!!generationError}
+              publicKey={publicKey}
+              verifyNFT={verifyNFT}
+              downloadNFT={downloadNFT}
+              verificationStatus={verificationStatus}
             />
 
             {generatedNFT && (
