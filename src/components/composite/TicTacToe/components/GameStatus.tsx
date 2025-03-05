@@ -1,5 +1,14 @@
-import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
 import styles from "./GameBoard.module.css";
+import Modal from "../../Modal/Moda";
+import RulesContent from "./RulesContent";
+import { Book } from "lucide-react";
 
 export interface GameState {
   board_state: {
@@ -30,13 +39,8 @@ interface GameStatusProps {
   timeoutMessage: string;
 }
 
-
-
-
 const AVAI_MESSAGES = {
-  waiting: [
-    "AVAI: Waiting for meatbag...",
-  ],
+  waiting: ["AVAI: Waiting for meatbag..."],
   aiGameStart: [
     "AVAI: Prepare for binary bullying!",
     "AVAI: Let's play 4x4 suffer-tac-toe!",
@@ -86,10 +90,8 @@ const AVAI_MESSAGES = {
     "AVAI: Blink twice if stuck! 👀",
     "AVAI: Oxygen helps! Maybe! 🌬️",
     "AVAI: F keys = moral support",
-  ]
+  ],
 };
-
-
 
 const GameStatus: React.FC<GameStatusProps> = ({
   username,
@@ -102,6 +104,7 @@ const GameStatus: React.FC<GameStatusProps> = ({
   const timeoutRef = useRef<NodeJS.Timeout>();
   const lastMessageRef = useRef<{ current: string }>({ current: "" });
   const moveCountRef = useRef(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   const playerNumId = useMemo(() => {
     try {
@@ -112,14 +115,18 @@ const GameStatus: React.FC<GameStatusProps> = ({
   }, [playerId]);
 
   const getUniqueMessage = useCallback((messages: string[]) => {
-    const filtered = messages.filter(msg => msg !== lastMessageRef.current.current);
+    const filtered = messages.filter(
+      (msg) => msg !== lastMessageRef.current.current,
+    );
     return filtered[Math.floor(Math.random() * filtered.length)] || messages[0];
   }, []);
 
   const getOpponentUsername = useCallback(() => {
-    return Object.values(gameState.players || {}).find(
-      (player) => player.id !== playerId
-    )?.username || "Opponent";
+    return (
+      Object.values(gameState.players || {}).find(
+        (player) => player.id !== playerId,
+      )?.username || "Opponent"
+    );
   }, [gameState.players, playerId]);
 
   const callResetEndpoint = useCallback(async () => {
@@ -133,75 +140,89 @@ const GameStatus: React.FC<GameStatusProps> = ({
     }
   }, []);
 
-  const updateAvaiMessage = useCallback((state: GameState) => {
-    setIsTyping(true);
-    clearTimeout(timeoutRef.current);
+  const updateAvaiMessage = useCallback(
+    (state: GameState) => {
+      setIsTyping(true);
+      clearTimeout(timeoutRef.current);
 
-    timeoutRef.current = setTimeout(() => {
-      let newMessage = "";
-      const { phase, pieces_placed } = state.board_state;
-      const isHumanTurn = state.current_player === playerNumId;
-      const moveCount = Object.keys(pieces_placed).length;
+      timeoutRef.current = setTimeout(
+        () => {
+          let newMessage = "";
+          const { phase, pieces_placed } = state.board_state;
+          const isHumanTurn = state.current_player === playerNumId;
+          const moveCount = Object.keys(pieces_placed).length;
 
-      if (moveCount !== moveCountRef.current) {
-        moveCountRef.current = moveCount;
-      }
-
-      if (state.status === "finished") {
-        // Updated victory/defeat message categories
-        newMessage = getUniqueMessage(
-          state.winner === playerNumId 
-            ? AVAI_MESSAGES.humanVictory  // Changed from 'victory'
-            : AVAI_MESSAGES.aiWin         // Changed from 'defeat'
-        );
-      } else if (state.playing_with_ai) {
-        if (isHumanTurn) {
-          if (moveCount === 0) {
-            newMessage = getUniqueMessage(AVAI_MESSAGES.aiGameStart);
-          } else if (moveCount % 3 === 0) {
-            newMessage = getUniqueMessage(AVAI_MESSAGES.criticalPoint);
-          } else {
-            const phaseMessages = [
-              ...(phase === "placement" ? AVAI_MESSAGES.placement : AVAI_MESSAGES.movement),
-              ...AVAI_MESSAGES.humanTurn
-            ];
-            newMessage = getUniqueMessage(phaseMessages);
-            
-            if (Math.random() < 0.25) {
-              newMessage = getUniqueMessage([...AVAI_MESSAGES.helpfulTips, newMessage]);
-            }
+          if (moveCount !== moveCountRef.current) {
+            moveCountRef.current = moveCount;
           }
-        } else {
-          newMessage = getUniqueMessage(
-            phase === "placement" ? AVAI_MESSAGES.aiSetup : AVAI_MESSAGES.aiTurn
-          );
-        }
-      } else if (!state.players || Object.keys(state.players).length < 2) {
-        newMessage = AVAI_MESSAGES.waiting[0];
-      } else if (state.status === "ongoing") {
-        newMessage = getUniqueMessage(
-          phase === "placement" ? AVAI_MESSAGES.placement : AVAI_MESSAGES.movement
-        );
-      }
 
-      if (newMessage && newMessage !== lastMessageRef.current.current) {
-        lastMessageRef.current = { current: newMessage };
-        setDisplayMessage(newMessage);
-      }
-      setIsTyping(false);
-    }, Math.random() * 400 + 400);
-  }, [playerNumId, getUniqueMessage]);
+          if (state.status === "finished") {
+            // Updated victory/defeat message categories
+            newMessage = getUniqueMessage(
+              state.winner === playerNumId
+                ? AVAI_MESSAGES.humanVictory // Changed from 'victory'
+                : AVAI_MESSAGES.aiWin, // Changed from 'defeat'
+            );
+          } else if (state.playing_with_ai) {
+            if (isHumanTurn) {
+              if (moveCount === 0) {
+                newMessage = getUniqueMessage(AVAI_MESSAGES.aiGameStart);
+              } else if (moveCount % 3 === 0) {
+                newMessage = getUniqueMessage(AVAI_MESSAGES.criticalPoint);
+              } else {
+                const phaseMessages = [
+                  ...(phase === "placement"
+                    ? AVAI_MESSAGES.placement
+                    : AVAI_MESSAGES.movement),
+                  ...AVAI_MESSAGES.humanTurn,
+                ];
+                newMessage = getUniqueMessage(phaseMessages);
+
+                if (Math.random() < 0.25) {
+                  newMessage = getUniqueMessage([
+                    ...AVAI_MESSAGES.helpfulTips,
+                    newMessage,
+                  ]);
+                }
+              }
+            } else {
+              newMessage = getUniqueMessage(
+                phase === "placement"
+                  ? AVAI_MESSAGES.aiSetup
+                  : AVAI_MESSAGES.aiTurn,
+              );
+            }
+          } else if (!state.players || Object.keys(state.players).length < 2) {
+            newMessage = AVAI_MESSAGES.waiting[0];
+          } else if (state.status === "ongoing") {
+            newMessage = getUniqueMessage(
+              phase === "placement"
+                ? AVAI_MESSAGES.placement
+                : AVAI_MESSAGES.movement,
+            );
+          }
+
+          if (newMessage && newMessage !== lastMessageRef.current.current) {
+            lastMessageRef.current = { current: newMessage };
+            setDisplayMessage(newMessage);
+          }
+          setIsTyping(false);
+        },
+        Math.random() * 400 + 400,
+      );
+    },
+    [playerNumId, getUniqueMessage],
+  );
 
   useEffect(() => {
     updateAvaiMessage(gameState);
     if (gameState.status === "finished") callResetEndpoint();
-    
+
     return () => {
       clearTimeout(timeoutRef.current);
       lastMessageRef.current = { current: "" };
     };
   }, [gameState, updateAvaiMessage, callResetEndpoint]);
-
 
   const renderGameStatus = useCallback(() => {
     if (!gameState.players || Object.keys(gameState.players).length < 2) {
@@ -218,8 +239,9 @@ const GameStatus: React.FC<GameStatusProps> = ({
             Phase: {gameState.board_state.phase.toUpperCase()}
           </p>
           <p className={styles.turnIndicator}>
-            🎮 {gameState.current_player === parseInt(playerId) 
-              ? "Your Turn" 
+            🎮{" "}
+            {gameState.current_player === parseInt(playerId)
+              ? "Your Turn"
               : `${getOpponentUsername()}'s Turn`}
           </p>
         </>
@@ -230,7 +252,8 @@ const GameStatus: React.FC<GameStatusProps> = ({
       return (
         <div className={styles.gameOverMessage}>
           <h2 className={styles.gameOverTitle}>
-            {gameState.playing_with_ai && gameState.winner !== parseInt(playerId)
+            {gameState.playing_with_ai &&
+            gameState.winner !== parseInt(playerId)
               ? "AVAI Wins! 🤖"
               : gameState.winner === parseInt(playerId)
                 ? "You Win! 🎉"
@@ -246,23 +269,36 @@ const GameStatus: React.FC<GameStatusProps> = ({
   const renderPlayersVersus = useCallback(() => {
     const players = Object.values(gameState.players || {});
     if (players.length === 0) return username;
-    
+
     return players
-      .sort((a, _b) => (a.id === playerId ? -1 : 1))
-      .map(p => p.username || "Waiting...")
+      .sort((a) => (a.id === playerId ? -1 : 1))
+      .map((p) => p.username || "Waiting...")
       .join(" vs. ");
   }, [gameState.players, username, playerId]);
 
   return (
     <>
       <h2 className={styles.greeting}>{renderPlayersVersus()}</h2>
+      <button onClick={() => setIsOpen(true)} className={styles.ruleBtn}>
+        <Book /> Rules
+      </button>
+
+      <Modal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Game Rules"
+      >
+        <RulesContent />
+      </Modal>
       {renderGameStatus()}
       <div className={styles.avaiContainer}>
         <div className={styles.avaiAvatar}>🤖</div>
         <div className={styles.avaiChatBubble}>
           {isTyping ? (
             <div className={styles.typingDots}>
-              {[...Array(3)].map((_, i) => <span key={i}>.</span>)}
+              {[...Array(3)].map((_, i) => (
+                <span key={i}>.</span>
+              ))}
             </div>
           ) : (
             displayMessage

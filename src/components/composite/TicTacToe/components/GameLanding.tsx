@@ -1,7 +1,11 @@
 // GameLanding.tsx
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styles from "./GameLanding.module.css";
 import RulesModal from "./RulesModal";
+import axios from "axios";
+
+
+const API_URL = "https://wanemregmi.pythonanywhere.com";
 
 interface LandingProps {
   onNext: () => void;
@@ -25,10 +29,65 @@ const GameLanding: React.FC<LandingProps> = ({
     setIsRulesOpen(true);
   };
 
-  const handleSpectate = () => {
-    if (gameExists) setPlayerId("spectator");
-    onSpectate();
-  };
+  // const handleSpectate = () => {
+  //   if (gameExists) setPlayerId("spectator");
+  //   onSpectate();
+  // };
+
+    const callResetEndpoint = useCallback(async () => {
+      try {
+        await fetch("https://wanemregmi.pythonanywhere.com/reset_all", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+      } catch (error) {
+        console.error("Error calling reset endpoint:", error);
+      }
+    }, []);
+
+    const handleSpectate = async () => {
+      if (gameExists) {
+        try {
+          // Get current game status when spectating
+          const response = await axios.get(`${API_URL}/active_games`);
+          const gameData = response.data.active_games["1"];
+          
+          if (!gameData) {
+            console.log("No active game found.");
+            setPlayerId("spectator");
+            onSpectate();
+            return;
+          }
+          
+          // Check last activity timestamp
+          const lastActivityTime = gameData.last_activity;
+          const currentTime = Date.now() / 1000; // Convert to seconds to match API format
+          const inactiveTime = currentTime - lastActivityTime;
+          console.log("Inactive time:", inactiveTime);
+          
+          // If game has been inactive for more than 30 seconds
+          if (inactiveTime > 30) {
+            console.log("Game inactive for more than 30 seconds. Resetting...");
+            // Call reset endpoint
+            await callResetEndpoint();
+            // Refresh page to show updated game state
+            window.location.reload();
+            return;
+          }
+          
+          // Otherwise proceed with spectating
+          setPlayerId("spectator");
+          onSpectate();
+        } catch (error) {
+          console.error("Error checking game status:", error);
+          // Still allow spectating in case of error
+          setPlayerId("spectator");
+          onSpectate();
+        }
+      } else {
+        console.log("No game exists to spectate");
+      }
+    };
 
   return (
     <div className={styles.container}>

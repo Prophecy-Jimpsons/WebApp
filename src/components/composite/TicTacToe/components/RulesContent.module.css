@@ -1,0 +1,158 @@
+.rulesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ruleCard {
+  background: rgba(10, 10, 20, 0.3);
+  border: 1px solid var(--color-thin-grey);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.ruleCard:hover {
+  background: rgba(10, 10, 20, 0.4);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(252, 175, 5, 0.1);
+}
+
+.ruleHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ruleIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(252, 175, 5, 0.1);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.ruleIcon {
+  color: var(--color-primary);
+  width: 24px;
+  height: 24px;
+}
+
+.ruleTitleGroup {
+  flex: 1;
+}
+
+.ruleTitleGroup h3 {
+  color: var(--color-white);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 0.25rem;
+}
+
+.ruleTitleGroup p {
+  color: var(--color-grey);
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.chevron {
+  color: var(--color-grey);
+  transition: transform 0.3s ease;
+}
+
+.rotated {
+  transform: rotate(90deg);
+}
+
+.ruleDetails {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-thin-grey);
+  color: var(--color-grey);
+  font-size: 1.5rem;
+  line-height: 1.6;
+}
+
+.ruleDetails p {
+  margin: 0.5rem 0;
+  padding-left: 1rem;
+}
+
+.expanded {
+  background: rgba(10, 10, 20, 0.4);
+  border-color: var(--color-primary);
+}
+
+/* Animation for expanding/collapsing */
+.ruleDetails {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects for icons */
+.ruleCard:hover .ruleIcon {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Focus styles for accessibility */
+.ruleCard:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(252, 175, 5, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .ruleCard {
+    padding: 0.75rem;
+  }
+
+  .ruleIconWrapper {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ruleIcon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .ruleTitleGroup h3 {
+    font-size: 1.4rem;
+  }
+
+  .ruleTitleGroup p {
+    font-size: 1.2rem;
+  }
+}
