@@ -1,17 +1,9 @@
 import { Clock } from "lucide-react";
 import type React from "react";
 import styles from "./VoteCard.module.css";
+import { OracleSource } from "@/types/dao";
 
-export interface VoteCardProps {
-  id: string;
-  title: string;
-  description: string;
-  author: string;
-  authorImage?: string;
-  votes: number;
-  daysLeft: number;
-  progress: number;
-  isActive?: boolean;
+export interface VoteCardProps extends OracleSource {
   isSelected?: boolean;
   onSelect?: (id: string) => void;
   children?: React.ReactNode;
@@ -20,16 +12,13 @@ export interface VoteCardProps {
 const VoteCard: React.FC<VoteCardProps> = ({
   id,
   title,
-  description,
-  author,
-  authorImage = "/placeholder.svg?height=40&width=40",
-  votes,
+  endpoints,
+  totalVotes,
   daysLeft,
   progress,
-  isActive,
+  status,
   isSelected = false,
   onSelect,
-  children,
 }) => {
   const handleSelect = () => {
     if (onSelect) {
@@ -52,49 +41,56 @@ const VoteCard: React.FC<VoteCardProps> = ({
       }}
     >
       <div className={styles.header}>
-        <div className={styles.author}>
-          <img
-            src={authorImage || "/placeholder.svg"}
-            alt={`${author}'s avatar`}
-            className={styles.avatar}
-          />
-          <span className={styles.authorText}>
-            by <span className={styles.authorName}>{author}</span>
-          </span>
-        </div>
         <div className={styles.stats}>
-          <span className={styles.votes}>
-            {votes >= 1000 ? `${Math.floor(votes / 1000)}K+` : votes} Votes
-          </span>
-          {isActive ? (
+          <div className={styles.votes}>
+            <span className={styles.voteCount}>
+              {totalVotes >= 1000
+                ? `${Math.floor(totalVotes / 1000)}K+`
+                : totalVotes}
+            </span>
+            <span className={styles.voteLabel}>votes</span>
+          </div>
+          {status === "active" ? (
             <span className={styles.activeTag}>Active</span>
           ) : (
             <span className={styles.closedTag}>Closed</span>
           )}
         </div>
+        <h3 className={styles.title}>{title}</h3>
       </div>
-
       <div className={styles.content}>
-        <div className={styles.mainContent}>
-          <h3 className={styles.title}>{title}</h3>
-          <p className={styles.description}>{description}</p>
+        <div className={styles.sourceHeader}>
+          <h4 className={styles.sourceTitle}>
+            Sources:{" "}
+            <span className={styles.sourceCount}>({endpoints.length})</span>
+          </h4>
+        </div>
 
-          <div className={styles.footer}>
-            <div className={styles.timeRemaining}>
-              <Clock size={16} className={styles.clockIcon} />
-              <span>{daysLeft} days left</span>
-            </div>
-            <div className={styles.progressBarContainer}>
-              <div
-                className={styles.progressBar}
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
+        <div className={styles.sourceList}>
+          <span className={styles.sourceNote}>
+            Note: For security, we display shortened URLs. To visit the full
+            source, click on the link and you will be redirected to the original
+            URL.
+          </span>
+          {endpoints.map((source, index) => (
+            <SourceItem key={index} source={source} />
+          ))}
+        </div>
+
+        <div className={styles.footer}>
+          <div className={styles.timeRemaining}>
+            <Clock size={16} className={styles.clockIcon} />
+            <span>{daysLeft} days left</span>
           </div>
-
-          {children && (
-            <div className={styles.childrenContainer}>{children}</div>
-          )}
+          <div className={styles.progressContainer}>
+            {/* <div
+              className={styles.progressBar}
+              style={{ width: `$${progress}%` }}
+            /> */}
+          </div>
+          <div className={styles.validation}>
+            Validation: Multi-Source Verification
+          </div>
         </div>
       </div>
     </div>
@@ -102,3 +98,28 @@ const VoteCard: React.FC<VoteCardProps> = ({
 };
 
 export default VoteCard;
+
+interface Source {
+  category: string;
+  url: string;
+}
+interface SourceItemProps {
+  source: Source;
+}
+
+const SourceItem: React.FC<SourceItemProps> = ({ source }) => {
+  return (
+    <div className={styles.sourceItem}>
+      <span className={styles.sourceType}>{source.category}:</span>
+      {/* <a
+        href={source.url}
+        className={styles.sourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {source.url}
+      </a> */}
+      <span className={styles.sourceUrl}>{source.url}</span>
+    </div>
+  );
+};

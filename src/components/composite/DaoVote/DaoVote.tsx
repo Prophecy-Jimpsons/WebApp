@@ -1,48 +1,112 @@
-import type React from "react";
-import { useState } from "react";
-import styles from "./DaoVote.module.css";
-import CardGroup from "./CardGroup";
-import VoteCard from "./VoteCard";
-import { oracleSources } from "./config";
 import { useWalletInfo } from "@/context/WalletContext";
+import {
+  getOracleSources,
+  initializeDatabase,
+  submitVote,
+} from "@/services/dao-service";
+import { OracleSource } from "@/types/dao";
+import type React from "react";
+import { useEffect, useState } from "react";
+import CardGroup from "./CardGroup";
+import styles from "./DaoVote.module.css";
+import VoteCard from "./VoteCard";
+
+const MIN_STAKE_REQUIRED = 100;
 
 const DaoVote: React.FC = () => {
   const [selectedSource, setSelectedSource] = useState<string>("");
+  const [oracleSources, setOracleSources] = useState<OracleSource[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { address, tokenAmount, tier } = useWalletInfo();
+
+  const hasEnoughStake = tokenAmount >= MIN_STAKE_REQUIRED;
+
+  useEffect(() => {
+    const fetchOracleSources = async () => {
+      setIsLoading(true);
+      try {
+        // Initialize database if needed
+        await initializeDatabase();
+
+        // Fetch oracle sources
+        const sources = await getOracleSources();
+        setOracleSources(sources);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching oracle sources:", err);
+        setError("Failed to load oracle sources");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOracleSources();
+  }, []);
 
   const handleSourceChange = (id: string) => {
     setSelectedSource(id);
-    console.log(`Selected Source: ${id}`);
+    setError(null);
+    // console.log(`Selected Source: ${id}`);
   };
 
-  const handleVote = () => {
+  const handleVote = async () => {
     if (!address || !selectedSource) return;
+
+    // Validate stake amount
+    if (!hasEnoughStake) {
+      setError(
+        `Minimum stake of ${MIN_STAKE_REQUIRED} JIMP tokens required to vote.`,
+      );
+      return;
+    }
 
     // Create the vote data object
     const voteData = {
-      voter: address,
+      voter: address.toString(),
       source_id: selectedSource,
       stake: tokenAmount,
       tier: tier.level,
+      timestamp: Date.now(),
     };
 
-    console.log("Submitting vote:", voteData);
+    try {
+      // console.log("Submitting vote:", voteData);
+      const { success, message } = await submitVote(voteData);
 
-    // Here you would typically send this data to your backend or blockchain
-    // For example:
-    // sendVoteToBlockchain(voteData);
-
-    // Show confirmation to user
-    alert(
-      `Vote submitted for ${oracleSources.find((s) => s.id === selectedSource)?.title}`,
-    );
+      if (success) {
+        // Refresh oracle sources after successful vote
+        const updatedSources = await getOracleSources();
+        setOracleSources(updatedSources);
+        setSuccessMessage(message);
+      } else {
+        setError(message);
+      }
+    } catch (err) {
+      console.error("Error in vote submission:", err);
+      setError("Error submitting vote. Please try again.");
+    }
   };
+
+  if (isLoading) {
+    return <div className={styles.loadingSpinner} />;
+  }
+
+  if (error && !oracleSources.length) {
+    return <div className={styles.error}>{error}</div>;
+  }
 
   return (
     <div className={styles.section}>
       <h1 className={styles.title}>AI Oracle Source Voting </h1>
-      <h4 className={styles.subtitle}>Community Governed Data Verification</h4>
-      <p className={styles.description}>Select a source to vote on</p>
+      {/* <h4 className={styles.subtitle}>Community Governed Data Verification</h4> */}
+      <p className={styles.description}>
+        Please vote for the best AI Oracle Source
+      </p>
+      {successMessage && (
+        <div className={styles.successMessage}>{successMessage}</div>
+      )}
       <section className={styles.voteSection}>
         <CardGroup
           name="Governance Sources"
@@ -52,58 +116,32 @@ const DaoVote: React.FC = () => {
           {oracleSources.map((source) => (
             <VoteCard
               key={source.id}
-              id={source.id}
-              title={source.title}
-              description={source.description}
-              author={source.author}
-              authorImage={source.authorImage}
-              votes={source.votes}
-              daysLeft={source.daysLeft}
-              progress={source.progress}
-              isActive={source.status === "active"}
-            >
-              {source.additionalInfo && (
-                <div className={styles.additionalInfo}>
-                  <h4>{source.additionalInfo.title}</h4>
-                  <ul>
-                    {source.additionalInfo.items.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <div className={styles.sourceMetadata}>
-                <span className={styles.validationMethod}>
-                  Validation: {source.validationMethod}
-                </span>
-              </div>
-            </VoteCard>
+              {...source}
+              isSelected={source.id === selectedSource}
+              onSelect={() => handleSourceChange(source.id)}
+            />
           ))}
         </CardGroup>
 
-        {selectedSource && (
-          <div className={styles.selectedInfo}>
-            <h2>
-              Selected Source:{" "}
-              {oracleSources.find((s) => s.id === selectedSource)?.title}
-            </h2>
-            <div className={styles.voteMetrics}>
-              <div className={styles.votingPower}>
-                <span className={styles.metricLabel}>Voting Power:</span>
-                <span className={styles.metricValue}>
-                  √ {tokenAmount} JIMP × {tier.multiplier} Multiplier
-                </span>
-              </div>
+        <div className={styles.selectedInfo}>
+          {!hasEnoughStake && (
+            <div className={styles.stakeWarning}>
+              Minimum {MIN_STAKE_REQUIRED} JIMP required to vote
             </div>
-            <button
-              className={`${styles.voteButton}`}
-              onClick={handleVote}
-              disabled={!address}
-            >
-              {address ? "Vote Source" : "Connect Wallet to Vote"}
-            </button>
-          </div>
-        )}
+          )}
+          {error && <div className={styles.errorMessage}>{error}</div>}
+          <button
+            className={`${styles.voteButton} ${!hasEnoughStake ? styles.disabledButton : ""}`}
+            onClick={handleVote}
+            disabled={!address || !hasEnoughStake}
+          >
+            {!address
+              ? "Connect Wallet to Vote"
+              : !hasEnoughStake
+                ? `Need ${MIN_STAKE_REQUIRED - tokenAmount} More JIMP`
+                : "Vote Source"}
+          </button>
+        </div>
       </section>
     </div>
   );
