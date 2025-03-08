@@ -1,5 +1,6 @@
-import { memo } from "react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { AlertCircle, RefreshCw, Sparkles } from "lucide-react";
+import { memo } from "react";
 import styles from "./styles/FormSection.module.css";
 
 interface FormState {
@@ -93,14 +94,20 @@ const FormSection = ({
           <ErrorMessage message={validationState.inputError} />
         )}
 
-        <button
-          className={styles.generateButton}
-          type="submit"
-          disabled={isButtonDisabled}
-          aria-busy={isLoading}
-        >
-          <ButtonContent isLoading={isLoading} />
-        </button>
+        {!connected ? (
+          <div className={styles.walletButtonWrapper}>
+            <WalletMultiButton>Connect Wallet to Predict</WalletMultiButton>
+          </div>
+        ) : (
+          <button
+            className={styles.generateButton}
+            type="submit"
+            disabled={isButtonDisabled}
+            aria-busy={isLoading}
+          >
+            <ButtonContent isLoading={isLoading} />
+          </button>
+        )}
       </form>
     </div>
   );
