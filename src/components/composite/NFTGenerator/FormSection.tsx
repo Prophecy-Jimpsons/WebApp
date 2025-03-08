@@ -74,7 +74,8 @@ const FormSection = ({
             type="text"
             className={`${styles.inputField} 
               ${isFieldInvalid ? styles.error : ""} 
-              ${isFieldValid ? styles.valid : ""}`}
+              ${isFieldValid ? styles.valid : ""}
+               ${!connected ? styles.notAllowed : ""}`}
             placeholder="Example: Bitcoin will reach $100K by Dec 2024"
             value={formState.name}
             onChange={handleNameChange}

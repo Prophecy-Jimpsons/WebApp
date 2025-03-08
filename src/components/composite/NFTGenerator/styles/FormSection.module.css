@@ -181,6 +181,10 @@
   box-shadow: none;
 }
 
+.notAllowed {
+  cursor: not-allowed;
+}
+
 /* Error states */
 .inputField.error {
   border-color: var(--color-danger);
