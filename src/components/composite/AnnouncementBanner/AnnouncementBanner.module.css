@@ -29,7 +29,7 @@
   justify-content: center;
   gap: var(--space-3);
   color: var(--color-white);
-  font-size: var(--space-4);
+  font-size: var(--space-3);
   max-width: var(--container-xl);
   margin: 0 auto;
   padding: 0 var(--space-8);

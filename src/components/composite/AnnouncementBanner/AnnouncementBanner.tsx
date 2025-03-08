@@ -1,8 +1,8 @@
-import { FC, useState, useEffect } from "react";
-import { Send, X } from "lucide-react";
+import { X } from "lucide-react";
+import { FC, useEffect, useState } from "react";
 import styles from "./AnnouncementBanner.module.css";
 
-const TELEGRAM_LINK = "https://t.me/Jimpsons";
+// const TELEGRAM_LINK = "https://t.me/Jimpsons";
 const SCROLL_THRESHOLD = 100; // Amount of scroll before hiding
 
 interface AnnouncementBannerProps {
@@ -63,7 +63,7 @@ const AnnouncementBanner: FC<AnnouncementBannerProps> = ({
       className={`${styles.banner} ${isClosing ? styles.closing : ""} ${isScrolled ? styles.scrolled : ""}`}
     >
       <div className={styles.content}>
-        <a
+        {/* <a
           href={TELEGRAM_LINK}
           target="_blank"
           rel="noopener noreferrer"
@@ -73,8 +73,14 @@ const AnnouncementBanner: FC<AnnouncementBannerProps> = ({
           <span>
             🎮 <span className={styles.highlight}>Telegram Game</span> unleased
             beta version of JIMP tic-tac-toe
-          </span>
+          </span> 
+        
         </a>
+        */}
+        <span>
+          <span className={styles.highlight}>Mainnet</span> deployement comming
+          soon!!!
+        </span>
         <button
           onClick={handleClose}
           className={styles.closeButton}
