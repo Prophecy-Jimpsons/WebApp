@@ -18,7 +18,9 @@ const AccountDetails: FC = () => {
               </div>
               <h1 className={styles.mainTitle}>Wallet Connection Required</h1>
               <p className={styles.connectSubtext}>
-                Please connect your wallet using the "Select Wallet" button in the top-right corner to access account details and platform features.
+                Please connect your wallet using the "Select Wallet" button in
+                the top-right corner to access account details and platform
+                features.
               </p>
             </div>
           </div>
@@ -26,8 +28,6 @@ const AccountDetails: FC = () => {
       </MainLayout>
     );
   }
-  
-  
 
   return (
     <MainLayout>

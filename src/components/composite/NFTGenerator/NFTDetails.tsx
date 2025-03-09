@@ -1,4 +1,10 @@
-import { CheckCircle, RefreshCw, Sparkles, Fingerprint, ArrowRight } from "lucide-react";
+import {
+  CheckCircle,
+  RefreshCw,
+  Sparkles,
+  Fingerprint,
+  ArrowRight,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import styles from "./styles/NFTDetails.module.css";
 
@@ -29,7 +35,7 @@ const NFTDetails = ({
   metadata,
   isGeneratingMetadata,
   isMinting,
-  isMintSuccess
+  isMintSuccess,
 }: NFTDetailsProps) => {
   if (!generatedNFT) return null;
 
@@ -70,19 +76,21 @@ const NFTDetails = ({
               Generating Metadata...
             </h3>
           </div>
-        ) : metadata && (
-          <div className={styles.detailItem}>
-            <h3>
-              <Fingerprint className={styles.infoIcon} size={16} />
-              Metadata URI
-            </h3>
-            <p
-              className={styles.hash}
-              onClick={() => window.open(metadata.url, "_blank")}
-            >
-              {metadata.cid}
-            </p>
-          </div>
+        ) : (
+          metadata && (
+            <div className={styles.detailItem}>
+              <h3>
+                <Fingerprint className={styles.infoIcon} size={16} />
+                Metadata URI
+              </h3>
+              <p
+                className={styles.hash}
+                onClick={() => window.open(metadata.url, "_blank")}
+              >
+                {metadata.cid}
+              </p>
+            </div>
+          )
         )}
 
         {/* Minting Status */}
@@ -98,9 +106,11 @@ const NFTDetails = ({
               </>
             ) : isMintSuccess ? (
               <>
-                <CheckCircle className={styles.infoIcon} size={16} />
-                <div className={styles.statusGroup}>
-                  <p className={styles.successText}>NFT Minted Successfully</p>
+                <div className={`${styles.statusGroup} ${styles.minting}`}>
+                  <div className={`${styles.flexBox}`}>
+                    <CheckCircle className={styles.infoIcon} size={16} />
+                    <h3 className={styles.infoIcon}>NFT Minted Successfully</h3>
+                  </div>
                   <Link to="/nft-collection" className={styles.collectionLink}>
                     View Collection
                     <ArrowRight size={16} />
