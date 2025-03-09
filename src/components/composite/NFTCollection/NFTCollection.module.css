@@ -63,8 +63,12 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ❌ Error Message */
@@ -149,6 +153,9 @@
   font-size: 0.9rem;
   font-weight: bold;
   text-transform: uppercase;
+  color: white;
+  border: 1px solid organge;
+  background-color: orange;
 }
 
 .networkBadge.mainnet {

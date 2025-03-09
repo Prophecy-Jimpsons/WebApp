@@ -24,6 +24,7 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
   );
   const [isGeneratingMetadata, setIsGeneratingMetadata] = useState(false);
   const [mintingAttempted, setMintingAttempted] = useState(false);
+  const [showNetworkWarning, setShowNetworkWarning] = useState(false);
 
   const { generatedNFT, nftGenerate, isLoading, generationError } =
     useNFTGeneration();
@@ -191,6 +192,104 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
 
   // Auto-mint when metadata is ready
   useEffect(() => {
+    // const handleMint = async () => {
+    //   if (!metadata || !publicKey || !generatedNFT) return;
+
+    //   // Track that we've attempted minting to prevent duplicate attempts
+    //   setMintingAttempted(true);
+
+    //   try {
+    //     // First check if this NFT has already been minted
+    //     const alreadyMinted = await checkForExistingMint(
+    //       generatedNFT["Image hash"],
+    //     );
+
+    //     if (alreadyMinted) {
+    //       setIsMintSuccess(true);
+    //       return;
+    //     }
+
+    //     // Mark that we're attempting to mint this NFT
+    //     await setDoc(
+    //       doc(db, "nfts", generatedNFT["Image hash"]),
+    //       { mintingAttempted: true },
+    //       { merge: true },
+    //     );
+
+    //     // Truncate name to fit Solana program limits
+    //     const originalName = metadata.name || "";
+    //     const truncatedName =
+    //       originalName.length > MAX_NFT_NAME_LENGTH
+    //         ? originalName.substring(0, MAX_NFT_NAME_LENGTH)
+    //         : originalName;
+
+    //     // console.log(
+    //     //   `Minting NFT with name: "${truncatedName}" (${truncatedName.length} chars)`,
+    //     // );
+
+    //     const mintResult = await mintNFT({
+    //       name: truncatedName,
+    //       symbol: metadata.symbol || "PREDICT",
+    //       uri: metadata.url,
+    //     });
+
+    //     if (mintResult.success && mintResult.signature) {
+    //       console.log("NFT minted successfully:", mintResult);
+
+    //       await setDoc(
+    //         doc(db, "nfts", generatedNFT["Image hash"]),
+    //         {
+    //           mintSignature: mintResult.signature,
+    //           mintAddress: mintResult.leafOwner || publicKey.toString(),
+    //           nftAddress: mintResult.leafOwner || publicKey.toString(),
+    //           mintingAttempted: true,
+    //           mintingCompleted: true,
+    //           mintedAt: new Date().toISOString(),
+    //         },
+    //         { merge: true },
+    //       );
+
+    //       setIsMintSuccess(true);
+    //     } else {
+    //       console.error(
+    //         "Mint returned success=false or no signature:",
+    //         mintResult,
+    //       );
+
+    //       // Update the record to show mint attempt failed
+    //       await setDoc(
+    //         doc(db, "nfts", generatedNFT["Image hash"]),
+    //         {
+    //           mintError: mintResult.error || "Unknown minting error",
+    //           mintingAttempted: true,
+    //           mintingCompleted: false,
+    //         },
+    //         { merge: true },
+    //       );
+
+    //       setIsMintSuccess(false);
+    //     }
+    //   } catch (error) {
+    //     console.error("Minting error:", error);
+
+    //     // Record the error
+    //     if (generatedNFT) {
+    //       await setDoc(
+    //         doc(db, "nfts", generatedNFT["Image hash"]),
+    //         {
+    //           mintError:
+    //             error instanceof Error ? error.message : "Unknown error",
+    //           mintingAttempted: true,
+    //           mintingCompleted: false,
+    //         },
+    //         { merge: true },
+    //       );
+    //     }
+
+    //     setIsMintSuccess(false);
+    //   }
+    // };
+
     const handleMint = async () => {
       if (!metadata || !publicKey || !generatedNFT) return;
 
@@ -222,10 +321,6 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
             ? originalName.substring(0, MAX_NFT_NAME_LENGTH)
             : originalName;
 
-        // console.log(
-        //   `Minting NFT with name: "${truncatedName}" (${truncatedName.length} chars)`,
-        // );
-
         const mintResult = await mintNFT({
           name: truncatedName,
           symbol: metadata.symbol || "PREDICT",
@@ -233,6 +328,7 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
         });
 
         if (mintResult.success && mintResult.signature) {
+          // Success handling remains the same
           console.log("NFT minted successfully:", mintResult);
 
           await setDoc(
@@ -255,6 +351,9 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
             mintResult,
           );
 
+          // Show network warning when minting fails
+          setShowNetworkWarning(true);
+
           // Update the record to show mint attempt failed
           await setDoc(
             doc(db, "nfts", generatedNFT["Image hash"]),
@@ -270,6 +369,9 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
         }
       } catch (error) {
         console.error("Minting error:", error);
+
+        // Show network warning on error
+        setShowNetworkWarning(true);
 
         // Record the error
         if (generatedNFT) {
@@ -320,6 +422,8 @@ const useMetadataHandling = (publicKey: PublicKey | null) => {
     storeNFTData,
     verifyNFT,
     downloadNFT,
+    showNetworkWarning,
+    setShowNetworkWarning,
   };
 };
 

@@ -1,6 +1,6 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
-import { Wand2, Search } from "lucide-react";
+import { Wand2, Search, AlertCircle } from "lucide-react";
 import FormSection from "./FormSection";
 import PreviewSection from "./PreviewSection";
 import NFTDetails from "./NFTDetails";
@@ -37,6 +37,8 @@ const NFTGenerator = () => {
     verifyNFT,
     downloadNFT,
     nftGenerate,
+    showNetworkWarning,
+    setShowNetworkWarning,
   } = useMetadataHandling(publicKey);
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,50 +75,72 @@ const NFTGenerator = () => {
   );
 
   return (
-    <div className={styles.container}>
-      {renderToggleButtons()}
-      <div className={styles.glassCard}>
-        {activeSection === "generate" ? (
-          <>
-            <FormSection
-              formState={formState}
-              validationState={validationState}
-              handleNameChange={handleNameChange}
-              handleSubmit={handleFormSubmit}
-              validateInputs={validateInputs}
-              connected={connected}
-              isLoading={isGeneratingMetadata}
-              generationError={!!generationError}
-            />
-
-            <PreviewSection
-              connected={connected}
-              generatedNFT={generatedNFT ?? null}
-              isLoading={isGeneratingMetadata}
-              generationError={!!generationError}
-              publicKey={publicKey}
-              verifyNFT={verifyNFT}
-              downloadNFT={downloadNFT}
-              verificationStatus={verificationStatus}
-            />
-
-            {generatedNFT && (
-              <NFTDetails
-                generatedNFT={generatedNFT}
-                metadata={
-                  metadata as (Metadata & { cid: string; url: string }) | null
-                }
-                isGeneratingMetadata={isGeneratingMetadata}
-                isMinting={isMinting}
-                isMintSuccess={isMintSuccess}
+    <>
+      {showNetworkWarning && (
+        <div className={styles.networkWarningOverlay}>
+          <div className={styles.networkWarningModal}>
+            <div className={styles.warningHeader}>
+              <AlertCircle size={24} color="#ef4444" />
+              <h3>Minting Failed</h3>
+            </div>
+            <p>
+              Minting is currently only available on Solana Devnet. Please
+              switch your wallet to Devnet and try again.
+            </p>
+            <button
+              onClick={() => setShowNetworkWarning(false)}
+              className={styles.warningButton}
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
+      <div className={styles.container}>
+        {renderToggleButtons()}
+        <div className={styles.glassCard}>
+          {activeSection === "generate" ? (
+            <>
+              <FormSection
+                formState={formState}
+                validationState={validationState}
+                handleNameChange={handleNameChange}
+                handleSubmit={handleFormSubmit}
+                validateInputs={validateInputs}
+                connected={connected}
+                isLoading={isGeneratingMetadata}
+                generationError={!!generationError}
               />
-            )}
-          </>
-        ) : (
-          <VerifyNFT />
-        )}
+
+              <PreviewSection
+                connected={connected}
+                generatedNFT={generatedNFT ?? null}
+                isLoading={isGeneratingMetadata}
+                generationError={!!generationError}
+                publicKey={publicKey}
+                verifyNFT={verifyNFT}
+                downloadNFT={downloadNFT}
+                verificationStatus={verificationStatus}
+              />
+
+              {generatedNFT && (
+                <NFTDetails
+                  generatedNFT={generatedNFT}
+                  metadata={
+                    metadata as (Metadata & { cid: string; url: string }) | null
+                  }
+                  isGeneratingMetadata={isGeneratingMetadata}
+                  isMinting={isMinting}
+                  isMintSuccess={isMintSuccess}
+                />
+              )}
+            </>
+          ) : (
+            <VerifyNFT />
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
