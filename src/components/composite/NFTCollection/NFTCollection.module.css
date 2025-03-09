@@ -114,9 +114,9 @@
   transition: transform 0.3s ease;
 }
 
-.nftCard:hover .nftImage {
-  /* transform: scale(1.05); */
-}
+/* .nftCard:hover .nftImage {
+  transform: scale(1.05);
+} */
 
 /* 📜 NFT Info */
 .nftInfo {
