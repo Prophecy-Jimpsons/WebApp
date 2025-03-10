@@ -209,7 +209,7 @@ export const WalletProviderContext: React.FC<{
   // Voting submission handler
   const submitVote = async (proposalId: string, choice: 'FOR'|'AGAINST') => {
     if (!publicKey) throw new Error("Wallet not connected");
-    const provider = (window as any).phantom;
+    const provider = (window as any).phantom?.solana;
     
     if (!provider) throw new Error("Phantom wallet required");
 

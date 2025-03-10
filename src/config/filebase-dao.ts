@@ -116,7 +116,7 @@ export class PhantomVotingClient<T> {
    */
   async createVote(data: T, provider: PhantomProvider): Promise<string> {
     // 1. Connect to Phantom wallet
-    const { publicKey, signMessage } = await provider.connect();
+    const { publicKey } = await provider.connect();
     
     // 2. Construct structured vote message
     const voteMessage = JSON.stringify({
@@ -127,7 +127,7 @@ export class PhantomVotingClient<T> {
 
     // 3. Sign message using Phantom's API
     const messageBytes = new TextEncoder().encode(voteMessage);
-    const { signature } = await signMessage(messageBytes);
+    const { signature } = await provider.signMessage(messageBytes);
 
     // 4. Generate Merkle tree components
     const leaf = this.hashVote(data);
@@ -334,13 +334,19 @@ export class PhantomVotingClient<T> {
  * Type-safe interface aligning with Phantom's wallet API
  */
 interface PhantomProvider {
-  connect: () => Promise<{
-    publicKey: PublicKey;
-    signMessage: (message: Uint8Array) => Promise<{ signature: Uint8Array }>;
+  connect: (options?: { 
+    onlyIfTrusted: boolean 
+  }) => Promise<{ publicKey: PublicKey }>;
+  signMessage: (message: Uint8Array) => Promise<{ 
+    signature: Uint8Array 
   }>;
-  isPhantom?: boolean;
-  on?: (event: string, callback: () => void) => void;
+  isPhantom: boolean;
+  isConnected: boolean;
+  disconnect: () => Promise<void>;
 }
+
+
+
 
 /**
  * Global Type Extension
@@ -348,6 +354,8 @@ interface PhantomProvider {
  */
 declare global {
   interface Window {
-    phantom?: PhantomProvider;
+    phantom?: {
+      solana?: PhantomProvider;
+    };
   }
 }

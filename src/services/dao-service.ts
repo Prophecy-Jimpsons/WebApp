@@ -4,12 +4,6 @@ import { OracleSource } from "@/types/dao";
 
 const VOTE_EXPIRY_DAYS = 10;
 const LP_WALLETS = ["5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1"];
-const TIER_MULTIPLIERS = {
-  'Diamond': 2.0,
-  'Gold': 1.5,
-  'Silver': 1.2,
-  'Tier 0': 0
-};
 
 // Helper functions
 const getCurrentExpiry = (): string => {
@@ -147,7 +141,14 @@ export const submitVote = async (
     }
 
     const votingClient = new PhantomVotingClient<DAOVote>();
-    const provider = (window as any).phantom;
+    const provider = window.phantom?.solana;
+
+    if (!provider?.isPhantom) {
+      throw new Error("Phantom wallet required");
+    }
+    if (!provider?.isPhantom) {
+      throw new Error("Phantom wallet required");
+    }
     
     if (!provider) {
       throw new Error("Phantom wallet required");

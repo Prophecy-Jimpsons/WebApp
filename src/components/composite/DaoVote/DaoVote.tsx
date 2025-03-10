@@ -6,7 +6,7 @@ import CardGroup from "./CardGroup";
 import styles from "./DaoVote.module.css";
 import VoteCard from "./VoteCard";
 
-const MIN_STAKE_REQUIRED = 100;
+const MIN_STAKE_REQUIRED = 0;
 
 const DaoVote: React.FC = () => {
   const [selectedSource, setSelectedSource] = useState<string>("");
