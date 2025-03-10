@@ -29,18 +29,31 @@
 }
 
 /* Section title */
-.title {
-  font-size: var(--space-6);
-  color: var(--color-primary);
+
+.header {
   text-align: center;
-  margin-bottom: var(--space-8);
-  font-weight: bold;
+  margin-bottom: var(--space-16);
+}
+
+.title {
+  font-size: var(--space-8);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 2px #feda03;
+  text-shadow: 0 0 20px rgba(252, 175, 5, 0.3);
+}
+
+.subtitle {
+  color: var(--color-grey);
+  font-size: var(--space-4);
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 @media (min-width: 768px) {
   .title {
     font-size: var(--space-8);
-    margin-bottom: var(--space-12);
   }
 }
 
