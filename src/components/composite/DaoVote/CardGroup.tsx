@@ -1,50 +1,48 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./CardGroup.module.css";
-import { VoteCardProps } from "./VoteCard";
 
 interface CardGroupProps {
-  children: React.ReactElement<VoteCardProps>[];
   name: string;
-  defaultSelected?: string;
-  onChange?: (selectedId: string) => void;
+  onChange: (id: string) => void;
+  selectedId: string;
+  children: React.ReactNode;
+}
+
+// Define expected child props
+interface ChildProps {
+  id: string;
+  isSelected?: boolean;
+  onSelect?: () => void;
 }
 
 const CardGroup: React.FC<CardGroupProps> = ({
-  children,
   name,
-  defaultSelected,
   onChange,
+  selectedId,
+  children
 }) => {
-  const [selectedId, setSelectedId] = useState<string>(defaultSelected || "");
-
   const handleSelect = (id: string) => {
-    setSelectedId(id);
-    if (onChange) {
-      onChange(id);
-    }
+    onChange(id);
   };
 
-  // Clone children and pass selection props
-  const childrenWithProps = React.Children.map(children, (child) => {
-    if (React.isValidElement<VoteCardProps>(child)) {
+  const childrenWithProps = React.Children.map(children, child => {
+    if (React.isValidElement<ChildProps>(child)) {
       return React.cloneElement(child, {
         isSelected: child.props.id === selectedId,
-        onSelect: handleSelect,
+        onSelect: () => handleSelect(child.props.id)
       });
     }
     return child;
   });
 
   return (
-    <div
-      className={styles.cardGroup}
-      role="radiogroup"
-      aria-labelledby={`${name}-group`}
-    >
+    <div className={styles.cardGroup} role="radiogroup" aria-labelledby={`${name}-group`}>
       <div id={`${name}-group`} className={styles.srOnly}>
         {name}
       </div>
-      {childrenWithProps}
+      <div className={styles.cardContainer}>
+        {childrenWithProps}
+      </div>
     </div>
   );
 };

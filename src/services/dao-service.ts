@@ -1,39 +1,57 @@
-import { get, push, ref, runTransaction, set, update } from "firebase/database";
-import { database } from "../config/firebase-dao";
-import { OracleSource } from "../types/dao";
+import { PhantomVotingClient } from "@/config/filebase-dao";
+import { DAOVote, VotingDelta } from "@/context/WalletContext";
+import { OracleSource } from "@/types/dao";
 
-const currentDate = new Date();
+const VOTE_EXPIRY_DAYS = 10;
+const LP_WALLETS = ["5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1"];
+const TIER_MULTIPLIERS = {
+  'Diamond': 2.0,
+  'Gold': 1.5,
+  'Silver': 1.2,
+  'Tier 0': 0
+};
 
-const endDate = new Date(currentDate.getTime() + 10 * 24 * 60 * 60 * 1000); // Expiration date is 10 days
-const endDateString = endDate.toISOString().split("T")[0];
+// Helper functions
+const getCurrentExpiry = (): string => {
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + VOTE_EXPIRY_DAYS);
+  return expiry.toISOString().split('T')[0];
+};
 
+const calculateDaysLeft = (endDate: string): number => {
+  const now = new Date();
+  const end = new Date(endDate);
+  return Math.max(0, Math.ceil((end.getTime() - now.getTime()) / 86400000));
+};
+
+const determineStatus = (endDate: string): "active" | "closed" => {
+  return new Date(endDate) > new Date() ? "active" : "closed";
+};
+// Initial data setup with proper function invocation
 const initialOracleSources: OracleSource[] = [
   {
     id: "group-1",
     title: "Group 1 Feeds",
     validationMethod: "Multi-Source Verification",
     totalVotes: 0,
-    // targetVotes: 20000,
-    endDate: endDateString,
+    weightedVotes: 0,
+    endDate: getCurrentExpiry(),
     endpoints: [
       { category: "News", url: "gdeltproject.org/api/v2/doc/doc" },
       { category: "Crypto", url: "api.nomics.com/v1/currencies/ticker" },
-      {
-        category: "Finance",
-        url: "financialmodelingprep.com/api/v3/quote/AAPL",
-      },
+      { category: "Finance", url: "financialmodelingprep.com/api/v3/quote/AAPL" },
       { category: "Sports", url: "thesportsdb.com/api/searchplayers.php" },
-      { category: "Politics", url: "api.turbovote.org/elections/upcoming" },
+      { category: "Politics", url: "api.turbovote.org/elections/upcoming" }
     ],
-    voters: {},
+    voters: {}
   },
   {
     id: "group-2",
     title: "Group 2 Feeds",
     validationMethod: "Multi-Source Verification",
     totalVotes: 0,
-    // targetVotes: 15000,
-    endDate: endDateString,
+    weightedVotes: 0,
+    endDate: getCurrentExpiry(),
     endpoints: [
       { category: "News", url: "api.mediastack.com/v1/news" },
       { category: "Crypto", url: "cryptocompare.com/data/pricemulti" },
@@ -44,15 +62,15 @@ const initialOracleSources: OracleSource[] = [
       },
       { category: "Politics", url: "api.api-ninjas.com/v1/historicalevents" },
     ],
-    voters: {},
+    voters: {}
   },
   {
     id: "group-3",
     title: "Group 3 Feeds",
     validationMethod: "Multi-Source Verification",
     totalVotes: 0,
-    // targetVotes: 18000,
-    endDate: endDateString,
+    weightedVotes: 0,
+    endDate: getCurrentExpiry(),
     endpoints: [
       { category: "News", url: "api.currentsapi.services/v1/latest-news" },
       { category: "Crypto", url: "api.coincap.io/v2/assets" },
@@ -66,15 +84,15 @@ const initialOracleSources: OracleSource[] = [
         url: "opensecrets.org/api/?method=getLegislators",
       },
     ],
-    voters: {},
+    voters: {}
   },
   {
     id: "group-4",
     title: "Group 4 Feeds",
     validationMethod: "Multi-Source Verification",
     totalVotes: 0,
-    // targetVotes: 22000,
-    endDate: endDateString,
+    weightedVotes: 0,
+    endDate: getCurrentExpiry(),
     endpoints: [
       { category: "News", url: "newsdata.io/api/1/latest" },
       { category: "Crypto", url: "api.coingecko.com/api/v3/coins/markets" },
@@ -88,156 +106,84 @@ const initialOracleSources: OracleSource[] = [
         url: "googleapis.com/civicinfo/v2/representatives",
       },
     ],
-    voters: {},
-  },
-];
-
-// Only initialize the database if it doesn't already exist
-export const initializeDatabase = async () => {
-  const oracleSourcesRef = ref(database, "oracleSources");
-  const snapshot = await get(oracleSourcesRef);
-
-  if (!snapshot.exists()) {
-    // console.log("Initializing database with initial data...");
-    await set(oracleSourcesRef, initialOracleSources);
-    // console.log("Database initialized successfully");
+    voters: {}
   }
-};
+].map(group => ({
+  ...group,
+  daysLeft: calculateDaysLeft(group.endDate),
+  status: determineStatus(group.endDate)
+}));
 
-export const getOracleSources = async (): Promise<OracleSource[]> => {
-  const oracleSourcesRef = ref(database, "oracleSources");
-  const snapshot = await get(oracleSourcesRef);
-
-  if (!snapshot.exists()) {
-    await initializeDatabase();
-    return initialOracleSources;
-  }
-
-  const data = snapshot.val();
-
-  // Clean up numeric nodes if they exist
-  const numericKeys = Object.keys(data).filter((key) => !isNaN(Number(key)));
-  if (numericKeys.length > 0) {
-    for (const key of numericKeys) {
-      await set(ref(database, `oracleSources/${key}`), null);
-    }
-  }
-
-  // Filter out numeric keys and only use group-* keys
-  const validSources = Object.keys(data)
-    .filter((key) => key.startsWith("group-"))
-    .map((key) => ({
-      ...data[key],
-      id: key, // Ensure id is set correctly
-      daysLeft: calculateDaysLeft(data[key].endDate),
-      status: determineStatus(data[key].endDate),
-    }));
-
-  // If we don't have all expected groups, initialize missing ones
-  if (validSources.length < 4) {
-    const existingIds = validSources.map((source) => source.id);
-    const missingGroups = initialOracleSources.filter(
-      (source) => !existingIds.includes(source.id),
+export const getOracleSources = async (votingHistory: VotingDelta<DAOVote>[]): Promise<OracleSource[]> => {
+  // Calculate vote metrics from voting history
+  const processedSources = initialOracleSources.map(source => {
+    const sourceVotes = votingHistory.filter(
+      v => v.vote.data.proposalId === source.id
     );
 
-    // Add missing groups to database
-    for (const group of missingGroups) {
-      await set(ref(database, `oracleSources/${group.id}`), group);
-    }
+    return {
+      ...source,
+      totalVotes: sourceVotes.length,
+      weightedVotes: sourceVotes.reduce((sum, vote) => 
+        sum + vote.vote.metadata.weight.calculated, 0
+      ),
+      daysLeft: calculateDaysLeft(source.endDate),
+      status: determineStatus(source.endDate)
+    };
+  });
 
-    // Return all sources including newly added ones
-    return [...validSources, ...missingGroups];
-  }
-
-  return validSources;
+  return processedSources;
 };
 
-export const submitVote = async (voteData: any) => {
-  const { source_id, voter, tier } = voteData;
-  const oracleSourcesRef = ref(database, "oracleSources");
-  const votesRef = ref(database, "votes");
-
+export const submitVote = async (
+  proposalId: string,
+  voter: string,
+  stake: number,
+  tier: string
+): Promise<{ success: boolean; message: string }> => {
   try {
-    // Check if the wallet has already voted in any group
-    const snapshot = await get(oracleSourcesRef);
-    const data = snapshot.val();
-
-    // Check all groups to see if this wallet has already voted
-    for (const groupId in data) {
-      if (data[groupId].voters && data[groupId].voters[voter]) {
-        // Wallet has already voted
-        const previousVoteGroup = data[groupId].title;
-        return {
-          success: false,
-          message: `You have already voted for ${previousVoteGroup}. Each wallet can only vote once.`,
-        };
-      }
+    if (LP_WALLETS.includes(voter)) {
+      throw new Error("Liquidity providers cannot vote");
     }
 
-    // If we get here, the wallet hasn't voted yet
-    // Store individual vote data
-    await push(votesRef, voteData);
+    const votingClient = new PhantomVotingClient<DAOVote>();
+    const provider = (window as any).phantom;
+    
+    if (!provider) {
+      throw new Error("Phantom wallet required");
+    }
 
-    // Update source totals using runTransaction to ensure atomicity
-    const groupRef = ref(database, `oracleSources/${source_id}`);
-    await runTransaction(groupRef, (currentData) => {
-      if (currentData === null) {
-        return {
-          ...initialOracleSources.find((s) => s.id === source_id),
-          totalVotes: 1,
-          voters: { [voter]: { tier } },
-        };
-      }
+    const voteData: DAOVote = {
+      proposalId,
+      choice: 'FOR',
+      timestamp: new Date().toISOString(),
+      stake,
+      tier
+    };
 
-      const updatedVoters = currentData.voters ? { ...currentData.voters } : {};
-      updatedVoters[voter] = { tier };
-
-      return {
-        ...currentData,
-        totalVotes: (currentData.totalVotes || 0) + 1,
-        voters: updatedVoters,
-      };
-    });
-
-    console.log("Vote submitted successfully");
-    return {
-      success: true,
-      message: "Vote submitted successfully",
+    await votingClient.createVote(voteData, provider);
+    
+    return { 
+      success: true, 
+      message: "Vote successfully stored on IPFS via Filebase" 
     };
   } catch (error) {
-    console.error("Error submitting vote:", error);
+    console.error("Voting error:", error);
     return {
       success: false,
-      message: "Error submitting vote. Please try again.",
+      message: error instanceof Error ? error.message : "IPFS storage failed"
     };
   }
 };
 
-export const updateVotes = (groupId: string, newVotes: number) => {
-  const groupRef = ref(database, `oracleSources/${groupId}`);
-  update(groupRef, { votes: newVotes });
+// Type validation utilities
+export const isVotingDelta = (data: any): data is VotingDelta<DAOVote> => {
+  return data?.version?.startsWith('1.') && 
+         typeof data?.vote?.metadata?.voter === 'string' &&
+         typeof data?.proofs?.phantom?.signature === 'string';
 };
 
-const calculateDaysLeft = (endDate: string) => {
-  const now = new Date();
-  const end = new Date(endDate);
-  const diff = end.getTime() - now.getTime();
-  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-};
-
-// const calculateProgress = (votes: number, targetVotes: number) => {
-//   return Math.min(100, Math.round((votes / targetVotes) * 100));
-// };
-
-const determineStatus = (
-  endDate: string,
-  //   votes: number,
-  //   targetVotes: number,
-): "active" | "ongoing" | "closed" => {
-  const now = new Date();
-  const end = new Date(endDate);
-  if (now > end) return "closed";
-  //   if (votes >= targetVotes) return "active";
-  //   return "ongoing";
-  return "active";
+export const validateVoteChain = async (cid: string): Promise<boolean> => {
+  const votingClient = new PhantomVotingClient<DAOVote>();
+  return votingClient.verifyVoteChain(cid);
 };

@@ -9,6 +9,7 @@ export interface OracleSource {
   validationMethod: string;
   endpoints: Endpoint[];
   totalVotes: number;
+  weightedVotes: number;
   // targetVotes: number;
   endDate: string;
   daysLeft?: number;
