@@ -68,7 +68,16 @@ const BuyingSteps = () => {
 
   return (
     <section className={styles.buyingSteps}>
-      <h2 className={styles.title}>How to Buy JIMP Token</h2>
+      <div className={styles.header}>
+        <h2 className={styles.title}>How to Buy $JIMP Token</h2>
+        <p className={styles.subtitle}>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet
+          voluptatum, quam explicabo sit veritatis harum. Mollitia dolore
+          accusantium, autem laboriosam cupiditate, repellat placeat, non animi
+          quisquam laborum porro exercitationem rem?
+        </p>
+      </div>
+      {/* <h2 className={styles.title}>How to Buy JIMP Token</h2> */}
 
       {/* Prerequisites Section */}
       <div className={styles.prerequisites}>
