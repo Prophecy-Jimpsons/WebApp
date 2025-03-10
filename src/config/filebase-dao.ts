@@ -20,8 +20,9 @@ import * as bs58 from 'bs58';
 
 // Filebase Configuration (Should use environment variables in production)
 export const FILABASE_CONFIG = {
-  key: process.env.FILEBASE_KEY!,
-  secret: process.env.FILEBASE_SECRET!,
+  key: process.env.FILEBASE_KEY! || "E6CFF793C74CA487D996",
+  secret: process.env.FILEBASE_SECRET! || "29krDPo1nROzRhv4V2RQuDyrG073LKIDCpMnxXDL",
+  pinningKey: "RTZDRkY3OTNDNzRDQTQ4N0Q5OTY6MjlrckRQbzFuUk96Umh2NFYyUlF1RHlyRzA3M0xLSURDcE1ueFhETDp2b3Rlcy1kYW8=",
   bucket: 'votes-dao',
   ipfsEndpoint: 'https://api.filebase.io/v1/ipfs'
 };
@@ -270,7 +271,7 @@ export class PhantomVotingClient<T> {
   private async pinCID(cid: string) {
     await fetch(FILABASE_CONFIG.ipfsEndpoint, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${FILABASE_CONFIG.secret}` },
+      headers: { Authorization: `Bearer ${FILABASE_CONFIG.pinningKey}` },
       body: JSON.stringify({ cid, pin: true })
     });
   }
