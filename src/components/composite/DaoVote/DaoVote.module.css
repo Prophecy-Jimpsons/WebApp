@@ -32,10 +32,18 @@
 }
 
 .successMessage {
-  font-size: var(--space-5);
-  text-align: center;
-  color: var(--color-primary);
-  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: var(--space-3);
+  background: rgba(0, 255, 0, 0.1);
+  border-left: 4px solid var(--color-primary);
+  border-radius: var(--space-1);
+  font-size: 16px;
+  color: #4caf50;
 }
 
 .voteSection {
@@ -45,6 +53,8 @@
   padding: var(--space-6) var(--space-4);
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: var(--space-6);
 }
 
@@ -64,6 +74,46 @@
   font-size: var(--space-5);
 }
 
+.voteControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-4);
+  gap: var(--space-4);
+}
+
+.stakeStatus {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-3);
+  background: rgba(20, 20, 30, 0.5);
+  border-radius: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.stakeMetric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2);
+}
+
+.metricLabel {
+  font-size: var(--space-4);
+  color: var(--color-grey);
+  margin-bottom: var(--space-1);
+}
+
+.metricValue {
+  font-size: var(--space-5);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px rgba(254, 218, 3, 0.3);
+}
+
 .voteButton {
   background: linear-gradient(
     90deg,
@@ -78,6 +128,9 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: var(--space-4);
+  max-width: var(--container-xl);
+  margin-top: var(--space-2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .voteButton:hover {
@@ -100,18 +153,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.metricLabel {
-  font-size: 14px;
-  color: var(--color-grey);
-  margin-bottom: var(--space-1);
-}
-
-.metricValue {
-  font-size: var(--space-4);
-  font-weight: 600;
-  color: var(--color-white);
 }
 
 .votingActions {
@@ -143,21 +184,55 @@
   color: var(--color-danger);
 }
 
+.warningIcon,
+.errorIcon,
+.successIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: var(--space-2);
+}
+
+.warningIcon {
+  background-color: rgba(255, 165, 0, 0.2);
+  color: orange;
+}
+
+.errorIcon {
+  background-color: rgba(255, 0, 0, 0.2);
+  color: #ff5252;
+}
+
+.successIcon {
+  background-color: rgba(0, 255, 0, 0.2);
+  color: #4caf50;
+}
+
 .stakeWarning {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--space-3);
+  background: rgba(255, 0, 0, 0.1);
+  border-left: 4px solid var(--color-danger);
+  border-radius: var(--space-1);
+  font-size: 14px;
   color: var(--color-danger);
-  font-size: var(--space-4);
-  margin-top: var(--space-4);
-  text-align: center;
-  font-weight: 500;
 }
 
 .errorMessage {
-  /* background-color: #ffebee; */
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--space-3);
+  background: rgba(255, 0, 0, 0.1);
   border-left: 4px solid var(--color-danger);
-  color: var(--color-danger);
-  font-size: var(--space-4);
-  padding: var(--space-2) var(--space-3);
   border-radius: var(--space-1);
+  font-size: 14px;
+  color: var(--color-danger);
 }
 
 .disabledButton {
@@ -192,6 +267,44 @@
   margin: auto;
 }
 
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.errorHeading {
+  font-size: var(--space-6);
+  color: var(--color-danger);
+  margin-bottom: var(--space-4);
+}
+
+.errorDetail {
+  font-size: var(--space-4);
+  color: var(--color-grey);
+  margin-bottom: var(--space-6);
+  max-width: 600px;
+}
+
+.retryButton {
+  background: linear-gradient(
+    90deg,
+    var(--color-secondary) 0%,
+    var(--color-primary) 100%
+  );
+  border: none;
+  color: var(--color-white);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--space-2);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
 /* Responsive adjustments for the new elements */
 @media (max-width: 768px) {
   .voteMetrics {
@@ -203,6 +316,15 @@
     flex-direction: column;
     gap: var(--space-2);
     align-items: flex-start;
+  }
+
+  .stakeStatus {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .stakeMetric {
+    width: 100%;
   }
 }
 

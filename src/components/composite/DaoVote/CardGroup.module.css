@@ -1,11 +1,14 @@
 .cardGroup {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-6);
   width: 100%;
   max-width: var(--container-xl);
   margin: 0 auto;
   padding: 0 var(--space-4);
+}
+
+.cardContainer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
 }
 
 /* screen reader only  */
@@ -23,15 +26,15 @@
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
-  .cardGroup {
+  .cardContainer {
     grid-template-columns: repeat(2, 1fr);
-    padding: 0 var(--space-3);
+    gap: var(--space-4);
   }
 }
 
 @media (max-width: 768px) {
-  .cardGroup {
+  .cardContainer {
     grid-template-columns: 1fr;
-    padding: 0 var(--space-2);
+    gap: var(--space-3);
   }
 }
