@@ -129,7 +129,7 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      external: ["fs", "path", "net", "tls"],
+      external: ["net", "tls"],
       // Added CommonJS handling for the AnyAlt widget
       output: {
         format: "es",

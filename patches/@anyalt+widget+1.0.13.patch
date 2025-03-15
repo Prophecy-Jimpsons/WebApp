@@ -1,0 +1,14 @@
+diff --git a/node_modules/@anyalt/widget/dist/src/types/global.mjs b/node_modules/@anyalt/widget/dist/src/types/global.mjs
+index 17bca46..c5e140a 100644
+--- a/node_modules/@anyalt/widget/dist/src/types/global.mjs
++++ b/node_modules/@anyalt/widget/dist/src/types/global.mjs
+@@ -1 +1,6 @@
+-export{};
+\ No newline at end of file
++// Export WidgetTemplateType as a JavaScript enum/object
++export const WidgetTemplateType = {
++    TOKEN_BUY: 'TOKEN_BUY',
++    DEPOSIT_TOKEN: 'DEPOSIT_TOKEN'
++  };
++  
+\ No newline at end of file
