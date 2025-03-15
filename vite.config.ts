@@ -17,6 +17,7 @@ export default defineConfig({
     react(),
     runtimeEnv({ name: "env", injectHtml: true, generateTypes: true }),
     nodePolyfills({
+      protocolImports: true,
       include: ["buffer", "crypto", "stream", "util"],
       globals: {
         Buffer: true,
@@ -78,7 +79,7 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      external: ["fs", "path", "net", "tls"],
+      external: ["net", "tls"],
     },
   },
 });
