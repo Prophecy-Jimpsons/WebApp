@@ -1,0 +1,244 @@
+.card {
+  background-color: var(--color-black-background);
+  border-radius: 12px;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-thin-grey);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.card:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.selected {
+  border: 2px solid var(--color-primary);
+}
+
+.header {
+  padding: var(--space-3);
+
+  border-bottom: 2px solid var(--color-thin-grey);
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.votes {
+  display: flex;
+  flex-direction: column;
+}
+
+.voteCount {
+  font-size: var(--space-6);
+  font-weight: 700;
+  color: var(--color-white);
+  line-height: 1;
+}
+
+.voteLabel {
+  font-size: var(--space-3);
+  color: var(--color-grey);
+  margin-top: var(--space-1);
+}
+
+.activeTag,
+.closedTag {
+  padding: var(--space-1) var(--space-3);
+  color: var(--color-white);
+  border-radius: var(--space-3);
+  font-size: var(--space-3);
+  font-weight: 500;
+}
+
+.activeTag {
+  background-color: var(--color-secondary);
+}
+
+.closedTag {
+  background-color: var(--color-danger);
+}
+
+.title {
+  color: var(--color-white);
+  font-size: var(--space-4);
+  font-weight: 600;
+  margin: 0;
+}
+
+.content {
+  padding: var(--space-4);
+}
+
+.sourceHeader {
+  margin-bottom: 1rem;
+}
+
+.sourceTitle {
+  font-size: var(--space-3);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-top: 0;
+  margin-bottom: var(--space-2);
+  font-size: var(--space-4);
+}
+
+.sourceCount {
+  color: var(--color-grey);
+}
+
+.sourceNote {
+  font-size: var(--space-3);
+  color: var(--color-white);
+  margin-top: var(--space-1);
+  text-align: center;
+  background-color: var(--color-thin-grey);
+  padding: var(--space-2);
+  border-radius: 8px;
+  margin-bottom: var(--space-2);
+  line-height: 1.4;
+  font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: var(--space-2);
+  }
+}
+
+.sourceList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.sourceItem {
+  display: flex;
+  font-size: var(--space-3);
+  line-height: 1.4;
+}
+
+.sourceType {
+  color: var(--color-grey);
+  font-weight: 600;
+  margin-right: 0.5rem;
+  min-width: var(--space-16);
+}
+
+.sourceUrl {
+  color: var(--color-grey);
+  opacity: 0.8;
+  text-decoration: none;
+  word-break: break-all;
+  transition: color 0.2s ease;
+}
+
+.sourceUrl:hover {
+  opacity: 1;
+
+  text-decoration: underline;
+}
+
+.footer {
+  margin-top: 1rem;
+}
+.timeRemaining {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-grey);
+  font-size: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.clockIcon {
+  color: var(--color-grey);
+}
+
+.progressContainer {
+  height: var(--space-2);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.validation {
+  font-size: var(--space-3);
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: var(--space-2);
+    min-height: auto;
+  }
+
+  .content {
+    padding: var(--space-3);
+  }
+  .sourceItem {
+    flex-direction: column;
+  }
+
+  .sourceType {
+    margin-bottom: 0.25rem;
+  }
+  .sourceNote {
+    font-size: var(--space-2);
+  }
+}
+@media (max-width: 1024px) {
+  .card {
+    min-height: 260px;
+  }
+}
+
+/* VoteCard.module.css */
+.weightedVotes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px; /* Adjust spacing as needed */
+}
+
+.voteCount {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #0070f3; /* Example color, adjust as needed */
+}
+
+.voteLabel {
+  font-size: 0.8em;
+  color: #666; /* Example color, adjust as needed */
+  text-transform: uppercase;
+}

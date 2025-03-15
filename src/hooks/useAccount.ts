@@ -3,8 +3,12 @@ import {
   getAssociatedTokenAddress,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { Connection, PublicKey } from "@solana/web3.js";
-import { useQuery } from "@tanstack/react-query";
+import {
+  Connection,
+  PublicKey,
+  VersionedTransactionResponse,
+} from "@solana/web3.js";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 // const syndicaApi = import.meta.env.VITE_SYNDICA_API!;
 
@@ -99,7 +103,11 @@ export function useGetATA(mint?: string, address?: PublicKey) {
 }
 
 // Fetch transaction history for a given Associated Token Account (ATA).
-export function useGetTxs({ ata }: { ata: string }) {
+export function useGetTxs({
+  ata,
+}: {
+  ata: string;
+}): UseQueryResult<VersionedTransactionResponse[], Error> {
   return useQuery({
     queryKey: ["get-txs", ata],
     queryFn: async () => {
@@ -129,7 +137,6 @@ export function useGetTxs({ ata }: { ata: string }) {
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
     refetchOnReconnect: false, // Don't refetch when reconnecting
     staleTime: 1000 * 60 * 2, // Data becomes stale after 2 minutes
-    cacheTime: 1000 * 60 * 30, // Cache for 30 minutes
     retry: 2, // Retry failed requests 2 times
   });
 }
