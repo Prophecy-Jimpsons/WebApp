@@ -27,6 +27,7 @@ const PATHS = {
     AI_CHAT: "/chat",
     GAME: "/game",
     PITCH: "/investment_pitch_deck",
+    DAO_VOTE: "/dao-vote",
   },
 
   // Protected routes (require wallet connection)
