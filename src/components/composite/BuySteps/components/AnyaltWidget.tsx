@@ -1,7 +1,7 @@
-import React, { forwardRef, useImperativeHandle } from "react";
 import { AnyaltWidget, ChainType, useModal } from "@anyalt/widget";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
+import { forwardRef, useImperativeHandle } from "react";
 
 // Define the ref type for the Widget component
 export interface WidgetRef {
@@ -24,6 +24,7 @@ const Widget = forwardRef<WidgetRef, WidgetProps>(({ tokenAddress }, ref) => {
   // Define a callback to estimate transaction details before execution
   const estimateCallback = async (params: any) => {
     console.log("Estimate params:", params);
+    console.log("Token address:", tokenAddress);
     return {
       success: true,
       amountOut: "100",

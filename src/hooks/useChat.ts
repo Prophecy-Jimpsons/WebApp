@@ -72,7 +72,7 @@ const useChat = () => {
 
   return {
     sendMessage: mutation.mutate,
-    isLoading: mutation.isLoading,
+    isLoading: mutation.isPending,
     error: mutation.error,
     chatHistory: queryClient.getQueryData<ChatMessage[]>(["chatHistory"]) || [],
   };

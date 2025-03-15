@@ -29,7 +29,6 @@ interface Step {
   image?: string;
 }
 
-
 const BuyingSteps: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [photoIndex, setPhotoIndex] = useState<number>(0);
@@ -52,9 +51,9 @@ const BuyingSteps: React.FC = () => {
     buyMethod === "raydium" ? raydiumSteps : anyaltSteps;
 
   // Extract image URLs from the current steps
-  const images: string[] = currentSteps
-    .map((step) => step.image)
-    .filter((image): image is string => Boolean(image));
+  // const images: string[] = currentSteps
+  //   .map((step) => step.image)
+  //   .filter((image): image is string => Boolean(image));
 
   // Preload all images when the component mounts or when buy method changes
   useEffect(() => {

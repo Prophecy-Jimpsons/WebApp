@@ -121,7 +121,7 @@ export default defineConfig({
         global: "globalThis",
         "process.env.NODE_DEBUG": JSON.stringify(""),
         "process.env": JSON.stringify({}),
-        Buffer: JSON.stringify("buffer").Buffer,
+        // Buffer: JSON.stringify("buffer").Buffer,
       },
       format: "esm",
     },
