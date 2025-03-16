@@ -9,7 +9,18 @@ import { DAOVote, VotingDelta } from "@/context/WalletContext";
 export class MerkleVoteAccumulator {
   private proposalTrees: Map<string, MerkleTree> = new Map();
   private proposalTallies: Map<string, Map<string, VotingDelta<DAOVote>>> = new Map();
+
   private verificationErrors: Map<string, string[]> = new Map(); // Track errors by proposal
+
+  private proposalGroupVoters: Map<string, Set<string>> = new Map();
+
+  private getProposalGroup(proposalId: string): string | null {
+    // If it starts with "group-", they belong to the same proposal group
+    if (proposalId.startsWith('group-')) {
+      return 'oracle-feeds';
+    }
+    return null;
+  }
   
   async addVote(delta: VotingDelta<DAOVote>): Promise<boolean> {
     try {
@@ -27,6 +38,29 @@ export class MerkleVoteAccumulator {
       
       const proposalId = delta.vote.data.proposalId;
       const voter = delta.vote.metadata.voter;
+      
+      // NEW: Check if this proposalId belongs to a group
+      const groupId = this.getProposalGroup(proposalId);
+      if (groupId) {
+        // Initialize group voter set if needed
+        if (!this.proposalGroupVoters.has(groupId)) {
+          this.proposalGroupVoters.set(groupId, new Set());
+        }
+        
+        // Check if this voter has already voted in this group
+        const groupVoters = this.proposalGroupVoters.get(groupId)!;
+        
+        // If proposal IDs are different but in same group, deny the vote
+        for (const [pid, voterMap] of this.proposalTallies.entries()) {
+          if (pid !== proposalId && this.getProposalGroup(pid) === groupId && voterMap.has(voter)) {
+            this.recordError(proposalId, `Voter ${voter} already voted on a different option in group ${groupId}`);
+            return false;
+          }
+        }
+        
+        // Track this voter in the group
+        groupVoters.add(voter);
+      }
       
       // Get or create proposal-specific tally map
       if (!this.proposalTallies.has(proposalId)) {
@@ -50,6 +84,7 @@ export class MerkleVoteAccumulator {
       return false;
     }
   }
+  
   
   // ENHANCED: Record errors for later inspection
   private recordError(proposalId: string, error: string): void {
