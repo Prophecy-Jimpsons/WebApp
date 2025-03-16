@@ -4,7 +4,6 @@
  */
 
 // Core Dependencies
-import { ObjectManager } from '@filebase/sdk';
 import { PublicKey } from '@solana/web3.js';
 import { MerkleTree } from 'merkletreejs';
 import { keccak256 } from 'js-sha3';
@@ -23,9 +22,9 @@ export const FILABASE_CONFIG = {
 // Update your configuration
 export const IPFS_CONFIG = {
   pinata: {
-    apiKey: "1470d3b440ee3b8460c7",
-    apiSecret: "633004537f6e36fd244b08a28e3e2bfcd9e3ed1336f1768840dcb4539039d23c",
-    jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIwN2I0ZmIxOS00NjVjLTQ2NGEtYmIyYi05N2U5ZmI4ZTcwNjgiLCJlbWFpbCI6InNhZ2FyYnVkaGF0aG9raTEwMkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MSwiaWQiOiJGUkExIn0seyJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MSwiaWQiOiJOWUMxIn1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiMTQ3MGQzYjQ0MGVlM2I4NDYwYzciLCJzY29wZWRLZXlTZWNyZXQiOiI2MzMwMDQ1MzdmNmUzNmZkMjQ0YjA4YTI4ZTNlMmJmY2Q5ZTNlZDEzMzZmMTc2ODg0MGRjYjQ1MzkwMzlkMjNjIiwiZXhwIjoxNzczNjIyODUxfQ.zjeLPbzQK_-KHEkmCf9hhO7Qcmn59F6KiL0k9YcQheg"
+    apiKey: "618d71e122d454e82111",
+    apiSecret: "b93c2aa9a74d81cdd1c90c73ee1f7506fc66676770450d40910bada41ea1f79d",
+    jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI2ZDM0OWQyZi03M2M4LTQ0ZGItOWVjZS0zMWNiY2EwZTc3ZWQiLCJlbWFpbCI6InBwbGVuZGV2ZXJlc3RAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjYxOGQ3MWUxMjJkNDU0ZTgyMTExIiwic2NvcGVkS2V5U2VjcmV0IjoiYjkzYzJhYTlhNzRkODFjZGQxYzkwYzczZWUxZjc1MDZmYzY2Njc2NzcwNDUwZDQwOTEwYmFkYTQxZWExZjc5ZCIsImV4cCI6MTc3MzYyNDM3MH0.KFP88oOJKYfuIh5Lde8ooQu9EiCQ-t2iKHMwwMxkUls"
   },
   endpoints: {
     pinFile: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
@@ -96,7 +95,7 @@ interface VotingDelta<T> {
  * @template T - Generic type for vote payload
  */
 export class PhantomVotingClient<T> {
-  private objectManager: ObjectManager;
+ 
   private merkleTree?: MerkleTree;
   currentProposalId: string | undefined;
 
@@ -105,20 +104,7 @@ export class PhantomVotingClient<T> {
    */
   constructor() {
     console.log('DEBUG: Initializing PhantomVotingClient');
-    try {
-      this.objectManager = new ObjectManager(
-        FILABASE_CONFIG.key,
-        FILABASE_CONFIG.secret,
-        {
-          bucket: FILABASE_CONFIG.bucket,
-          ipfs: { cidVersion: 1 } // CIDv1 for improved IPFS compatibility
-        }
-      );
-      console.log('DEBUG: ObjectManager created successfully');
-    } catch (error) {
-      console.error('DEBUG: Error creating ObjectManager:', error);
-      throw error;
-    }
+    
   }
 
   /**
@@ -209,7 +195,7 @@ export class PhantomVotingClient<T> {
           previousCID: await this.getLatestCID(),
           ipfs: {
             cid: '', // Populated post-upload
-            gateway: FILABASE_CONFIG.ipfsEndpoint
+            gateway: "https://gateway.pinata.cloud/ipfs"
           }
         }
       };
@@ -234,7 +220,7 @@ export class PhantomVotingClient<T> {
       console.error('DEBUG: Error stack:', error instanceof Error ? error.stack : 'No stack available');
       throw error;
     }
-  }
+  } 
 
   /**
    * Store voting delta in IPFS with proper metadata
@@ -397,7 +383,7 @@ export class PhantomVotingClient<T> {
    * @param delta - VotingDelta to validate
    * @returns Promise resolving to boolean indicating validity
    */
-  private async validateDelta(delta: VotingDelta<T>): Promise<boolean> {
+  public async validateDelta(delta: VotingDelta<T>): Promise<boolean> {
     console.log('DEBUG: validateDelta called');
     try {
       const validations = [
@@ -485,11 +471,62 @@ export class PhantomVotingClient<T> {
    * 
    * @returns Promise resolving to previous CID string
    */
-  private async getLatestCID(): Promise<string> {
+  public async getLatestCID(): Promise<string> {
     console.log('DEBUG: getLatestCID called');
-    // Simplified implementation that doesn't depend on Firebase
-    return '';
+    try {
+      // Define interface for Pinata pin object structure
+      interface PinataPin {
+        ipfs_pin_hash: string;
+        metadata?: {
+          keyvalues?: {
+            proposalId?: string;
+            timestamp?: string;
+            voter?: string;
+          }
+        }
+      }
+  
+      // Query Pinata's API for pins sorted by timestamp
+      const response = await fetch('https://api.pinata.cloud/data/pinList?status=pinned', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${IPFS_CONFIG.pinata.jwt}`
+        }
+      });
+      
+      if (!response.ok) {
+        console.error(`Failed to fetch pin list: ${response.statusText}`);
+        return '';
+      }
+      
+      const data = await response.json();
+      if (!data.rows || data.rows.length === 0) {
+        console.log('No pins found');
+        return '';
+      }
+      
+      // Filter pins by proposal ID if needed
+      const relevantPins = this.currentProposalId 
+        ? data.rows.filter((pin: PinataPin) => 
+            pin.metadata?.keyvalues?.proposalId === this.currentProposalId)
+        : data.rows;
+      
+      // Sort by timestamp (descending)
+      const sortedPins = relevantPins.sort((a: PinataPin, b: PinataPin) => {
+        const timeA = a.metadata?.keyvalues?.timestamp || '';
+        const timeB = b.metadata?.keyvalues?.timestamp || '';
+        return new Date(timeB).getTime() - new Date(timeA).getTime();
+      });
+      
+      // Return the most recent CID
+      return sortedPins.length > 0 ? sortedPins[0].ipfs_pin_hash : '';
+    } catch (error) {
+      console.error('DEBUG: Error getting latest CID:', error);
+      return '';
+    }
   }
+  
+  
 
   /**
    * Retrieve voting delta from IPFS
@@ -497,13 +534,20 @@ export class PhantomVotingClient<T> {
    * @param cid - IPFS content identifier
    * @returns Promise resolving to parsed VotingDelta
    */
-  private async getDelta(cid: string): Promise<VotingDelta<T>> {
+  public async getDelta(cid: string): Promise<VotingDelta<T>> {
     console.log('DEBUG: getDelta called with CID:', cid);
     try {
-      const data = await this.objectManager.download(cid, {});
+      // Use Pinata gateway to fetch content
+      const response = await fetch(`https://gateway.pinata.cloud/ipfs/${cid}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch content: ${response.statusText}`);
+      }
+      
+      const data = await response.text();
       console.log('DEBUG: Downloaded data length:', data.length);
       
-      const delta = JSON.parse(data.toString());
+      const delta = JSON.parse(data);
       console.log('DEBUG: Parsed delta successfully');
       
       return delta;
@@ -512,6 +556,7 @@ export class PhantomVotingClient<T> {
       throw error;
     }
   }
+  
 }
 
 /**

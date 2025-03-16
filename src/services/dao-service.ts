@@ -1,6 +1,7 @@
 import { PhantomVotingClient } from "@/config/filebase-dao";
 import { DAOVote, VotingDelta } from "@/context/WalletContext";
 import { OracleSource } from "@/types/dao";
+import { MerkleVoteAccumulator } from "@/utils/vote-tallying";
 
 const VOTE_EXPIRY_DAYS = 10;
 const LP_WALLETS = ["5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1"];
@@ -109,18 +110,32 @@ const initialOracleSources: OracleSource[] = [
 }));
 
 export const getOracleSources = async (votingHistory: VotingDelta<DAOVote>[]): Promise<OracleSource[]> => {
+   // Create accumulator and process all votes
+  const accumulator = new MerkleVoteAccumulator();
+  const invalidVotes: string[] = [];
+
+
+  votingHistory.forEach(vote => {
+    const added = accumulator.addVote(vote);
+    if (!added) {
+      invalidVotes.push(`Vote from ${vote.vote.metadata.voter} failed verification`);
+    }
+  });
+  
+  if (invalidVotes.length > 0) {
+    console.warn("Some votes failed verification:", invalidVotes);
+  }
+
   // Calculate vote metrics from voting history
   const processedSources = initialOracleSources.map(source => {
-    const sourceVotes = votingHistory.filter(
-      v => v.vote.data.proposalId === source.id
-    );
+    const tally = accumulator.getTally(source.id);
+    
 
     return {
       ...source,
-      totalVotes: sourceVotes.length,
-      weightedVotes: sourceVotes.reduce((sum, vote) => 
-        sum + vote.vote.metadata.weight.calculated, 0
-      ),
+      totalVotes: tally.totalVotes,
+      weightedVotes: tally.weightedVotes,
+      merkleRoot: tally.merkleRoot, // Add this to your OracleSource type
       daysLeft: calculateDaysLeft(source.endDate),
       status: determineStatus(source.endDate)
     };
