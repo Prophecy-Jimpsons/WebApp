@@ -155,13 +155,16 @@ export const submitVote = async (
     }
 
     const voteData: DAOVote = {
-      proposalId,
+      proposalId: String(proposalId),
       choice: 'FOR',
       timestamp: new Date().toISOString(),
-      stake,
-      tier
+      stake: Number(stake),
+      tier: String(tier)
     };
 
+    console.log("---------------------");
+    console.log(voteData)
+    console.log("---------------------");
     await votingClient.createVote(voteData, provider);
     
     return { 
@@ -178,6 +181,7 @@ export const submitVote = async (
 };
 
 // Type validation utilities
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isVotingDelta = (data: any): data is VotingDelta<DAOVote> => {
   return data?.version?.startsWith('1.') && 
          typeof data?.vote?.metadata?.voter === 'string' &&
