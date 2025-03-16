@@ -78,7 +78,7 @@ const raydiumSteps: Step[] = [
 const anyaltSteps: Step[] = [
   {
     number: "01",
-    title: "Open AnyAlt Widget",
+    title: "Buy with AnyAlt",
     description:
       "Click the button to open the AnyAlt widget, which allows you to swap various cryptocurrencies for JIMP tokens.",
     icon: Repeat,
