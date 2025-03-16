@@ -73,7 +73,7 @@ const DaoVote: React.FC = () => {
     if (!address || !selectedSource) return;
 
     if (!hasEnoughStake) {
-      setError(`Minimum stake of ${MIN_STAKE_REQUIRED} JIMP tokens required to vote.`);
+      setError(`Minimum Holdings of ${MIN_STAKE_REQUIRED} JIMP tokens required to vote.`);
       return;
     }
 
@@ -238,7 +238,7 @@ const DaoVote: React.FC = () => {
         <div className={styles.voteControls}>
           <div className={styles.stakeStatus}>
             <div className={styles.stakeMetric}>
-              <span className={styles.metricLabel}>Your Stake:</span>
+              <span className={styles.metricLabel}>Your Hold:</span>
               <span className={styles.metricValue}>{tokenAmount} JIMP</span>
             </div>
             <div className={styles.stakeMetric}>
