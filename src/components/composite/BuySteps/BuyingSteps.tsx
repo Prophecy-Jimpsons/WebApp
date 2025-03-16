@@ -14,7 +14,7 @@ import styles from "./BuyingSteps.module.css";
 import Widget, { WidgetRef } from "./components/AnyaltWidget"; // Import the WidgetRef type
 import {
   anyaltPrerequisites,
-  anyaltSteps,
+  // anyaltSteps,
   raydiumPrerequisites,
   raydiumSteps,
   swapUrl,
@@ -48,7 +48,8 @@ const BuyingSteps: React.FC = () => {
 
   // Get the appropriate steps based on selected method
   const currentSteps: Step[] =
-    buyMethod === "raydium" ? raydiumSteps : anyaltSteps;
+    // buyMethod === "raydium" ? raydiumSteps : anyaltSteps;
+    buyMethod === "raydium" ? raydiumSteps : [];
 
   // Extract image URLs from the current steps
   // const images: string[] = currentSteps
