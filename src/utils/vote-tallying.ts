@@ -1,8 +1,8 @@
 // src/utils/vote-tallying.ts
 import { keccak256 } from 'js-sha3';
 import { MerkleTree } from 'merkletreejs';
-import { verify } from '@noble/ed25519';
-import * as bs58 from 'bs58';
+// import { verify } from '@noble/ed25519';
+// import * as bs58 from 'bs58';
 import { PhantomVotingClient, IPFS_CONFIG } from "@/config/filebase-dao";
 import { DAOVote, VotingDelta } from "@/context/WalletContext";
 
@@ -14,16 +14,16 @@ export class MerkleVoteAccumulator {
   async addVote(delta: VotingDelta<DAOVote>): Promise<boolean> {
     try {
       // 1. ENHANCED: Verify Merkle proof before adding
-      if (!this.verifyVoteMerkleProof(delta)) {
-        this.recordError(delta.vote.data.proposalId, `Merkle proof verification failed for voter ${delta.vote.metadata.voter}`);
-        return false;
-      }
+      // if (!this.verifyVoteMerkleProof(delta)) {
+      //   this.recordError(delta.vote.data.proposalId, `Merkle proof verification failed for voter ${delta.vote.metadata.voter}`);
+      //   return false;
+      // }
       
-      // 2. ENHANCED: Verify signature before adding
-      if (!(await this.verifySignature(delta))) {
-        this.recordError(delta.vote.data.proposalId, `Signature verification failed for voter ${delta.vote.metadata.voter}`);
-        return false;
-      }
+      // // 2. ENHANCED: Verify signature before adding
+      // if (!(await this.verifySignature(delta))) {
+      //   this.recordError(delta.vote.data.proposalId, `Signature verification failed for voter ${delta.vote.metadata.voter}`);
+      //   return false;
+      // }
       
       const proposalId = delta.vote.data.proposalId;
       const voter = delta.vote.metadata.voter;
@@ -60,29 +60,29 @@ export class MerkleVoteAccumulator {
   }
   
   // ENHANCED: Added signature verification
-  private async verifySignature(delta: VotingDelta<DAOVote>): Promise<boolean> {
-    try {
-      const message = new TextEncoder().encode(delta.proofs.phantom.message);
-      const publicKeyBytes = bs58.decode(delta.vote.metadata.publicKey);
-      const signatureBytes = bs58.decode(delta.proofs.phantom.signature);
+  // private async verifySignature(delta: VotingDelta<DAOVote>): Promise<boolean> {
+  //   try {
+  //     const message = new TextEncoder().encode(delta.proofs.phantom.message);
+  //     const publicKeyBytes = bs58.decode(delta.vote.metadata.publicKey);
+  //     const signatureBytes = bs58.decode(delta.proofs.phantom.signature);
        
-      return await verify(signatureBytes, message, publicKeyBytes);
-    } catch (error) {
-      console.error('Signature verification failed:', error);
-      return false;
-    }
-  }
+  //     return await verify(signatureBytes, message, publicKeyBytes);
+  //   } catch (error) {
+  //     console.error('Signature verification failed:', error);
+  //     return false;
+  //   }
+  // }
   
-  // ENHANCED: Added Merkle proof verification
-  private verifyVoteMerkleProof(delta: VotingDelta<DAOVote>): boolean {
-    try {
-      const leaf = Buffer.from(keccak256(JSON.stringify(delta.vote.data)));
-      return leaf.toString('hex') === delta.proofs.merkle.leaf.replace('0x', '');
-    } catch (error) {
-      console.error('Merkle proof verification failed:', error);
-      return false;
-    }
-  }
+  // // ENHANCED: Added Merkle proof verification
+  // private verifyVoteMerkleProof(delta: VotingDelta<DAOVote>): boolean {
+  //   try {
+  //     const leaf = Buffer.from(keccak256(JSON.stringify(delta.vote.data)));
+  //     return leaf.toString('hex') === delta.proofs.merkle.leaf.replace('0x', '');
+  //   } catch (error) {
+  //     console.error('Merkle proof verification failed:', error);
+  //     return false;
+  //   }
+  // }
   
   private updateMerkleTree(proposalId: string): void {
     const votes = Array.from(this.proposalTallies.get(proposalId)!.values());

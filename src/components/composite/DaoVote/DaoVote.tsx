@@ -8,6 +8,7 @@ import { DAOVote } from "@/context/WalletContext";
 import CardGroup from "./CardGroup";
 import styles from "./DaoVote.module.css";
 import VoteCard from "./VoteCard";
+import VoteTallies from "./VoteTallies";
 
 const MIN_STAKE_REQUIRED = 0;
 
@@ -21,6 +22,11 @@ const DaoVote: React.FC = () => {
   
   // Create a ref to the tally service to persist between renders
   const tallyServiceRef = useRef<MerkleVoteTallyService | null>(null);
+
+  const proposalGroups = useMemo(() => 
+    oracleSources.map(source => source.id),
+    [oracleSources]
+  );
   
   const { 
     address, 
@@ -245,7 +251,10 @@ const DaoVote: React.FC = () => {
               </span>
             </div>
           </div>
-
+          {/* Add the vote tallies section */}
+          <div className={styles.talliesSection}>
+            <VoteTallies proposalIds={proposalGroups} />
+          </div>
           {!hasEnoughStake && (
             <div className={styles.stakeWarning}>
               <div className={styles.warningIcon}>!</div>
