@@ -275,7 +275,7 @@ const BuyingSteps: React.FC = () => {
         )}
 
       {/* AnyAlt Widget component with ref */}
-      <Widget ref={widgetRef} tokenAddress={tokenAddress} />
+      <Widget ref={widgetRef} />
     </section>
   );
 };
