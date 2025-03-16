@@ -26,7 +26,7 @@ const LaunchOverlay: FC<LaunchOverlayProps> = ({
             ))}
           </div>
         </div>
-        <h3 className={styles.title}>NFT Marketplace Comming Soon</h3>
+        <h3 className={styles.title}>NFT Marketplace Coming Soon</h3>
         <p className={styles.message}>{message}</p>
         <div className={styles.buttonWrapper}>
           <Button variant="primary" to="/">
