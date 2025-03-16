@@ -12,6 +12,7 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
+// Update this in env.d.ts
 interface Window {
   ENV_CONFIG?: {
     SYNDICA_API_KEY?: string;
@@ -25,6 +26,6 @@ interface Window {
     HELIUS_API?: string;
     SERVER_BASE_URL?: string;
     MAINNET_ALCHEMY_HOST_URL?: string;
-    [key: string]: string | undefined;
+    [key: string]: string | undefined;  // Add index signature
   };
 }

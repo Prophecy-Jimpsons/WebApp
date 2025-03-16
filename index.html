@@ -273,7 +273,10 @@
     <div id="root"></div>
 
     <!-- Main Application -->
-    <scrip type="module" src="/env-config.js"></scrip>
+    <script>
+      window.ENV_CONFIG = window.ENV_CONFIG || {};
+    </script>
+    <script type="module" src="/env-config.js"></script>
     <script type="module" src="/src/main.tsx"></script>
 
     <!-- Loading Screen Handler -->

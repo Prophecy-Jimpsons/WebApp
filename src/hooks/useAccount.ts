@@ -5,6 +5,8 @@ import {
 } from "@solana/spl-token";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
+import { getSyndicaUrl } from '@/utils/env';
+
 
 
 // const syndicaApi = import.meta.env.VITE_SYNDICA_API!;
@@ -15,9 +17,7 @@ declare global {
     };
   }
 }
-
-// Now, TypeScript will recognize ENV_CONFIG
-const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/${window.ENV_CONFIG?.SYNDICA_API_KEY ?? ''}`;
+const syndicaHostUrl = getSyndicaUrl();
 console.log("-----------------")
 console.log(syndicaHostUrl)
 console.log("-----------------")
