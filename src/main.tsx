@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
+import "./polyfills.js";
 
 // For Minting
 import { Buffer } from "buffer";

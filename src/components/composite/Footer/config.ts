@@ -12,6 +12,10 @@ export const footerLinks = [
     label: "Roadmap",
   },
   {
+    path: PATHS.PUBLIC.DAO_VOTE,
+    label: "Dao Vote",
+  },
+  {
     path: PATHS.PUBLIC.PRIVACY_POLICY,
     label: "Privacy Policy",
   },

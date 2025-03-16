@@ -6,6 +6,8 @@ import {
   CheckCircle,
   LucideIcon,
   DollarSign,
+  Repeat,
+  AlertCircle,
 } from "lucide-react";
 import { step_1, step_2, step_3, step_4 } from "@/assets/images/Howtobuy";
 
@@ -18,7 +20,7 @@ interface Step {
 }
 
 // Prerequisites - not shown as steps but displayed in prerequisites section
-const prerequisites = [
+const raydiumPrerequisites = [
   {
     icon: Wallet,
     text: "Install Phantom Wallet",
@@ -28,8 +30,18 @@ const prerequisites = [
     text: "Have sufficient SOL balance for swap and transaction fees",
   },
 ];
+const anyaltPrerequisites = [
+  {
+    icon: Wallet,
+    text: "You need a Web3 wallet with ETH or other supported cryptocurrencies",
+  },
+  {
+    icon: AlertCircle,
+    text: "Ensure you have enough funds to cover the swap amount plus gas fees",
+  },
+];
 
-const steps: Step[] = [
+const raydiumSteps: Step[] = [
   {
     number: "01",
     title: "Visit Raydium and Confirm Token",
@@ -53,7 +65,6 @@ const steps: Step[] = [
     icon: CheckCircle,
     image: step_3,
   },
-
   {
     number: "04",
     title: "Swap Confirmation",
@@ -64,8 +75,51 @@ const steps: Step[] = [
   },
 ];
 
-export const swapUrl =
-  "https://raydium.io/swap/?inputMint=sol&outputMint=D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump";
-export const tokenAddress = "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump";
+const anyaltSteps: Step[] = [
+  {
+    number: "01",
+    title: "Open AnyAlt Widget",
+    description:
+      "Click the button to open the AnyAlt widget, which allows you to swap various cryptocurrencies for JIMP tokens.",
+    icon: Repeat,
+    image: step_1,
+  },
+  {
+    number: "02",
+    title: "Select Your Input Token",
+    description:
+      "Choose which cryptocurrency you want to swap from (ETH, USDT, etc.) and enter the amount you wish to convert.",
+    icon: CreditCard,
+    image: step_2,
+  },
+  {
+    number: "03",
+    title: "Review and Confirm",
+    description:
+      "Review the transaction details including fees and estimated JIMP tokens you'll receive, then confirm the swap.",
+    icon: CheckCircle,
+    image: step_3,
+  },
+  {
+    number: "04",
+    title: "Complete the Transaction",
+    description:
+      "Approve the transaction in your wallet and wait for confirmation. The JIMP tokens will be sent directly to your wallet.",
+    icon: ArrowRight,
+    image: step_4,
+  },
+];
 
-export { prerequisites, steps as default };
+const swapUrl =
+  "https://raydium.io/swap/?inputMint=sol&outputMint=D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump";
+
+const tokenAddress = "D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump";
+
+export {
+  raydiumPrerequisites,
+  anyaltPrerequisites,
+  raydiumSteps,
+  anyaltSteps,
+  swapUrl,
+  tokenAddress,
+};

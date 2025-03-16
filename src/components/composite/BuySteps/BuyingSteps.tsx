@@ -1,32 +1,65 @@
-import { useEffect, useState } from "react";
-import styles from "./BuyingSteps.module.css";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import {
   AlertCircle,
   Check,
   CheckCircle2,
   Copy,
   ExternalLink,
+  Repeat,
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
-import steps, { prerequisites, swapUrl, tokenAddress } from "./config";
-import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
+import styles from "./BuyingSteps.module.css";
+import Widget, { WidgetRef } from "./components/AnyaltWidget"; // Import the WidgetRef type
+import {
+  anyaltPrerequisites,
+  // anyaltSteps,
+  raydiumPrerequisites,
+  raydiumSteps,
+  swapUrl,
+  tokenAddress,
+} from "./config";
 
-const BuyingSteps = () => {
+// Define types for steps
+interface Step {
+  number: string;
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const BuyingSteps: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [photoIndex, setPhotoIndex] = useState<number>(0);
-  const [loadedImages, setLoadedImages] = useState<{ [key: string]: boolean }>(
-    {},
-  );
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
   const { copiedMap, copyToClipboard } = useCopyToClipboard();
+  const [buyMethod, setBuyMethod] = useState<"raydium" | "anyalt">("raydium");
 
-  // Extract image URLs from the steps
-  const images = steps.map((step) => step.image);
+  // Reference to the Widget component to access its methods
+  const widgetRef = useRef<WidgetRef>(null);
 
-  // Preload all images when the component mounts
+  // Function to open the AnyAlt widget
+  const openAnyaltWidget = (): void => {
+    if (widgetRef.current) {
+      widgetRef.current.openWidget();
+    }
+  };
+
+  // Get the appropriate steps based on selected method
+  const currentSteps: Step[] =
+    // buyMethod === "raydium" ? raydiumSteps : anyaltSteps;
+    buyMethod === "raydium" ? raydiumSteps : [];
+
+  // Extract image URLs from the current steps
+  // const images: string[] = currentSteps
+  //   .map((step) => step.image)
+  //   .filter((image): image is string => Boolean(image));
+
+  // Preload all images when the component mounts or when buy method changes
   useEffect(() => {
-    const preloadImages = (imageUrls: string[]) => {
-      const loadImage = (url: string) => {
+    const preloadImages = (imageUrls: string[]): Promise<string[]> => {
+      const loadImage = (url: string): Promise<string> => {
         return new Promise((resolve, reject) => {
           const img = new Image();
           img.onload = () => {
@@ -45,30 +78,59 @@ const BuyingSteps = () => {
       return Promise.all(imageUrls.map((url) => loadImage(url)));
     };
 
-    const images = steps
+    const imagesToLoad: string[] = currentSteps
       .map((step) => step?.image)
-      .filter((image) => image !== undefined);
+      .filter((image): image is string => image !== undefined);
 
-    preloadImages(images).catch((error) =>
+    preloadImages(imagesToLoad).catch((error) =>
       console.error("Error preloading images:", error),
     );
-  }, [images]);
+  }, [buyMethod, currentSteps]);
 
-  const openLightbox = (index: number) => {
+  const openLightbox = (index: number): void => {
     // Only open lightbox if the image is loaded
-    if (loadedImages[steps[index].image!]) {
+    if (currentSteps[index].image && loadedImages[currentSteps[index].image]) {
       setPhotoIndex(index);
       setIsOpen(true);
     }
   };
 
-  const closeLightbox = () => {
+  const closeLightbox = (): void => {
     setIsOpen(false);
   };
 
   return (
     <section className={styles.buyingSteps}>
-      <h2 className={styles.title}>How to Buy JIMP Token</h2>
+      <div className={styles.header}>
+        <h2 className={styles.title}>How to Buy $JIMP Token</h2>
+        <p className={styles.subtitle}>
+          Choose your preferred method to purchase JIMP tokens. You can either
+          buy directly with SOL on Raydium or use other cryptocurrencies via
+          AnyAlt.
+        </p>
+      </div>
+
+      {/* Method Toggle */}
+      <div className={styles.methodToggle}>
+        <button
+          className={`${styles.methodButton} ${buyMethod === "raydium" ? styles.active : ""}`}
+          onClick={() => setBuyMethod("raydium")}
+        >
+          {/* <img
+            src="/images/solana-logo.svg"
+            alt="Solana"
+            className={styles.methodIcon}
+          /> */}
+          Buy with SOL on Raydium
+        </button>
+        <button
+          className={`${styles.methodButton} ${buyMethod === "anyalt" ? styles.active : ""}`}
+          onClick={() => setBuyMethod("anyalt")}
+        >
+          <Repeat className={styles.methodIcon} />
+          Buy with Other Cryptocurrencies
+        </button>
+      </div>
 
       {/* Prerequisites Section */}
       <div className={styles.prerequisites}>
@@ -77,32 +139,52 @@ const BuyingSteps = () => {
           Before You Begin
         </h3>
         <div className={styles.prerequisitesList}>
-          {prerequisites.map((prerequisite, index) => (
-            <div key={index} className={styles.prerequisiteItem}>
-              <prerequisite.icon className={styles.icon} />
-              <span>{prerequisite.text}</span>
-            </div>
-          ))}
+          {buyMethod === "raydium"
+            ? raydiumPrerequisites.map((prerequisite, index) => (
+                <div key={index} className={styles.prerequisiteItem}>
+                  <prerequisite.icon className={styles.icon} />
+                  <span>{prerequisite.text}</span>
+                </div>
+              ))
+            : anyaltPrerequisites.map((prerequisite, index) => (
+                <div key={index} className={styles.prerequisiteItem}>
+                  <prerequisite.icon className={styles.icon} />
+                  <span>{prerequisite.text}</span>
+                </div>
+              ))}
         </div>
       </div>
 
       <div className={styles.tradingLink}>
-        <h3>🚀 Our $JIMP Token is now LIVE on Raydium! 🚀</h3>
+        <h3>🚀 Our $JIMP Token is now LIVE! 🚀</h3>
       </div>
+
+      {/* AnyAlt Direct Button (only shown when anyalt method is selected) */}
+      {buyMethod === "anyalt" && (
+        <div className={styles.anyaltButtonContainer}>
+          <button onClick={openAnyaltWidget} className={styles.anyaltButton}>
+            <Repeat className={styles.buttonIcon} />
+            Open AnyAlt Widget Now
+          </button>
+          <p className={styles.anyaltDescription}>
+            Click the button above to directly open the swap widget, or follow
+            the step-by-step guide below.
+          </p>
+        </div>
+      )}
 
       {/* Steps Section */}
       <div className={styles.stepsWrapper}>
-        {steps.map((step, index) => (
+        {currentSteps.map((step, index) => (
           <div
             key={index}
             className={`${styles.step} ${index % 2 === 0 ? styles.left : ""}`}
           >
             <div className={styles.contentWrapper}>
               <span className={styles.stepNumber}>STEP: {step.number}</span>
-
               <h3 className={styles.stepTitle}>{step.title}</h3>
               <p className={styles.stepDescription}>
-                {step.number === "01" ? (
+                {buyMethod === "raydium" && step.number === "01" ? (
                   <>
                     <a
                       href={swapUrl}
@@ -115,11 +197,22 @@ const BuyingSteps = () => {
                     </a>
                     {step.description}
                   </>
+                ) : buyMethod === "anyalt" && step.number === "01" ? (
+                  <>
+                    <button
+                      onClick={openAnyaltWidget}
+                      className={styles.anyaltInlineButton}
+                    >
+                      Open AnyAlt Widget
+                      <Repeat className={styles.linkIcon} />
+                    </button>
+                    {step.description}
+                  </>
                 ) : (
                   step.description
                 )}
               </p>
-              {step.number === "03" && (
+              {buyMethod === "raydium" && step.number === "03" && (
                 <div className={styles.tokenAddress}>
                   <span>Token Address:</span>
                   <code>{tokenAddress}</code>
@@ -167,16 +260,23 @@ const BuyingSteps = () => {
       <div className={styles.completionContent}>
         <CheckCircle2 className={styles.completionIcon} />
         <h3>Voilà!!! 🎉</h3>
-        <p>You've successfully swaped JIMP tokens! 🚀 Now, Lets keep going!</p>
+        <p>
+          You've successfully acquired JIMP tokens! 🚀 Now, Let's keep going!
+        </p>
       </div>
 
-      {isOpen && loadedImages[steps[photoIndex].image!] && (
-        <Lightbox
-          mainSrc={steps[photoIndex].image!}
-          onCloseRequest={closeLightbox}
-          enableZoom={false}
-        />
-      )}
+      {isOpen &&
+        currentSteps[photoIndex].image &&
+        loadedImages[currentSteps[photoIndex].image] && (
+          <Lightbox
+            mainSrc={currentSteps[photoIndex].image}
+            onCloseRequest={closeLightbox}
+            enableZoom={false}
+          />
+        )}
+
+      {/* AnyAlt Widget component with ref */}
+      <Widget ref={widgetRef} />
     </section>
   );
 };

@@ -78,7 +78,7 @@ const AnnouncementBanner: FC<AnnouncementBannerProps> = ({
         </a>
         */}
         <span>
-          <span className={styles.highlight}>Mainnet</span> deployement comming
+          <span className={styles.highlight}>Mainnet</span> deployement coming
           soon!!!
         </span>
         <button

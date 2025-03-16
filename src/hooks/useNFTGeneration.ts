@@ -17,7 +17,7 @@ export const useNFTGeneration = () => {
   const {
     data: generatedNFT,
     mutate: nftGenerate,
-    isLoading,
+    isPending: isLoading,
     error: generationError,
     reset: resetGeneration,
   } = useMutation({

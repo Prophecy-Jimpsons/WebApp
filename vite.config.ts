@@ -4,6 +4,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import { runtimeEnv } from "vite-plugin-runtime";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import commonjs from "vite-plugin-commonjs";
 import fs from "fs"
 
 const __filename = fileURLToPath(import.meta.url);
@@ -15,10 +17,34 @@ const makeAbsolute = (relativePath: string) =>
 
 export default defineConfig({
   plugins: [
+    nodeResolve({
+      browser: true,
+      preferBuiltins: false,
+      extensions: [".js", ".jsx", ".ts", ".tsx"],
+    }),
+    commonjs({
+      filter(id) {
+        return (
+          id.includes("@anyalt/widget") ||
+          id.includes("rpc-websockets") ||
+          id.includes("@solana/web3.js")
+        );
+      },
+    }),
     react(),
     runtimeEnv({ name: "env", injectHtml: true, generateTypes: true }),
     nodePolyfills({
-      include: ["buffer", "crypto", "stream", "util"],
+      include: [
+        "buffer",
+        "crypto",
+        "stream",
+        "util",
+        "events",
+        "process",
+        "url",
+        "https",
+        "http",
+      ],
       globals: {
         Buffer: true,
         global: true,
@@ -70,6 +96,9 @@ export default defineConfig({
       "@lib": path.resolve(__dirname, "./src/lib"),
       "@config": path.resolve(__dirname, "./src/config"),
 
+      // Add specific resolution for the AnyAlt widget
+      "@anyalt/widget": path.resolve(__dirname, "node_modules/@anyalt/widget"),
+
       // RPC Websockets resolution
       "rpc-websockets": makeAbsolute("node_modules/rpc-websockets"),
       "rpc-websockets/dist/lib/client/websocket.browser": makeAbsolute(
@@ -78,23 +107,60 @@ export default defineConfig({
       "rpc-websockets/dist/lib/client": makeAbsolute(
         "node_modules/rpc-websockets/dist/lib/client.js",
       ),
+      // "rpc-websockets/dist/lib/client": path.resolve(
+      //   __dirname,
+      //   "node_modules/rpc-websockets/dist/lib/client.js",
+      // ),
+      // "rpc-websockets/dist/lib/client/websocket.browser": path.resolve(
+      //   __dirname,
+      //   "node_modules/rpc-websockets/dist/lib/client/websocket.browser.js",
+      // ),
+      "@solana/web3.js": path.resolve(
+        __dirname,
+        "node_modules/@solana/web3.js/lib/index.browser.esm.js",
+      ),
     },
+    mainFields: ["browser", "module", "main"],
   },
 
   optimizeDeps: {
-    include: ["rpc-websockets"],
+    include: [
+      "rpc-websockets",
+      "@anyalt/widget",
+      "@solana/web3.js",
+      "@solana/spl-token",
+    ],
     esbuildOptions: {
-      target: "esnext",
+      target: "es2020",
       platform: "browser",
       define: {
         global: "globalThis",
+        "process.env.NODE_DEBUG": JSON.stringify(""),
+        "process.env": JSON.stringify({}),
+        // Buffer: JSON.stringify("buffer").Buffer,
       },
+      format: "esm",
     },
   },
 
   build: {
     rollupOptions: {
-      external: ["fs", "path", "net", "tls"],
+      external: ["net", "tls"],
+      // Added CommonJS handling for the AnyAlt widget
+      output: {
+        format: "es",
+        // Ensure globals are properly defined
+        globals: {
+          process: "process",
+          buffer: "buffer",
+          stream: "stream-browserify",
+          crypto: "crypto-browserify",
+          util: "util/util",
+        },
+      },
+    },
+    commonjsOptions: {
+      transformMixedEsModules: true,
     },
   },
 });
