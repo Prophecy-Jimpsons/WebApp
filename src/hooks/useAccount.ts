@@ -6,7 +6,21 @@ import {
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
 
+
 // const syndicaApi = import.meta.env.VITE_SYNDICA_API!;
+declare global {
+  interface Window {
+    ENV_CONFIG?: {
+      SYNDICA_API_KEY?: string;
+    };
+  }
+}
+
+// Now, TypeScript will recognize ENV_CONFIG
+const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/${window.ENV_CONFIG?.SYNDICA_API_KEY ?? ''}`;
+console.log("-----------------")
+console.log(syndicaHostUrl)
+console.log("-----------------")
 
 // const syndicaHostUrl = import.meta.env.VITE_MAINNET_SYNDICA_HOST_URL!;
 // const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/${syndicaApi}`;
@@ -15,7 +29,7 @@ import { useQuery } from "@tanstack/react-query";
 // const syndicaKey = import.meta.env.VITE_SYNDICA_API!;
 // const syndicaKey = import.meta.env.SYNDICA_API;
 // const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/3RUqQ1hDkbrXkK9Ptnid8uE9tYXSgZzrwcnozwefj2qUqXmEgZg68zt6HQ8Y8v4gvYDDf2e4ZaAnox5YrdLFAwb2qsdtpzq266b`;
-const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/${import.meta.env.VITE_SYNDICA_API_KEY}`;
+// const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/${window.ENV_CONFIG?.SYNDICA_API_KEY ?? ''}`;
 
 // console.log("Syndica API Key:", import.meta.env);
 // console.log("Syndica Host URL:", syndicaHostUrl);
@@ -23,9 +37,7 @@ const syndicaHostUrl = `https://solana-mainnet.api.syndica.io/api-key/${import.m
 // console.log("is this host url" + syndicaHostUrl);
 
 const connection = new Connection(syndicaHostUrl, "confirmed");
-console.log("-----------------")
-console.log(syndicaHostUrl)
-console.log("-----------------")
+
 
 // Fetch the balance of a given solana address
 export function useGetBalance({ address }: { address: PublicKey }) {

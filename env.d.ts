@@ -6,7 +6,25 @@ interface ImportMetaEnv {
   readonly DATABASE_URL: string;
   readonly HELIUS_API: string;
   readonly SYNDICA_API: string;
+  readonly SYNDICA_API_KEY: string;
 }
 interface ImportMeta {
   readonly env: ImportMetaEnv;
+}
+
+interface Window {
+  ENV_CONFIG?: {
+    SYNDICA_API_KEY?: string;
+    FIREBASE_API_KEY?: string;
+    FIREBASE_AUTH_DOMAIN?: string;
+    FIREBASE_PROJECT_ID?: string;
+    FIREBASE_STORAGE_BUCKET?: string;
+    FIREBASE_MESSAGING_SENDER_ID?: string;
+    FIREBASE_APP_ID?: string;
+    FIREBASE_MEASUREMENT_ID?: string;
+    HELIUS_API?: string;
+    SERVER_BASE_URL?: string;
+    MAINNET_ALCHEMY_HOST_URL?: string;
+    [key: string]: string | undefined;
+  };
 }

@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import { runtimeEnv } from "vite-plugin-runtime";
+import fs from "fs"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +25,21 @@ export default defineConfig({
         process: true,
       },
     }),
+    {
+      name: 'generate-env-config',
+      writeBundle: () => {
+        // Generate env-config.js for local development
+        const envConfig = `
+          window.ENV_CONFIG = {
+            SYNDICA_API_KEY: "${process.env.VITE_SYNDICA_API_KEY || ''}",
+            // Add other variables as needed
+          };
+        `;
+        
+        // Write to the output directory
+        fs.writeFileSync('dist/env-config.js', envConfig);
+      }
+    }
   ],
   css: {
     postcss: "./postcss.config.js",
