@@ -4,6 +4,7 @@
  */
 
 // Core Dependencies
+
 import { PublicKey } from '@solana/web3.js';
 import { MerkleTree } from 'merkletreejs';
 import { keccak256 } from 'js-sha3';
@@ -131,6 +132,8 @@ export class PhantomVotingClient<T> {
         timestamp: new Date().toISOString(),
         data
       });
+
+      console.log('Data is  ', data);
       console.log('DEBUG: Vote message created:', voteMessage);
 
       // 3. Sign message using Phantom's API
@@ -159,7 +162,12 @@ export class PhantomVotingClient<T> {
       console.log('DEBUG: Leaf string:', leafStr);
       this.updateMerkleTree(leafStr);
       console.log('DEBUG: Merkle tree updated');
-
+      const TIER_MULTIPLIERS = {
+        'Diamond': 2.0,
+        'Gold': 1.5,
+        'Silver': 1.2,
+        'Tier 0': 0
+        }
       // 5. Construct complete vote delta
       console.log('DEBUG: Constructing vote delta');
       const delta: VotingDelta<T> = {
@@ -174,10 +182,37 @@ export class PhantomVotingClient<T> {
             voter: publicKey.toString(),
             publicKey: bs58.encode(publicKey.toBytes()),
             weight: {
-              raw: 1.5,
-              tier: 'member',
+              raw: (() => {
+                // Extract tier multiplier from TIER_MULTIPLIERS
+                if (typeof data === 'object' && data !== null && 'tier' in data) {
+                  const tier = String(data.tier);
+                  // Type assertion for accessing TIER_MULTIPLIERS safely
+                  return tier in TIER_MULTIPLIERS ? TIER_MULTIPLIERS[tier as keyof typeof TIER_MULTIPLIERS] : 1.5;
+                }
+                return 1.5; // Default multiplier
+              })(),
+              tier: typeof data === 'object' && data !== null && 'tier' in data 
+                ? String(data.tier)
+                : 'member',
               formula: 'sqrt(stake) * tierMultiplier',
-              calculated: 1.5 * Math.sqrt(1.5)
+              calculated: (() => {
+                // Extract stake and tier values safely
+                const stake = typeof data === 'object' && data !== null && 'stake' in data 
+                  ? Number(data.stake) 
+                  : 1.5;
+                  
+                // Get tier multiplier
+                let tierMultiplier = 1.5; // Default
+                if (typeof data === 'object' && data !== null && 'tier' in data) {
+                  const tier = String(data.tier);
+                  tierMultiplier = tier in TIER_MULTIPLIERS 
+                    ? TIER_MULTIPLIERS[tier as keyof typeof TIER_MULTIPLIERS] 
+                    : 1.5;
+                }
+                
+                // Apply the formula: sqrt(stake) * tierMultiplier
+                return tierMultiplier * Math.sqrt(stake);
+              })()
             }
           }
         },
@@ -199,6 +234,7 @@ export class PhantomVotingClient<T> {
           }
         }
       };
+      
       console.log('DEBUG: Vote delta constructed');
 
       // 6. Store in IPFS and return CID
