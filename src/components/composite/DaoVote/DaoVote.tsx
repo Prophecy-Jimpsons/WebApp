@@ -1,10 +1,14 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
+import { MerkleVoteTallyService } from "@/utils/vote-tallying";
+import { PhantomVotingClient } from "@/config/filebase-dao";
 import { useWalletInfo } from "@/context/WalletContext";
-import { getOracleSources, submitVote } from "@/services/dao-service";
+import { getOracleSources } from "@/services/dao-service";
 import { OracleSource } from "@/types/dao";
+import { DAOVote } from "@/context/WalletContext";
 import CardGroup from "./CardGroup";
 import styles from "./DaoVote.module.css";
 import VoteCard from "./VoteCard";
+import VoteTallies from "./VoteTallies";
 
 const MIN_STAKE_REQUIRED = 0;
 
@@ -13,14 +17,24 @@ const DaoVote: React.FC = () => {
   const [oracleSources, setOracleSources] = useState<OracleSource[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [verificationErrors, setVerificationErrors] = useState<string[]>([]);
+  
+  // Create a ref to the tally service to persist between renders
+  const tallyServiceRef = useRef<MerkleVoteTallyService | null>(null);
+
+  const proposalGroups = useMemo(() => 
+    oracleSources.map(source => source.id),
+    [oracleSources]
+  );
   
   const { 
     address, 
     tokenAmount, 
-    tier, 
     votingHistory,
     isLoading,
-    votingPower
+    votingPower,
+    submitVote
   } = useWalletInfo();
 
   const hasEnoughStake = tokenAmount >= MIN_STAKE_REQUIRED;
@@ -28,6 +42,14 @@ const DaoVote: React.FC = () => {
   const formattedVotingPower = useMemo(() => {
     return `${votingPower.weight.toFixed(2)} VP`;
   }, [votingPower.weight]);
+
+  // Initialize the tally service
+  useEffect(() => {
+    if (!tallyServiceRef.current) {
+      const votingClient = new PhantomVotingClient<DAOVote>();
+      tallyServiceRef.current = new MerkleVoteTallyService(votingClient);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchOracleSources = async () => {
@@ -49,6 +71,7 @@ const DaoVote: React.FC = () => {
     setError(null);
   };
 
+  // Enhanced handleVote with verification
   const handleVote = async () => {
     if (!address || !selectedSource) return;
 
@@ -58,25 +81,83 @@ const DaoVote: React.FC = () => {
     }
 
     try {
-      const { success, message } = await submitVote(
+      setIsRefreshing(true);
+      
+      // ENHANCED: Verify current vote chain before submitting new vote
+      if (tallyServiceRef.current) {
+        const verificationResult = await tallyServiceRef.current.processVotesOnDemand(true);
+        
+        if (!verificationResult.chainVerified) {
+          setError("Vote chain integrity check failed. Cannot submit vote.");
+          setVerificationErrors(verificationResult.errors);
+          return;
+        }
+        
+        if (verificationResult.errors.length > 0) {
+          console.warn("Non-critical vote verification warnings:", verificationResult.errors);
+        }
+      }
+      
+      // Submit vote
+      const cid = await submitVote(
         selectedSource,
-        address.toString(),
-        tokenAmount,
-        tier.level
+        'FOR'  // Using 'FOR' as the choice, adjust if needed
       );
-
-      if (success) {
+      
+      // Process the new vote immediately
+      if (tallyServiceRef.current) {
+        await tallyServiceRef.current.processVotesOnDemand(true);
+      }
+      
+      // Update UI state
+      const updatedSources = await getOracleSources(votingHistory);
+      setOracleSources(updatedSources);
+      setSuccessMessage(`Vote verified and stored at IPFS CID: ${cid}`);
+      setSelectedSource("");
+      setVerificationErrors([]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Vote failed");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+  
+  // Add a manual refresh function with verification
+  const handleRefresh = async () => {
+    if (!tallyServiceRef.current) return;
+    
+    try {
+      setIsRefreshing(true);
+      
+      // Force processing of new votes with enhanced error reporting
+      const result = await tallyServiceRef.current.processVotesOnDemand(true);
+      
+      if (!result.success) {
+        setError("Failed to refresh vote tallies: " + result.errors.join(', '));
+        setVerificationErrors(result.errors);
+      } else {
+        // Update sources with fresh tallies
         const updatedSources = await getOracleSources(votingHistory);
         setOracleSources(updatedSources);
+        
+        const message = result.votesProcessed > 0 
+          ? `Processed ${result.votesProcessed} new votes successfully` 
+          : "No new votes to process";
+        
         setSuccessMessage(message);
-        setError(null);
-        setSelectedSource("");
-      } else {
-        setError(message);
+        
+        if (result.errors.length > 0) {
+          setVerificationErrors(result.errors);
+        } else {
+          setVerificationErrors([]);
+        }
+        
+        setTimeout(() => setSuccessMessage(null), 3000);
       }
     } catch (err) {
-      console.error("Vote submission error:", err);
-      setError(err instanceof Error ? err.message : "Vote submission failed");
+      setError("Failed to refresh vote tallies: " + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -115,6 +196,32 @@ const DaoVote: React.FC = () => {
         </div>
       )}
 
+      {/* Add a refresh button */}
+      <div className={styles.refreshContainer}>
+        <button 
+          className={styles.refreshButton}
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+        >
+          {isRefreshing ? "Verifying & Refreshing..." : "Verify & Refresh Vote Tallies"}
+        </button>
+      </div>
+      
+      {/* Add verification error display */}
+      {verificationErrors.length > 0 && (
+        <div className={styles.verificationWarning}>
+          <h4 className={styles.warningTitle}>Verification Warnings:</h4>
+          <ul className={styles.warningList}>
+            {verificationErrors.slice(0, 3).map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+            {verificationErrors.length > 3 && (
+              <li>...and {verificationErrors.length - 3} more warnings</li>
+            )}
+          </ul>
+        </div>
+      )}
+
       <section className={styles.voteSection}>
         <CardGroup
           name="Data Source Groups"
@@ -144,7 +251,10 @@ const DaoVote: React.FC = () => {
               </span>
             </div>
           </div>
-
+          {/* Add the vote tallies section */}
+          <div className={styles.talliesSection}>
+            <VoteTallies proposalIds={proposalGroups} />
+          </div>
           {!hasEnoughStake && (
             <div className={styles.stakeWarning}>
               <div className={styles.warningIcon}>!</div>
@@ -161,13 +271,15 @@ const DaoVote: React.FC = () => {
 
           <button
             className={`${styles.voteButton} ${
-              !hasEnoughStake ? styles.disabledButton : ""
+              !hasEnoughStake || isRefreshing ? styles.disabledButton : ""
             }`}
             onClick={handleVote}
-            disabled={!address || !hasEnoughStake}
+            disabled={!address || !hasEnoughStake || isRefreshing}
             aria-label="Submit vote"
           >
-            {!address
+            {isRefreshing
+              ? "Verifying..."
+              : !address
               ? "Connect Wallet to Participate"
               : !hasEnoughStake
               ? `Required Stake: ${MIN_STAKE_REQUIRED} JIMP`
