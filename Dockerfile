@@ -2,13 +2,6 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Copy the script that will generate environment variables
-COPY scripts/generate-env.sh /app/generate-env.sh
-RUN chmod +x /app/generate-env.sh
-
-# Use it as the entrypoint
-ENTRYPOINT ["/app/generate-env.sh"]
-
 # Install all required build dependencies
 RUN apk add --no-cache \
     python3 \
