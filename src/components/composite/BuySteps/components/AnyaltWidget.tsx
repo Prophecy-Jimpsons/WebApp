@@ -4,8 +4,6 @@ import { AnyaltWidget, ChainType, useModal } from "@anyalt/widget";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
-import { jimpToken as jimpTokenLogo } from "@/assets/images/Logo";
-
 // Define the ref type for the Widget component
 
 export interface Token {
@@ -35,15 +33,6 @@ export interface WidgetRef {
   openWidget: () => void;
 }
 
-const popkittyToken: Token = {
-  name: "Popkitty",
-  symbol: "POPKITTY",
-  address: "GB8V6tFBN6QZCEFdEjsntGu7kT8C5cHHn13dcwgtnPZU",
-  chainType: ChainType.SOLANA,
-  logoUrl:
-    "https://img-v1.raydium.io/icon/GB8V6tFBN6QZCEFdEjsntGu7kT8C5cHHn13dcwgtnPZU.png",
-};
-
 const jimpToken: Token = {
   name: "Prophecy Jimpsons",
   symbol: "JIMP",
@@ -53,7 +42,7 @@ const jimpToken: Token = {
     "https://dd.dexscreener.com/ds-data/tokens/solana/D86WEcSeM4YkQKqP6LLLt8bRypbJnaQcPUxHAVsopump.png?size=lg&key=a7a59d",
 };
 
-const Widget = forwardRef<WidgetRef, {}>((props, ref) => {
+const Widget = forwardRef<WidgetRef, {}>((_, ref) => {
   // useModal hook provides control over the widget's modal state
   const { isOpen, onOpen, onClose } = useModal();
   const isTokenBuyTemplate = true;
