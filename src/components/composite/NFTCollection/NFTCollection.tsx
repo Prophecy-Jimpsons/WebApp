@@ -75,6 +75,7 @@ const NFTCollection: React.FC = () => {
         },
       );
 
+      console.log(response)
       if (!response.ok) {
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
