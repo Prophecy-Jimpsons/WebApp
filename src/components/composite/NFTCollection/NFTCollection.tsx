@@ -8,6 +8,7 @@ import {
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import styles from "./NFTCollection.module.css";
+const VITE_HELIUS_API = import.meta.env.VITE_HELIUS_API;
 
 interface HeliusResponse {
   result?: {
@@ -41,7 +42,9 @@ const NFTCollection: React.FC = () => {
       try {
         const nftsRef = collection(db, "nfts");
         const q = query(nftsRef, where("ownerAddress", "==", walletAddress));
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const snapshot = await getDocs(q);
       } catch (err) {
         console.error("Error checking Firestore:", err);
@@ -59,7 +62,7 @@ const NFTCollection: React.FC = () => {
   ) => {
     try {
       const response = await fetch(
-        `https://${network}.helius-rpc.com/v0/rpc?api-key=70eef812-8d6b-496f-bc30-1725d5acb800`,
+        `https://${network}.helius-rpc.com/v0/rpc?api-key=${VITE_HELIUS_API}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
