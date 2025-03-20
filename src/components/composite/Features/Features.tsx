@@ -9,11 +9,11 @@ import {
   Target,
 } from "lucide-react";
 import SOLANA from "@/assets/icons/chains/Solana_Network_Logo.png";
-import BASE from "@/assets/icons/chains/Base_Network_Logo.svg";
-import POLYGON from "@/assets/icons/chains/Polygon_Network_Logo.png";
-import ADD from "@/assets/icons/chains/add.png";
+// import BASE from "@/assets/icons/chains/Base_Network_Logo.svg";
+// import POLYGON from "@/assets/icons/chains/Polygon_Network_Logo.png";
+// import ADD from "@/assets/icons/chains/add.png";
 
-import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
+// import STARKNET from "@/assets/icons/chains/Starknet_Network_Logo.svg";
 import styles from "./Features.module.css";
 
 const Features = () => {
@@ -48,34 +48,34 @@ const Features = () => {
       logo: SOLANA,
       alt: "Solana Network Logo",
     },
-    {
-      name: "Polygon",
-      description: "Ethereum's Cool Kid 😎",
-      colorClass: styles.polygon,
-      logo: POLYGON,
-      alt: "Polygon Network Logo",
-    },
-    {
-      name: "StarkNet",
-      description: "Privacy Master 🕵️‍♂️",
-      colorClass: styles.starknet,
-      logo: STARKNET,
-      alt: "StarkNet Network Logo",
-    },
-    {
-      name: "Base",
-      description: "Layer 2 Legend 🎭",
-      colorClass: styles.base,
-      logo: BASE,
-      alt: "Base Network Logo",
-    },
-    {
-      name: "More Chains Soon",
-      description: "Stay tuned! ⭐",
-      colorClass: styles.comingSoon,
-      logo: ADD,
-      alt: "More Chains Soon",
-    },
+    // {
+    //   name: "Polygon",
+    //   description: "Ethereum's Cool Kid 😎",
+    //   colorClass: styles.polygon,
+    //   logo: POLYGON,
+    //   alt: "Polygon Network Logo",
+    // },
+    // {
+    //   name: "StarkNet",
+    //   description: "Privacy Master 🕵️‍♂️",
+    //   colorClass: styles.starknet,
+    //   logo: STARKNET,
+    //   alt: "StarkNet Network Logo",
+    // },
+    // {
+    //   name: "Base",
+    //   description: "Layer 2 Legend 🎭",
+    //   colorClass: styles.base,
+    //   logo: BASE,
+    //   alt: "Base Network Logo",
+    // },
+    // {
+    //   name: "More Chains Soon",
+    //   description: "Stay tuned! ⭐",
+    //   colorClass: styles.comingSoon,
+    //   logo: ADD,
+    //   alt: "More Chains Soon",
+    // },
   ];
 
   return (
@@ -131,7 +131,7 @@ const Features = () => {
           <div className={`${styles.featureCard} ${styles.chainCard}`}>
             <h4 className={styles.chainTitle}>
               <Network className={styles.titleIcon} />
-              Launching on Solana
+              Launching on Solana Mainnet
               <ArrowUpRight className={styles.arrowIcon} />
             </h4>
             <p className={styles.chainDescription}>
