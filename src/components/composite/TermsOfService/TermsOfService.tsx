@@ -57,7 +57,7 @@ const TermsOfService: React.FC = () => {
     contact: {
       title: "Contact",
       content:
-        "For questions or concerns regarding these terms, please engage with our community through our official Discord channel or participate in DAO discussions. Our community moderators are available to address platform-related inquiries.",
+        "For questions or concerns regarding these terms, please engage with our community through our official Discord channel or participate in DAO discussions. Our community moderators are available to address platform related inquiries.",
     },
   };
 
