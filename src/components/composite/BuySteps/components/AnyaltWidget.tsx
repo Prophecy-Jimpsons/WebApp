@@ -32,7 +32,7 @@ interface ExecuteResponse {
   executeTxHash?: string;
   amountOut: string;
 }
-interface WidgetRef {
+export interface WidgetRef {
   openWidget: () => void;
 }
 

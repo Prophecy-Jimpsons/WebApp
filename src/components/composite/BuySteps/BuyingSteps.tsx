@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
 import styles from "./BuyingSteps.module.css";
-import Widget from "./components/AnyaltWidget"; // Import the WidgetRef type
+import Widget, { WidgetRef } from "./components/AnyaltWidget"; // Import the WidgetRef type
 import {
   anyaltPrerequisites,
   anyaltSteps,
@@ -49,12 +49,11 @@ const BuyingSteps: React.FC = () => {
   // Get the appropriate steps based on selected method
   const currentSteps: Step[] =
     buyMethod === "raydium" ? raydiumSteps : anyaltSteps;
-  // buyMethod === "raydium" ? raydiumSteps : [];
 
   // Extract image URLs from the current steps
-  // const images: string[] = currentSteps
-  //   .map((step) => step.image)
-  //   .filter((image): image is string => Boolean(image));
+  const images: string[] = currentSteps
+    .map((step) => step.image)
+    .filter((image): image is string => Boolean(image));
 
   // Preload all images when the component mounts or when buy method changes
   useEffect(() => {
@@ -88,11 +87,8 @@ const BuyingSteps: React.FC = () => {
   }, [buyMethod, currentSteps]);
 
   const openLightbox = (index: number): void => {
-    // Only open lightbox if the image is loaded
-    if (currentSteps[index].image && loadedImages[currentSteps[index].image]) {
-      setPhotoIndex(index);
-      setIsOpen(true);
-    }
+    setPhotoIndex(index);
+    setIsOpen(true);
   };
 
   const closeLightbox = (): void => {
@@ -250,15 +246,23 @@ const BuyingSteps: React.FC = () => {
         </p>
       </div>
 
-      {isOpen &&
-        currentSteps[photoIndex].image &&
-        loadedImages[currentSteps[photoIndex].image] && (
-          <Lightbox
-            mainSrc={currentSteps[photoIndex].image}
-            onCloseRequest={closeLightbox}
-            enableZoom={false}
-          />
-        )}
+      {isOpen && currentSteps[photoIndex].image && (
+        <Lightbox
+          mainSrc={currentSteps[photoIndex].image}
+          onCloseRequest={closeLightbox}
+          enableZoom={false}
+          imageLoadErrorMessage="Failed to load image"
+          imageCaption={currentSteps[photoIndex].title}
+          onImageLoad={() => {
+            if (currentSteps[photoIndex].image) {
+              setLoadedImages((prev) => ({
+                ...prev,
+                [currentSteps[photoIndex].image!]: true,
+              }));
+            }
+          }}
+        />
+      )}
 
       {/* AnyAlt Widget component with ref */}
       <Widget ref={widgetRef} />
