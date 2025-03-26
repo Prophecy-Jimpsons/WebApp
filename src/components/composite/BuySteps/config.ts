@@ -10,6 +10,14 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { step_1, step_2, step_3, step_4 } from "@/assets/images/Howtobuy";
+import {
+  anyalt_step_1,
+  anyalt_step_2,
+  anyalt_step_3,
+  anyalt_step_4,
+  anyalt_step_5,
+  anyalt_step_6,
+} from "@/assets/images/Howtobuy/anyalt";
 
 interface Step {
   number: string;
@@ -33,7 +41,7 @@ const raydiumPrerequisites = [
 const anyaltPrerequisites = [
   {
     icon: Wallet,
-    text: "You need a Web3 wallet with ETH or other supported cryptocurrencies",
+    text: "You need a Web3 wallet like Metamask with ETH or other supported cryptocurrencies and Solana Wallet like Phantom that you want to receive JIMP tokens in",
   },
   {
     icon: AlertCircle,
@@ -78,35 +86,50 @@ const raydiumSteps: Step[] = [
 const anyaltSteps: Step[] = [
   {
     number: "01",
-    title: "Open AnyAlt Widget",
+    title: "Select a chain and cyrpto asset to swap from",
     description:
-      "Click the button to open the AnyAlt widget, which allows you to swap various cryptocurrencies for JIMP tokens.",
+      "Choose the chain and asset you want to swap from (ETH, USDT, etc.). For example, we are swapping from ETH on Ethereum chain.",
     icon: Repeat,
-    image: step_1,
+    image: anyalt_step_1,
   },
   {
     number: "02",
-    title: "Select Your Input Token",
+    title: "Enter the amount to swap",
     description:
-      "Choose which cryptocurrency you want to swap from (ETH, USDT, etc.) and enter the amount you wish to convert.",
+      "Enter the amount you wish to swap. Here you will see the calculation of estimated amount of JIMP tokens you will receive as well as the routes details. Then, click the 'Start Transaction' button.",
     icon: CreditCard,
-    image: step_2,
+    image: anyalt_step_2,
   },
   {
     number: "03",
-    title: "Review and Confirm",
+    title: "Transaction Review ",
     description:
-      "Review the transaction details including fees and estimated JIMP tokens you'll receive, then confirm the swap.",
+      "Review the transaction details including fees, estimated time and estimated JIMP tokens you'll receive, then click 'Execute Transaction'.",
     icon: CheckCircle,
-    image: step_3,
+    image: anyalt_step_3,
   },
   {
     number: "04",
-    title: "Complete the Transaction",
+    title: "Approve Transaction",
     description:
-      "Approve the transaction in your wallet and wait for confirmation. The JIMP tokens will be sent directly to your wallet.",
+      "A pop-up will ask you to approve the transaction in your wallet and wait for confirmation. The JIMP tokens will be sent directly to your wallet.",
     icon: ArrowRight,
-    image: step_4,
+    image: anyalt_step_4,
+  },
+  {
+    number: "05",
+    title: "Transaction Complete",
+    description:
+      "You should see a transaction completion message. Now you can check the JIMP tokens in your solana wallet.",
+    icon: ArrowRight,
+    image: anyalt_step_5,
+  },
+  {
+    number: "06",
+    title: "Check your solana wallet",
+    description: "You should see the JIMP tokens in your solana wallet.",
+    icon: ArrowRight,
+    image: anyalt_step_6,
   },
 ];
 

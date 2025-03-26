@@ -1,3 +1,3 @@
-import jimpToken from "./jimpsons-token.png";
+import jimpTokenLogo from "./jimpsons-token.png";
 
-export { jimpToken };
+export { jimpTokenLogo };

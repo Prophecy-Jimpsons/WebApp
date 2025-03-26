@@ -11,10 +11,10 @@ import { useEffect, useRef, useState } from "react";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
 import styles from "./BuyingSteps.module.css";
-import Widget, { WidgetRef } from "./components/AnyaltWidget"; // Import the WidgetRef type
+import Widget from "./components/AnyaltWidget"; // Import the WidgetRef type
 import {
   anyaltPrerequisites,
-  // anyaltSteps,
+  anyaltSteps,
   raydiumPrerequisites,
   raydiumSteps,
   swapUrl,
@@ -48,8 +48,8 @@ const BuyingSteps: React.FC = () => {
 
   // Get the appropriate steps based on selected method
   const currentSteps: Step[] =
-    // buyMethod === "raydium" ? raydiumSteps : anyaltSteps;
-    buyMethod === "raydium" ? raydiumSteps : [];
+    buyMethod === "raydium" ? raydiumSteps : anyaltSteps;
+  // buyMethod === "raydium" ? raydiumSteps : [];
 
   // Extract image URLs from the current steps
   // const images: string[] = currentSteps
@@ -155,10 +155,6 @@ const BuyingSteps: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.tradingLink}>
-        <h3>🚀 Our $JIMP Token is now LIVE! 🚀</h3>
-      </div>
-
       {/* AnyAlt Direct Button (only shown when anyalt method is selected) */}
       {buyMethod === "anyalt" && (
         <div className={styles.anyaltButtonContainer}>
@@ -195,17 +191,6 @@ const BuyingSteps: React.FC = () => {
                       Go to Raydium
                       <ExternalLink className={styles.linkIcon} />
                     </a>
-                    {step.description}
-                  </>
-                ) : buyMethod === "anyalt" && step.number === "01" ? (
-                  <>
-                    <button
-                      onClick={openAnyaltWidget}
-                      className={styles.anyaltInlineButton}
-                    >
-                      Open AnyAlt Widget
-                      <Repeat className={styles.linkIcon} />
-                    </button>
                     {step.description}
                   </>
                 ) : (
