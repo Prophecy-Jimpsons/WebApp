@@ -77,7 +77,7 @@ const Widget = forwardRef<WidgetRef, {}>((_, ref) => {
 
   return (
     <AnyaltWidget
-      inputToken={jimpToken}
+      swapResultToken={jimpToken}
       isTokenBuyTemplate={isTokenBuyTemplate}
       apiKey="pk_a96c68b5d6cc63b0bb431761a41dacd8eea00617e3089c57" // needs to be placed in .env file
       widgetTemplate="TOKEN_BUY"

@@ -150,10 +150,10 @@
     ts-jest "^29.2.5"
     viem "^2.21.55"
 
-"@anyalt/widget@^1.0.14":
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/@anyalt/widget/-/widget-1.0.14.tgz#a972e97fbf863c5094624e448d9aa25e716f2b42"
-  integrity sha512-N+S8ASZEA5yV3Tyh4nOWcTIvwelZkd8RtCr5c0DcAleiV1q7MBg0Xn4SjjJy0drlQ0y0+BEi0jitbpEq2O+dsQ==
+"@anyalt/widget@^1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@anyalt/widget/-/widget-1.0.15.tgz#8e9453dbcea631e6a72a8124d268e9ceb7e45b93"
+  integrity sha512-MoqHZjObpFrfDLIqxA7/qtb2u9ow7d3+U+Ow6SxY939Kle2pL8mlybMlfYpIdzRtKI8nvuDLToibbd9lsrt2dg==
   dependencies:
     "@ant-design/web3" "^1.22.0"
     "@ant-design/web3-bitcoin" "^1.5.2"

@@ -41,7 +41,7 @@ const BuyingSteps: React.FC = () => {
 
   // Function to open the AnyAlt widget
   const openAnyaltWidget = (): void => {
-    if (widgetRef.current) {
+    if (widgetRef?.current) {
       widgetRef.current.openWidget();
     }
   };
@@ -51,9 +51,9 @@ const BuyingSteps: React.FC = () => {
     buyMethod === "raydium" ? raydiumSteps : anyaltSteps;
 
   // Extract image URLs from the current steps
-  const images: string[] = currentSteps
-    .map((step) => step.image)
-    .filter((image): image is string => Boolean(image));
+  // const images: string[] = currentSteps
+  //   .map((step) => step.image)
+  //   .filter((image): image is string => Boolean(image));
 
   // Preload all images when the component mounts or when buy method changes
   useEffect(() => {

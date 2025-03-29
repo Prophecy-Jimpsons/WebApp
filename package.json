@@ -13,7 +13,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "@anyalt/widget": "^1.0.14",
+    "@anyalt/widget": "^1.0.15",
     "@coral-xyz/anchor": "0.29.0",
     "@filebase/sdk": "^1.0.6",
     "@lottiefiles/dotlottie-react": "^0.13.0",

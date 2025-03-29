@@ -32,14 +32,8 @@ RUN yarn install --frozen-lockfile --network-timeout 300000
 # Copy source files
 COPY . .
 
-# Manually apply patches (this replaces the postinstall script execution)
-RUN yarn patch-package
-
 # Build TypeScript and Vite
 RUN yarn build
-
-# Create a modified package.json without the postinstall script
-RUN node -e "const pkg = require('./package.json'); delete pkg.scripts.postinstall; require('fs').writeFileSync('package.prod.json', JSON.stringify(pkg, null, 2));"
 
 # Production stage
 FROM node:20-alpine
@@ -65,7 +59,7 @@ ENV NODE_GYP_FORCE_PYTHON=/usr/bin/python3
 
 # Copy built files and production dependencies
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/package.prod.json ./package.json
+COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/yarn.lock ./yarn.lock
 
 # Install only production dependencies
