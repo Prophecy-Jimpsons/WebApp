@@ -14,7 +14,7 @@ import styles from "./BuyingSteps.module.css";
 import Widget, { WidgetRef } from "./components/AnyaltWidget"; // Import the WidgetRef type
 import {
   anyaltPrerequisites,
-  // anyaltSteps,
+  anyaltSteps,
   raydiumPrerequisites,
   raydiumSteps,
   swapUrl,
@@ -41,15 +41,14 @@ const BuyingSteps: React.FC = () => {
 
   // Function to open the AnyAlt widget
   const openAnyaltWidget = (): void => {
-    if (widgetRef.current) {
+    if (widgetRef?.current) {
       widgetRef.current.openWidget();
     }
   };
 
   // Get the appropriate steps based on selected method
   const currentSteps: Step[] =
-    // buyMethod === "raydium" ? raydiumSteps : anyaltSteps;
-    buyMethod === "raydium" ? raydiumSteps : [];
+    buyMethod === "raydium" ? raydiumSteps : anyaltSteps;
 
   // Extract image URLs from the current steps
   // const images: string[] = currentSteps
@@ -88,11 +87,8 @@ const BuyingSteps: React.FC = () => {
   }, [buyMethod, currentSteps]);
 
   const openLightbox = (index: number): void => {
-    // Only open lightbox if the image is loaded
-    if (currentSteps[index].image && loadedImages[currentSteps[index].image]) {
-      setPhotoIndex(index);
-      setIsOpen(true);
-    }
+    setPhotoIndex(index);
+    setIsOpen(true);
   };
 
   const closeLightbox = (): void => {
@@ -155,10 +151,6 @@ const BuyingSteps: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.tradingLink}>
-        <h3>🚀 Our $JIMP Token is now LIVE! 🚀</h3>
-      </div>
-
       {/* AnyAlt Direct Button (only shown when anyalt method is selected) */}
       {buyMethod === "anyalt" && (
         <div className={styles.anyaltButtonContainer}>
@@ -195,17 +187,6 @@ const BuyingSteps: React.FC = () => {
                       Go to Raydium
                       <ExternalLink className={styles.linkIcon} />
                     </a>
-                    {step.description}
-                  </>
-                ) : buyMethod === "anyalt" && step.number === "01" ? (
-                  <>
-                    <button
-                      onClick={openAnyaltWidget}
-                      className={styles.anyaltInlineButton}
-                    >
-                      Open AnyAlt Widget
-                      <Repeat className={styles.linkIcon} />
-                    </button>
                     {step.description}
                   </>
                 ) : (
@@ -265,15 +246,23 @@ const BuyingSteps: React.FC = () => {
         </p>
       </div>
 
-      {isOpen &&
-        currentSteps[photoIndex].image &&
-        loadedImages[currentSteps[photoIndex].image] && (
-          <Lightbox
-            mainSrc={currentSteps[photoIndex].image}
-            onCloseRequest={closeLightbox}
-            enableZoom={false}
-          />
-        )}
+      {isOpen && currentSteps[photoIndex].image && (
+        <Lightbox
+          mainSrc={currentSteps[photoIndex].image}
+          onCloseRequest={closeLightbox}
+          enableZoom={false}
+          imageLoadErrorMessage="Failed to load image"
+          imageCaption={currentSteps[photoIndex].title}
+          onImageLoad={() => {
+            if (currentSteps[photoIndex].image) {
+              setLoadedImages((prev) => ({
+                ...prev,
+                [currentSteps[photoIndex].image!]: true,
+              }));
+            }
+          }}
+        />
+      )}
 
       {/* AnyAlt Widget component with ref */}
       <Widget ref={widgetRef} />
